@@ -6,7 +6,7 @@ export async function addCustomer(form: FormData) {
   const kind = String(form.get('kind') ?? 'cash') as 'cash' | 'ledger';
   const name = String(form.get('name') ?? '').trim();
   if (!name) return;
-  createCustomer({
+  await createCustomer({
     kind,
     name,
     contact: String(form.get('contact') ?? '').trim() || undefined,
@@ -22,7 +22,7 @@ export async function editCustomer(form: FormData) {
   const id = Number(form.get('id'));
   const name = String(form.get('name') ?? '').trim();
   if (!id || !name) return;
-  updateCustomer(id, {
+  await updateCustomer(id, {
     name,
     contact: String(form.get('contact') ?? '').trim() || undefined,
     credit_limit: Number(form.get('credit_limit')) || 0,
@@ -35,7 +35,7 @@ export async function editCustomer(form: FormData) {
 export async function deactivateCustomerAction(form: FormData) {
   const id = Number(form.get('id'));
   if (!id) return;
-  deactivateCustomer(id);
+  await deactivateCustomer(id);
   revalidatePath('/customers');
   revalidatePath('/billing');
 }

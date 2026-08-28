@@ -8,7 +8,7 @@ export default async function ExpensesPage({
   searchParams,
 }: { searchParams: Promise<{ from?: string; to?: string; category?: string }> }) {
   const { from, to, category } = await searchParams;
-  const expenses = listExpenses(from, to, category);
+  const expenses = await listExpenses(from, to, category);
   const total = expenses.reduce((s, e) => s + e.amount, 0);
 
   const categories = ['general', 'diesel', 'transport', 'chai', 'loading', 'maintenance', 'rent', 'salary', 'other'];

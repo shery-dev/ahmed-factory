@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Shell } from '@/components/Shell';
-import { dashboard, listBills, dataIssues } from '@/lib/repo';
+import { dashboard, listBills } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
 
 export const metadata: Metadata = {
@@ -12,15 +12,16 @@ export const metadata: Metadata = {
 // Always read fresh — this is an operational system, not a marketing site.
 export const dynamic = 'force-dynamic';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const d = dashboard();
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const d = await dashboard();
+  const billsList = await listBills(999);
   const counts = {
-    bills: listBills(999).length,
-    customers: d.customers.n,
-    products: d.products.n,
-    issues: d.issues.n,
-    receivable: `PKR ${fmtNum(d.receivable.v)}`,
-    salesToday: `PKR ${fmtNum(d.billsToday.v)}`,
+    bills: billsList.length,
+    customers: d.customers?.n ?? 0,
+    products: d.products?.n ?? 0,
+    issues: d.issues?.n ?? 0,
+    receivable: `PKR ${fmtNum(d.receivable?.v ?? 0)}`,
+    salesToday: `PKR ${fmtNum(d.billsToday?.v ?? 0)}`,
   };
   return (
     <html lang="en">

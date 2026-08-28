@@ -14,7 +14,7 @@ export async function submitBill(input: {
   customerId: number; lines: LineInput[];
   rent?: number; credit?: number; creditMethod?: string;
 }) {
-  const res = postBill(input);
+  const res = await postBill(input);
   if (res.ok) {
     revalidatePath('/'); revalidatePath('/bills');
     revalidatePath('/stock'); revalidatePath('/customers');

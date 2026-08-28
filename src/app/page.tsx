@@ -9,10 +9,10 @@ const LEVEL: Record<string, string> = {
   warn: 'log-warn', error: 'log-error',
 };
 
-export default function Home() {
-  const d = dashboard();
-  const log = recentActivity(18);
-  const owed = outstandingBalances().slice(0, 6);
+export default async function Home() {
+  const d = await dashboard();
+  const log = await recentActivity(18);
+  const owed = (await outstandingBalances()).slice(0, 6);
 
   return (
     <>
@@ -28,32 +28,32 @@ export default function Home() {
       <div className="grid grid-4" style={{ marginBottom: 20 }}>
         <div className="card">
           <div className="card-title">TODAY&apos;S BILLS</div>
-          <div className="stat-big num">{d.billsToday.n}</div>
-          <div className="stat-sub num">PKR {fmtNum(d.billsToday.v)} billed</div>
+          <div className="stat-big num">{d.billsToday?.n ?? 0}</div>
+          <div className="stat-sub num">PKR {fmtNum(d.billsToday?.v ?? 0)} billed</div>
         </div>
         <div className="card">
           <div className="card-title">CASH RECEIVED TODAY</div>
-          <div className="stat-big stat-green num">PKR {fmtNum(d.creditToday.v)}</div>
+          <div className="stat-big stat-green num">PKR {fmtNum(d.creditToday?.v ?? 0)}</div>
           <div className="stat-sub">Credits posted against bills</div>
         </div>
         <div className="card">
           <div className="card-title">TOTAL RECEIVABLE</div>
-          <div className="stat-big stat-accent num">PKR {fmtNum(d.receivable.v)}</div>
+          <div className="stat-big stat-accent num">PKR {fmtNum(d.receivable?.v ?? 0)}</div>
           <div className="stat-sub">Computed, never stored</div>
         </div>
         <div className="card">
           <div className="card-title">CATALOGUE</div>
-          <div className="stat-big num">{d.products.n}</div>
+          <div className="stat-big num">{d.products?.n ?? 0}</div>
           <div className="stat-sub">
-            products · {d.customers.n} customers
+            products · {d.customers?.n ?? 0} customers
           </div>
         </div>
       </div>
 
-      {d.issues.n > 0 && (
+      {(d.issues?.n ?? 0) > 0 && (
         <div className="info-card warn" style={{ marginBottom: 20 }}>
           <div>
-            <b>{d.issues.n} items need attention.</b> The 2022 import contained
+            <b>{d.issues?.n} items need attention.</b> The 2022 import contained
             values that failed sanity checks — negative stock, implausible
             quantities and placeholder customer names. Nothing was silently
             dropped or silently trusted.{' '}

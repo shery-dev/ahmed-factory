@@ -5,8 +5,9 @@ import { addCustomer } from './actions';
 
 export const dynamic = 'force-dynamic';
 
-export default function CustomersPage() {
-  const customers = listCustomers().map((c) => ({ ...c, balance: customerBalance(c.id) }));
+export default async function CustomersPage() {
+  const customersList = await listCustomers();
+  const customers = await Promise.all(customersList.map(async (c) => ({ ...c, balance: await customerBalance(c.id) })));
   return (
     <>
       <div className="panel-header">

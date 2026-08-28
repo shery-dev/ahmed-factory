@@ -1,30 +1,69 @@
 /**
  * Seed the database from the 2022 workbook export.
  *
- * Principle carried over from the Scope of Work: NOTHING IS SILENTLY DROPPED
- * AND NOTHING IMPLAUSIBLE IS SILENTLY IMPORTED. Values that fail a sanity
- * check are imported as zero, flagged on the stock row, and written to
- * data_issues so they surface in the app's "Needs Attention" queue.
+ * Works with both:
+ *   - Local SQLite file (no env vars needed)
+ *   - Turso cloud database (TURSO_DATABASE_URL + TURSO_AUTH_TOKEN in .env.local)
  *
- * Run:  npm run seed     (idempotent — skips if the database already exists)
- *       npm run reset    (delete and rebuild)
+ * Run:  npm run seed     (idempotent — skips if data already exists)
  */
-import Database from 'better-sqlite3';
+import { createClient } from '@libsql/client';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = process.cwd();
-const DB_PATH = path.join(ROOT, 'data', 'factory.db');
-const IMPORT = path.join(ROOT, 'data', 'import', 'legacy.json');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '..');
 
-if (fs.existsSync(DB_PATH)) {
-  console.log('✓ Database already exists — skipping seed. Use `npm run reset` to rebuild.');
-  process.exit(0);
+// Load .env.local manually (scripts don't go through Next.js env loading)
+const envPath = path.join(ROOT, '.env.local');
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const eq = trimmed.indexOf('=');
+    if (eq === -1) continue;
+    const key = trimmed.slice(0, eq);
+    const val = trimmed.slice(eq + 1);
+    if (!process.env[key]) process.env[key] = val;
+  }
 }
 
-fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-const db = new Database(DB_PATH);
-db.exec(fs.readFileSync(path.join(ROOT, 'src', 'lib', 'schema.sql'), 'utf8'));
+const IMPORT = path.join(ROOT, 'data', 'import', 'legacy.json');
+const SCHEMA = path.join(ROOT, 'src', 'lib', 'schema.sql');
+
+const url = process.env.TURSO_DATABASE_URL || `file:${path.join(ROOT, 'data', 'factory.db')}`;
+const authToken = process.env.TURSO_AUTH_TOKEN;
+
+const db = createClient({
+  url,
+  authToken: authToken || undefined,
+});
+
+console.log(`Connecting to: ${url.replace(/\/\/.*@/, '//***@')}`);
+
+// ─── Schema ──────────────────────────────────────────────────────────────────
+const schemaSql = fs.readFileSync(SCHEMA, 'utf8');
+const statements = schemaSql.split(';').map(s => s.trim()).filter(s => s && !s.startsWith('--'));
+for (const stmt of statements) {
+  if (stmt.toUpperCase().startsWith('PRAGMA')) continue;
+  try {
+    await db.execute({ sql: stmt, args: [] });
+  } catch (e) {
+    if (!String(e).includes('already exists')) {
+      console.warn('Schema warning:', String(e).slice(0, 120));
+    }
+  }
+}
+console.log('✓ Schema applied (or already exists)');
+
+// ─── Check if already seeded ─────────────────────────────────────────────────
+const existing = await db.execute({ sql: 'SELECT COUNT(*) as n FROM item_types', args: [] });
+if (Number(existing.rows[0].n) > 0) {
+  console.log('✓ Database already has data — skipping seed.');
+  db.close();
+  process.exit(0);
+}
 
 const legacy = JSON.parse(fs.readFileSync(IMPORT, 'utf8'));
 const issues = [];
@@ -32,78 +71,61 @@ const addIssue = (entity, detail, severity = 'warn') =>
   issues.push({ source: 'book.xlsx', entity, detail, severity });
 
 // ─── Catalogue ────────────────────────────────────────────────────────────────
-const insType = db.prepare(
-  `INSERT INTO item_types (code,name_en,name_ur,family,is_bareek,description_en,default_rate,sort_order)
-   VALUES (@code,@name_en,@name_ur,@family,@is_bareek,@description_en,@default_rate,@sort_order)`,
-);
 const typeIds = {};
-db.transaction(() => {
-  for (const t of legacy.item_types) {
-    typeIds[t.code] = Number(insType.run(t).lastInsertRowid);
-  }
-})();
-console.log(`✓ ${legacy.item_types.length} product types imported (rates and descriptions are real)`);
+for (const t of legacy.item_types) {
+  const result = await db.execute({
+    sql: `INSERT INTO item_types (code,name_en,name_ur,family,is_bareek,description_en,default_rate,sort_order)
+   VALUES (@code,@name_en,@name_ur,@family,@is_bareek,@description_en,@default_rate,@sort_order)`,
+    args: [t.code, t.name_en, t.name_ur, t.family, t.is_bareek, t.description_en, t.default_rate, t.sort_order],
+  });
+  typeIds[t.code] = Number(result.lastInsertRowid);
+}
+console.log(`✓ ${legacy.item_types.length} product types imported`);
 
 // ─── Stock, with sanity checks ────────────────────────────────────────────────
-// The legacy per-size quantities are demonstrably unreliable: negatives,
-// and values like 1,111,111,189. They are imported but quarantined.
 const MAX_PLAUSIBLE = { roll: 2000, reel: 50000, tota: 50000 };
-const insStock = db.prepare(
-  `INSERT INTO stock_items (item_type_id,size,unit,quantity,rate,flagged,flag_reason)
+let flagged = 0, imported = 0;
+for (const s of legacy.stock) {
+  const tid = typeIds[s.type_code];
+  if (!tid) { addIssue('stock', `Unknown product code "${s.type_code}" — row skipped`, 'error'); continue; }
+  let qty = Number(s.quantity) || 0;
+  let flag = 0, reason = null;
+  if (qty < 0) {
+    reason = `Source had a negative quantity (${qty}). Imported as 0.`;
+    qty = 0; flag = 1;
+  } else if (qty > (MAX_PLAUSIBLE[s.unit] ?? 5000)) {
+    reason = `Source value ${qty.toLocaleString()} is implausible. Imported as 0.`;
+    qty = 0; flag = 1;
+  }
+  if (flag) { flagged++; addIssue('stock', `${s.type_code} size ${s.size} (${s.unit}): ${reason}`); }
+  await db.execute({
+    sql: `INSERT INTO stock_items (item_type_id,size,unit,quantity,rate,flagged,flag_reason)
    VALUES (?,?,?,?,?,?,?)
    ON CONFLICT(item_type_id,size,unit) DO UPDATE SET quantity = quantity + excluded.quantity`,
-);
-let flagged = 0, imported = 0;
-db.transaction(() => {
-  for (const s of legacy.stock) {
-    const tid = typeIds[s.type_code];
-    if (!tid) { addIssue('stock', `Unknown product code "${s.type_code}" — row skipped`, 'error'); continue; }
-    let qty = Number(s.quantity) || 0;
-    let flag = 0, reason = null;
-    if (qty < 0) {
-      reason = `Source had a negative quantity (${qty}). Imported as 0.`;
-      qty = 0; flag = 1;
-    } else if (qty > (MAX_PLAUSIBLE[s.unit] ?? 5000)) {
-      reason = `Source value ${qty.toLocaleString()} is implausible. Imported as 0.`;
-      qty = 0; flag = 1;
-    }
-    if (flag) { flagged++; addIssue('stock', `${s.type_code} size ${s.size} (${s.unit}): ${reason}`); }
-    insStock.run(tid, s.size, s.unit, qty, s.rate ?? 0, flag, reason);
-    imported++;
-  }
-})();
-console.log(`✓ ${imported} stock rows imported, ${flagged} quarantined as implausible`);
+    args: [tid, s.size, s.unit, qty, s.rate ?? 0, flag, reason],
+  });
+  imported++;
+}
+console.log(`✓ ${imported} stock rows imported, ${flagged} quarantined`);
 
 // ─── Customers ────────────────────────────────────────────────────────────────
-const insCust = db.prepare(
-  `INSERT INTO customers (code,kind,name,contact,manual_ledger_page,needs_review)
-   VALUES (@code,@kind,@name,@contact,@manual_ledger_page,@needs_review)`,
-);
 const custIds = {};
-// These names are visibly placeholders from 2022 testing, not the real register.
 const LOOKS_LIKE_TEST = /^(qasim|abeera|abc|asc|acv fe|test|aaa|xyz)$/i;
-db.transaction(() => {
-  for (const c of legacy.customers) {
-    const suspect = !c.name || LOOKS_LIKE_TEST.test(c.name.trim());
-    if (suspect) {
-      addIssue('customer', `"${c.name || '(blank)'}" (${c.code}) looks like 2022 test data — replace with the real customer from the paper register.`);
-    }
-    custIds[c.code] = Number(insCust.run({
-      code: c.code, kind: c.kind, name: c.name || `Unnamed ${c.code}`,
-      contact: c.contact || null, manual_ledger_page: c.manual_ledger_page || null,
-      needs_review: suspect ? 1 : 0,
-    }).lastInsertRowid);
+for (const c of legacy.customers) {
+  const suspect = !c.name || LOOKS_LIKE_TEST.test(c.name.trim());
+  if (suspect) {
+    addIssue('customer', `"${c.name || '(blank)'}" (${c.code}) looks like 2022 test data.`);
   }
-})();
+  const result = await db.execute({
+    sql: `INSERT INTO customers (code,kind,name,contact,manual_ledger_page,needs_review)
+   VALUES (?,?,?,?,?,?)`,
+    args: [c.code, c.kind, c.name || `Unnamed ${c.code}`, c.contact || null, c.manual_ledger_page || null, suspect ? 1 : 0],
+  });
+  custIds[c.code] = Number(result.lastInsertRowid);
+}
 console.log(`✓ ${legacy.customers.length} customers imported`);
 
-// ─── Ledger — opening entries only, balance NEVER imported ────────────────────
-const insLedger = db.prepare(
-  `INSERT INTO ledger_entries (ts,customer_id,receipt_no,particulars,debit,credit,credit_method,rent,flagged,flag_reason)
-   VALUES (?,?,?,?,?,?,?,?,?,?)`,
-);
-// A single line above this is not a real transaction for this business —
-// rates run 28-111 PKR against weights in kilograms.
+// ─── Ledger ───────────────────────────────────────────────────────────────────
 const MAX_LINE_PKR = 5_000_000;
 const toIso = (d) => {
   const m = String(d).match(/^(\d{2})-(\d{2})-(\d{2,4})$/);
@@ -112,54 +134,59 @@ const toIso = (d) => {
   return `${yr}-${m[2]}-${m[1]} 09:00:00`;
 };
 let maxReceipt = 0, ledgerFlagged = 0;
-db.transaction(() => {
-  for (const l of legacy.ledger) {
-    const cid = custIds[l.code];
-    if (!cid) continue;
-    const rno = Number(l.receipt_no) || null;
-    if (rno && rno > maxReceipt) maxReceipt = rno;
-    const d = l.debit || 0, c = l.credit || 0, r = l.rent || 0;
-    const worst = Math.max(d, c, r);
-    let flag = 0, reason = null;
-    if (worst > MAX_LINE_PKR) {
-      reason = `Amount PKR ${worst.toLocaleString()} is not a plausible transaction. Excluded from balances.`;
-      flag = 1; ledgerFlagged++;
-      addIssue('ledger', `"${l.particulars}" (${l.code}, receipt ${rno ?? '—'}): ${reason}`, 'error');
-    }
-    insLedger.run(toIso(l.date), cid, rno, l.particulars,
-      d, c, l.credit_method || null, r, flag, reason);
+for (const l of legacy.ledger) {
+  const cid = custIds[l.code];
+  if (!cid) continue;
+  const rno = Number(l.receipt_no) || null;
+  if (rno && rno > maxReceipt) maxReceipt = rno;
+  const d = l.debit || 0, c = l.credit || 0, r = l.rent || 0;
+  const worst = Math.max(d, c, r);
+  let flag = 0, reason = null;
+  if (worst > MAX_LINE_PKR) {
+    reason = `Amount PKR ${worst.toLocaleString()} is not plausible. Excluded from balances.`;
+    flag = 1; ledgerFlagged++;
+    addIssue('ledger', `"${l.particulars}" (${l.code}, receipt ${rno ?? '—'}): ${reason}`, 'error');
   }
-})();
-console.log(`✓ ${legacy.ledger.length} ledger entries imported, ${ledgerFlagged} quarantined (balances are computed, never stored)`);
+  await db.execute({
+    sql: `INSERT INTO ledger_entries (ts,customer_id,receipt_no,particulars,debit,credit,credit_method,rent,flagged,flag_reason)
+   VALUES (?,?,?,?,?,?,?,?,?,?)`,
+    args: [toIso(l.date), cid, rno, l.particulars, d, c, l.credit_method || null, r, flag, reason],
+  });
+}
+console.log(`✓ ${legacy.ledger.length} ledger entries imported, ${ledgerFlagged} quarantined`);
 
 // ─── Counters ─────────────────────────────────────────────────────────────────
-// One shared receipt sequence for cash and ledger bills, as the factory uses.
-db.prepare(`INSERT INTO counters (name,value) VALUES ('receipt_no',?)`).run(maxReceipt);
+await db.execute({ sql: `INSERT INTO counters (name,value) VALUES ('receipt_no',?)`, args: [maxReceipt] });
 console.log(`✓ Receipt sequence starts after #${maxReceipt}`);
 
 // ─── Data issues ──────────────────────────────────────────────────────────────
-const insIssue = db.prepare(
-  `INSERT INTO data_issues (source,entity,detail,severity) VALUES (@source,@entity,@detail,@severity)`,
-);
-db.transaction(() => {
-  issues.forEach((i) => insIssue.run(i));
-  insIssue.run({
-    source: 'book.xlsx', entity: 'stock', severity: 'error',
-    detail: 'All per-size quantities came from the 2022 spreadsheet and follow arithmetic test patterns. Treat every figure as unverified until a physical count is entered.',
+for (const i of issues) {
+  await db.execute({
+    sql: `INSERT INTO data_issues (source,entity,detail,severity) VALUES (?,?,?,?)`,
+    args: [i.source, i.entity, i.detail, i.severity],
   });
-  insIssue.run({
-    source: 'business', entity: 'ledger', severity: 'warn',
-    detail: 'The "rent" column exists in every legacy sheet but nothing in 12,000 lines of code explains what it charges for. Confirm with the factory before relying on it.',
-  });
-})();
-console.log(`✓ ${issues.length + 2} items written to the Needs Attention queue`);
+}
+await db.execute({
+  sql: `INSERT INTO data_issues (source,entity,detail,severity) VALUES (?,?,?,?)`,
+  args: ['book.xlsx', 'stock', 'error',
+    'All per-size quantities came from the 2022 spreadsheet. Treat every figure as unverified until a physical count is entered.'],
+});
+await db.execute({
+  sql: `INSERT INTO data_issues (source,entity,detail,severity) VALUES (?,?,?,?)`,
+  args: ['business', 'ledger', 'warn',
+    'The "rent" column exists in every legacy sheet but nothing explains what it charges for. Confirm with the factory.'],
+});
+console.log(`✓ ${issues.length + 2} items written to Needs Attention queue`);
 
-// ─── Activity log seed ────────────────────────────────────────────────────────
-const log = db.prepare(`INSERT INTO activity_log (level,actor,event,detail) VALUES (?,?,?,?)`);
-log.run('system', 'import', 'Database created', `Schema applied — 9 tables replacing 29 spreadsheet sheets`);
-log.run('success', 'import', 'Catalogue imported', `${legacy.item_types.length} product types are now DATA, not code`);
-log.run('warn', 'import', 'Stock quarantined', `${flagged} rows failed sanity checks and were imported as 0`);
-log.run('warn', 'import', 'Customers need review', 'Legacy names look like 2022 test entries');
+// ─── Activity log ─────────────────────────────────────────────────────────────
+await db.execute({ sql: `INSERT INTO activity_log (level,actor,event,detail) VALUES (?,?,?,?)`,
+  args: ['system', 'import', 'Database created', 'Schema applied — 9 tables'] });
+await db.execute({ sql: `INSERT INTO activity_log (level,actor,event,detail) VALUES (?,?,?,?)`,
+  args: ['success', 'import', 'Catalogue imported', `${legacy.item_types.length} product types`] });
+await db.execute({ sql: `INSERT INTO activity_log (level,actor,event,detail) VALUES (?,?,?,?)`,
+  args: ['warn', 'import', 'Stock quarantined', `${flagged} rows failed sanity checks`] });
+await db.execute({ sql: `INSERT INTO activity_log (level,actor,event,detail) VALUES (?,?,?,?)`,
+  args: ['warn', 'import', 'Customers need review', 'Legacy names look like 2022 test entries'] });
 
 db.close();
-console.log('\n✅ Seed complete →', path.relative(ROOT, DB_PATH));
+console.log('\n✅ Seed complete');

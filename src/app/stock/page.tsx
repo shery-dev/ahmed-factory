@@ -1,4 +1,4 @@
-import { db } from '@/lib/db';
+import { dbAll } from '@/lib/db';
 import { listStock, listItemTypes } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
 import { PanelHeader } from '@/components/PanelHeader';
@@ -10,14 +10,14 @@ export default async function StockPage({
   searchParams,
 }: { searchParams: Promise<{ unit?: string }> }) {
   const { unit = 'roll' } = await searchParams;
-  const rows = listStock(unit);
-  const movements = db.prepare(
+  const rows = await listStock(unit);
+  const movements = await dbAll<any>(
     `SELECT m.*, t.name_en FROM stock_movements m
      LEFT JOIN item_types t ON t.id = m.item_type_id
      ORDER BY m.id DESC LIMIT 15`,
-  ).all() as any[];
+  );
 
-  const items = listItemTypes();
+  const items = await listItemTypes();
   const totalUnits = rows.reduce((s, r) => s + r.quantity, 0);
   const flagged = rows.filter((r) => r.flagged).length;
 

@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function BillPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const bill = getBill(Number(id));
+  const bill = await getBill(Number(id));
   if (!bill) notFound();
 
   const isVoid = bill.status === 'void';

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { db } from '@/lib/db';
+import { dbGet } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -89,15 +89,15 @@ const BADGE = {
   next: { cls: 'badge-muted', label: 'NEXT PHASE' },
 };
 
-export default function ChangesPage() {
+export default async function ChangesPage() {
   const counts = {
-    types: (db.prepare(`SELECT COUNT(*) n FROM item_types`).get() as any).n,
-    stock: (db.prepare(`SELECT COUNT(*) n FROM stock_items`).get() as any).n,
-    customers: (db.prepare(`SELECT COUNT(*) n FROM customers`).get() as any).n,
-    ledger: (db.prepare(`SELECT COUNT(*) n FROM ledger_entries`).get() as any).n,
-    tables: (db.prepare(
+    types: (await dbGet<{ n: number }>(`SELECT COUNT(*) n FROM item_types`))?.n ?? 0,
+    stock: (await dbGet<{ n: number }>(`SELECT COUNT(*) n FROM stock_items`))?.n ?? 0,
+    customers: (await dbGet<{ n: number }>(`SELECT COUNT(*) n FROM customers`))?.n ?? 0,
+    ledger: (await dbGet<{ n: number }>(`SELECT COUNT(*) n FROM ledger_entries`))?.n ?? 0,
+    tables: (await dbGet<{ n: number }>(
       `SELECT COUNT(*) n FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'`,
-    ).get() as any).n,
+    ))?.n ?? 0,
   };
   const done = CHANGES.filter((c) => c.status === 'done').length;
 

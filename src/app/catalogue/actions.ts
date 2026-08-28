@@ -5,7 +5,7 @@ import { createItemType, updateRate } from '@/lib/repo';
 export async function addProduct(form: FormData) {
   const name_en = String(form.get('name_en') ?? '').trim();
   if (!name_en) return;
-  createItemType({
+  await createItemType({
     name_en,
     name_ur: String(form.get('name_ur') ?? '').trim() || name_en,
     family: String(form.get('family') ?? '').trim() || name_en,
@@ -17,6 +17,6 @@ export async function addProduct(form: FormData) {
 }
 
 export async function changeRate(form: FormData) {
-  updateRate(Number(form.get('id')), Number(form.get('rate')) || 0);
+  await updateRate(Number(form.get('id')), Number(form.get('rate')) || 0);
   revalidatePath('/catalogue'); revalidatePath('/billing');
 }

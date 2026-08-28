@@ -12,7 +12,7 @@ export async function receiveDelivery(form: FormData) {
 
   if (!itemTypeId || !size || !quantity) return;
 
-  stockIn({ itemTypeId, size, unit, quantity, rate, note: note || undefined });
+  await stockIn({ itemTypeId, size, unit, quantity, rate, note: note || undefined });
   revalidatePath('/stock');
   revalidatePath('/');
 }
@@ -26,7 +26,7 @@ export async function postPhysicalCount(form: FormData) {
 
   if (!itemTypeId || !size || !reason) return;
 
-  stockAdjust({ itemTypeId, size, unit, newQuantity, reason });
+  await stockAdjust({ itemTypeId, size, unit, newQuantity, reason });
   revalidatePath('/stock');
   revalidatePath('/');
 }

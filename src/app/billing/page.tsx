@@ -4,18 +4,20 @@ import { listItemTypes, listCustomers, sizesFor, customerBalance } from '@/lib/r
 
 export const dynamic = 'force-dynamic';
 
-export default function BillingPage() {
-  const items: CatalogueItem[] = listItemTypes().map((t) => ({
+export default async function BillingPage() {
+  const itemTypes = await listItemTypes();
+  const items: CatalogueItem[] = await Promise.all(itemTypes.map(async (t) => ({
     id: t.id, name_en: t.name_en, name_ur: t.name_ur, default_rate: t.default_rate,
     sizes: {
-      roll: sizesFor(t.id, 'roll'),
-      reel: sizesFor(t.id, 'reel'),
-      tota: sizesFor(t.id, 'tota'),
+      roll: await sizesFor(t.id, 'roll'),
+      reel: await sizesFor(t.id, 'reel'),
+      tota: await sizesFor(t.id, 'tota'),
     },
-  }));
-  const customers: CustomerOpt[] = listCustomers().map((c) => ({
-    id: c.id, code: c.code, name: c.name, kind: c.kind, balance: customerBalance(c.id),
-  }));
+  })));
+  const customersList = await listCustomers();
+  const customers: CustomerOpt[] = await Promise.all(customersList.map(async (c) => ({
+    id: c.id, code: c.code, name: c.name, kind: c.kind, balance: await customerBalance(c.id),
+  })));
 
   return (
     <>

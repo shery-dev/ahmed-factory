@@ -1,38 +1,48 @@
-import Database from 'better-sqlite3';
+import { createClient, type Client } from '@libsql/client';
 import fs from 'node:fs';
 import path from 'node:path';
 
 /**
- * SQLite is used here so the whole system runs locally with no services to
- * install. The repository layer below is the only place that touches SQL,
- * so moving to Postgres for production is a contained change.
+ * Database configuration:
+ * - Production (Vercel): Uses Turso cloud database
+ * - Development: Uses local SQLite file if TURSO_DATABASE_URL not set
  */
 
-const DB_PATH = path.join(process.cwd(), 'data', 'factory.db');
+const LOCAL_DB_PATH = path.join(process.cwd(), 'data', 'factory.db');
 
 declare global {
   // eslint-disable-next-line no-var
-  var __factoryDb: Database.Database | undefined;
+  var __factoryDb: Client | undefined;
 }
 
-function open(): Database.Database {
-  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-  const db = new Database(DB_PATH);
-  db.pragma('journal_mode = WAL');
-  db.pragma('foreign_keys = ON');
-  return db;
+function open(): Client {
+  // Use Turso in production, local file in development
+  const url = process.env.TURSO_DATABASE_URL || `file:${LOCAL_DB_PATH}`;
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+
+  const client = createClient({
+    url,
+    authToken: authToken || undefined,
+  });
+
+  return client;
 }
 
 // Reused across hot reloads in dev so we don't leak handles.
-export const db: Database.Database = global.__factoryDb ?? open();
+export const db: Client = global.__factoryDb ?? open();
 if (process.env.NODE_ENV !== 'production') global.__factoryDb = db;
 
-export function applySchema(target: Database.Database = db) {
+// Helper to execute raw SQL (for schema initialization)
+export async function applySchema(target: Client = db) {
   const sql = fs.readFileSync(
     path.join(process.cwd(), 'src', 'lib', 'schema.sql'),
     'utf8',
   );
-  target.exec(sql);
+  // Execute each statement separately since libsql doesn't support multiple statements
+  const statements = sql.split(';').filter(s => s.trim());
+  for (const stmt of statements) {
+    await target.execute({ sql: stmt, args: [] });
+  }
 }
 
 export const money = (n: number) =>
@@ -40,18 +50,35 @@ export const money = (n: number) =>
     Math.round((n + Number.EPSILON) * 100) / 100,
   );
 
-export function logActivity(
+export async function logActivity(
   event: string,
   detail = '',
   level: 'system' | 'agent' | 'success' | 'warn' | 'error' = 'system',
   actor = 'system',
   billId: number | null = null,
-  target: Database.Database = db,
+  target: Client = db,
 ) {
-  target
-    .prepare(
-      `INSERT INTO activity_log (level, actor, event, detail, bill_id)
-       VALUES (?, ?, ?, ?, ?)`,
-    )
-    .run(level, actor, event, detail, billId);
+  await target.execute({
+    sql: `INSERT INTO activity_log (level, actor, event, detail, bill_id) VALUES (?, ?, ?, ?, ?)`,
+    args: [level, actor, event, detail, billId],
+  });
+}
+
+// Helper functions to mimic better-sqlite3 API
+export async function dbAll<T>(sql: string, params: unknown[] = []): Promise<T[]> {
+  const result = await db.execute({ sql, args: params });
+  return result.rows as T[];
+}
+
+export async function dbGet<T>(sql: string, params: unknown[] = []): Promise<T | undefined> {
+  const result = await db.execute({ sql, args: params });
+  return result.rows[0] as T | undefined;
+}
+
+export async function dbRun(sql: string, params: unknown[] = []): Promise<{ lastInsertRowid: number; changes: number }> {
+  const result = await db.execute({ sql, args: params });
+  return {
+    lastInsertRowid: Number(result.lastInsertRowid),
+    changes: result.rowsAffected,
+  };
 }

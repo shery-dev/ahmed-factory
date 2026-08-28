@@ -4,8 +4,8 @@ import { addProduct, changeRate } from './actions';
 
 export const dynamic = 'force-dynamic';
 
-export default function CataloguePage() {
-  const items = listItemTypes(false);
+export default async function CataloguePage() {
+  const items = await listItemTypes(false);
   return (
     <>
       <div className="panel-header">

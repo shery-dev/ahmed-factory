@@ -4,8 +4,8 @@ import { fmtNum } from '@/lib/i18n';
 
 export const dynamic = 'force-dynamic';
 
-export default function BillsPage() {
-  const bills = listBills(200);
+export default async function BillsPage() {
+  const bills = await listBills(200);
   return (
     <>
       <div className="panel-header">

@@ -10,15 +10,15 @@ export default async function ReviewPage({
 }: { searchParams: Promise<{ filter?: string }> }) {
   const { filter = 'open' } = await searchParams;
   const resolved = filter === 'resolved';
-  const issues = allDataIssues(resolved);
+  const issues = await allDataIssues(resolved);
 
   const byEntity = issues.reduce<Record<string, typeof issues>>((acc, i) => {
     (acc[i.entity] ??= []).push(i);
     return acc;
   }, {});
 
-  const openCount = allDataIssues(false).length;
-  const resolvedCount = allDataIssues(true).length;
+  const openCount = (await allDataIssues(false)).length;
+  const resolvedCount = (await allDataIssues(true)).length;
 
   return (
     <>

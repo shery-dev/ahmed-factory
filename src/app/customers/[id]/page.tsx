@@ -8,10 +8,10 @@ export const dynamic = 'force-dynamic';
 
 export default async function CustomerPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const c = getCustomer(Number(id));
+  const c = await getCustomer(Number(id));
   if (!c) notFound();
-  const rows = customerLedger(c.id);
-  const balance = customerBalance(c.id);
+  const rows = await customerLedger(c.id);
+  const balance = await customerBalance(c.id);
 
   return (
     <>
