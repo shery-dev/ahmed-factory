@@ -1,0 +1,60 @@
+Ahmed Corrugation Machines — Project Briefing
+What this is
+My brother runs Ahmed Corrugation Machines — a corrugated packaging paper business. Trading paper in reels and rolls, converting it into cut sheets and packets, selling to box makers.
+Everything they do is manual. Billing, the customer ledger, the stock register, the daily report — all on paper, in registers, by hand.
+We are going to automate it. Then we are going to use that foundation to build a second business on top: Ahmed Packages, making and exporting finished cardboard boxes.
+This is a real production system for a real family business with real money moving through it. It is not a demo, and it is not a pilot we can abandon. If it breaks, my brother's factory has a bad day.
+The vision, in three layers
+Layer 1 — Take out the hefty manual work. Billing, stock, ledger, daily reports. The things that eat hours every day and still end up wrong.
+Layer 2 — Make it one system, not five screens. Billing, stock and the customer ledger are not three modules. They are one event with three consequences. An approved bill posts the ledger entry, moves the stock, closes the order and numbers the receipt — atomically, or not at all. Getting this right is most of the job.
+Layer 3 — Agents that run the process, and then grow the business. Operations agents first: the owner dictates today's orders and gets back a confirmable list; a dispatch tracker that humans update as goods actually leave; a vision agent that reads photographed ledger pages. Then growth agents: SEO, lead discovery, outreach, quotation, export documentation — to turn this into an exporter.
+Why I am sharing the old code
+There are two folders of Python from 2022. Read them for domain knowledge. Do not port them.
+I am sharing them because they contain something you cannot get any other way: someone sat with this business and worked out how it actually trades. The pricing formulas, the seven sale forms, the cash-versus-ledger customer split, the stock semantics — that is four years of accumulated understanding, and it transfers.
+Two things to know before you open them:
+
+• Factory Management System First Deploymentis thenewer, more completeversion, despite the other one being called "Final". Use it as the reference..
+• The code itself is a catalogue of what not to do. Excel used as a database with one sheet per customer. Eighteen paper types hardcoded 364 times across four files. 376globalstatements. A stored balance column that goes wrong the moment anything is edited. It never shipped, and the reasons are all structural..
+Read book.xlsx before you read the code. The data shapes will teach you more, faster.
+The one thing I most need you to get right
+The people using this cannot read English.
+Not "prefer Urdu" — cannot read English. That single fact should shape more of your design decisions than anything else in the documents.
+Obvious things go in Urdu. Everything else stays English. Concretely:
+LayerLanguageWhat it coversShop floorUrdu primary, English secondaryBilling screen, stock in/out, dispatch board, gate pass, printed receipts, buttons, confirmations, every error messageManagementEnglish primary, Urdu availableReports, dashboards, customer statements, agent proposals for reviewSystemEnglish onlyCode, database, logs, admin, API, agent internals, documentation
+What that means in practice:
+
+1. Translation keys from the first commit.Not retrofitted — that costs three times as much..
+2. RTL layout properly, not a mirrored afterthought..
+3. An Urdu font in the printed receipts.The receipt is what the customer sees..
+4. Trade vocabulary is not translated — it is kept.Raddi, Jutta, Totay, Nali, Bareek, Reel, Roll, Tota. These are what the staff say. Don't let a translation tool "fix" them..
+5. Numerals stay Western (0–9)for money and quantities — but confirm with the staff..
+6. Do not machine-translate the interface and ship it.Have my brother's staff read the actual strings. A wrong word on a billing button costs real money..
+7. Voice input is not a nice-to-have.Someone who cannot read English often would rather speak than type. The order intake agent must accept Urdu and Roman Urdu voice notes..
+And the implication people miss: users who cannot read English will not file bug reports. They will work around a broken screen silently, or stop using it. You cannot rely on them telling you what is wrong. Build in enough logging that you can see problems yourself, and plan to be on site watching people use it.
+What you are building
+Two documents come with this. Read them in order.
+
+1. Process Map, Agent Architecture & Scope of Work— the operations build. Business vocabulary, verified pricing formulas, all twelve processes as they run today, the data model, and nine operations agents with triggers, guardrails and human checkpoints. Section 3 is the important one..
+2. Ahmed Packages — Future Roadmap— where this goes. Paper trading → finished boxes → export. A technical audit ofcardboardpackage.com. Ten growth agents. Three horizons with hard gates..
+The order is not negotiable. The quotation agent in the roadmap cannot exist until the factory system knows what a box costs. Operations first.
+Ground rules
+
+• Agents propose. Humans dispose.Nothing that touches money, stock or a customer happens without a named human approving it. No config flag bypasses this, however much anyone asks later..
+• Never block the factory.If an agent cannot parse something, if stock looks wrong, if the internet drops — staff must still be able to raise a bill and let goods out of the gate. Fail into a queue, never into an error. A system that is occasionally wrong but never blocks gets adopted. One that is always right but sometimes stops the factory gets abandoned. That is exactly what happened in 2022..
+• The catalogue is data.New products are coming. Adding one must be a row in a table, never a code change. If a hardcoded list of paper types appears anywhere — including in an agent prompt — we have rebuilt the original system's central defect..
+• Git, tests and backups from day one.The last attempt had none of the three, which is why a corrupted spreadsheet became a total loss..
+• The factory keeps running manually the whole time.We run in parallel and only cut over when the numbers match for five consecutive days..
+What I am providing
+
+• Photographs of the manual customer ledger, stock register, daily report format, real receipts and a gate pass.
+• The current product list including the new items, and current rates.
+• A recording of my brother dictating a typical day's orders — the evaluation set for the order intake agent, and the most useful single artefact you will get.
+• Direct access to my brother and his staff, and site visits.
+Samples are coming. Don't wait for all of them to start on the foundation, but don't design the screens without them either.
+What I want back first
+
+1. Your read on the two documents — especially anything you think is wrong. The architecture is a considered starting point, not a finished decision..
+2. Your proposed stack and repository structure..
+3. Confirmation of how you intend to handle bilingual, before any UI is written..
+4. Questions for my brother. Appendix C of the scope-of-work document lists the ones I already know about —rentin the ledger is still unexplained, and how gate passes work today is the biggest open question..
+Ask me anything. I would much rather answer a question now than review the wrong thing in three weeks.

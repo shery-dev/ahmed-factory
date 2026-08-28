@@ -1,0 +1,10 @@
+numpy
+matplotlib
+reportlab
+PyQt5
+pywhatkit
+pandas
+openpyxl
+pdf2image
+pillow
+module
