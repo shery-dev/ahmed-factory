@@ -41,3 +41,5 @@ data/*.db-wal
 data/*.db-shm
 next-env.d.ts
 .DS_Store
+
+.vercel

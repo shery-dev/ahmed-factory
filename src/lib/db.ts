@@ -65,17 +65,17 @@ export async function logActivity(
 }
 
 // Helper functions to mimic better-sqlite3 API
-export async function dbAll<T>(sql: string, params: unknown[] = []): Promise<T[]> {
+export async function dbAll<T>(sql: string, params: any[] = []): Promise<T[]> {
   const result = await db.execute({ sql, args: params });
   return result.rows as T[];
 }
 
-export async function dbGet<T>(sql: string, params: unknown[] = []): Promise<T | undefined> {
+export async function dbGet<T>(sql: string, params: any[] = []): Promise<T | undefined> {
   const result = await db.execute({ sql, args: params });
   return result.rows[0] as T | undefined;
 }
 
-export async function dbRun(sql: string, params: unknown[] = []): Promise<{ lastInsertRowid: number; changes: number }> {
+export async function dbRun(sql: string, params: any[] = []): Promise<{ lastInsertRowid: number; changes: number }> {
   const result = await db.execute({ sql, args: params });
   return {
     lastInsertRowid: Number(result.lastInsertRowid),
