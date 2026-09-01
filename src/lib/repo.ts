@@ -19,11 +19,39 @@ export interface StockRow {
 }
 
 // ─── Catalogue ────────────────────────────────────────────────────────────────
-export const listItemTypes = async (activeOnly = true): Promise<ItemType[]> =>
-  dbAll<ItemType>(
-    `SELECT * FROM item_types ${activeOnly ? 'WHERE active = 1' : ''}
-     ORDER BY sort_order, name_en`,
-  );
+export const listItemTypes = async (opts?: { activeOnly?: boolean; search?: string }): Promise<ItemType[]> => {
+  const params: any[] = [];
+  let sql = `SELECT * FROM item_types WHERE 1=1`;
+  if (opts?.activeOnly !== false) { sql += ' AND active = 1'; }
+  if (opts?.search) { sql += ' AND (name_en LIKE ? OR name_ur LIKE ? OR code LIKE ? OR family LIKE ?)'; const s = `%${opts.search}%`; params.push(s, s, s, s); }
+  sql += ' ORDER BY sort_order, name_en';
+  return dbAll<ItemType>(sql, params);
+};
+
+export async function deactivateItemType(id: number) {
+  const item = await dbGet<{ name_en: string }>(`SELECT name_en FROM item_types WHERE id = ?`, [id]);
+  await dbRun(`UPDATE item_types SET active = 0 WHERE id = ?`, [id]);
+  if (item) await logActivity('Product deactivated', item.name_en, 'warn', 'owner');
+}
+
+export async function reactivateItemType(id: number) {
+  const item = await dbGet<{ name_en: string }>(`SELECT name_en FROM item_types WHERE id = ?`, [id]);
+  await dbRun(`UPDATE item_types SET active = 1 WHERE id = ?`, [id]);
+  if (item) await logActivity('Product reactivated', item.name_en, 'success', 'owner');
+}
+
+export async function updateItemType(id: number, input: { name_en?: string; name_ur?: string; family?: string; description_en?: string; description_ur?: string }) {
+  const prev = await dbGet<{ name_en: string }>(`SELECT name_en FROM item_types WHERE id = ?`, [id]);
+  const sets: string[] = [];
+  const params: any[] = [];
+  if (input.name_en !== undefined) { sets.push('name_en = ?'); params.push(input.name_en.trim()); }
+  if (input.name_ur !== undefined) { sets.push('name_ur = ?'); params.push(input.name_ur.trim()); }
+  if (input.family !== undefined) { sets.push('family = ?'); params.push(input.family.trim()); }
+  if (input.description_en !== undefined) { sets.push('description_en = ?'); params.push(input.description_en.trim() || null); }
+  if (input.description_ur !== undefined) { sets.push('description_ur = ?'); params.push(input.description_ur.trim() || null); }
+  if (sets.length) { params.push(id); await dbRun(`UPDATE item_types SET ${sets.join(', ')} WHERE id = ?`, params); }
+  if (prev) await logActivity('Product updated', prev.name_en, 'system', 'owner');
+}
 
 export async function createItemType(input: {
   name_en: string; name_ur: string; family: string; is_bareek: number;
@@ -56,12 +84,15 @@ export async function updateRate(itemTypeId: number, rate: number) {
 }
 
 // ─── Customers ────────────────────────────────────────────────────────────────
-export const listCustomers = async (kind?: 'cash' | 'ledger'): Promise<Customer[]> =>
-  dbAll<Customer>(
-    `SELECT * FROM customers WHERE active = 1 ${kind ? 'AND kind = ?' : ''}
-     ORDER BY name`,
-    kind ? [kind] : [],
-  );
+export const listCustomers = async (opts?: { kind?: 'cash' | 'ledger'; search?: string; includeInactive?: boolean }): Promise<Customer[]> => {
+  const params: any[] = [];
+  let sql = `SELECT * FROM customers WHERE 1=1`;
+  if (!opts?.includeInactive) { sql += ' AND active = 1'; }
+  if (opts?.kind) { sql += ' AND kind = ?'; params.push(opts.kind); }
+  if (opts?.search) { sql += ' AND (name LIKE ? OR code LIKE ? OR contact LIKE ?)'; const s = `%${opts.search}%`; params.push(s, s, s); }
+  sql += ' ORDER BY name';
+  return dbAll<Customer>(sql, params);
+};
 
 export const getCustomer = async (id: number): Promise<Customer | undefined> =>
   dbGet<Customer>(`SELECT * FROM customers WHERE id = ?`, [id]);
@@ -105,6 +136,13 @@ export async function deactivateCustomer(id: number) {
   await logActivity('Customer deactivated', `${c.code} — ${c.name}`, 'warn', 'owner');
 }
 
+export async function reactivateCustomer(id: number) {
+  const c = await dbGet<Customer>(`SELECT * FROM customers WHERE id = ?`, [id]);
+  if (!c) return;
+  await dbRun(`UPDATE customers SET active = 1 WHERE id = ?`, [id]);
+  await logActivity('Customer reactivated', `${c.code} — ${c.name}`, 'success', 'owner');
+}
+
 /**
  * THE BALANCE IS COMPUTED, NEVER STORED.
  */
@@ -144,14 +182,29 @@ export async function outstandingBalances() {
 }
 
 // ─── Stock ────────────────────────────────────────────────────────────────────
-export const listStock = async (unit?: string): Promise<StockRow[]> =>
-  dbAll<StockRow>(
-    `SELECT s.*, t.name_en, t.name_ur
-     FROM stock_items s JOIN item_types t ON t.id = s.item_type_id
-     ${unit ? 'WHERE s.unit = ?' : ''}
-     ORDER BY t.sort_order, s.size`,
-    unit ? [unit] : [],
-  );
+export const listStock = async (opts?: { unit?: string; search?: string }): Promise<StockRow[]> => {
+  const params: any[] = [];
+  let sql = `SELECT s.*, t.name_en, t.name_ur
+     FROM stock_items s JOIN item_types t ON t.id = s.item_type_id WHERE 1=1`;
+  if (opts?.unit) { sql += ' AND s.unit = ?'; params.push(opts.unit); }
+  if (opts?.search) { sql += ' AND (t.name_en LIKE ? OR t.name_ur LIKE ? OR t.code LIKE ?)'; const s = `%${opts.search}%`; params.push(s, s, s); }
+  sql += ' ORDER BY t.sort_order, s.size';
+  return dbAll<StockRow>(sql, params);
+};
+
+export const stockSummary = async (search?: string) => {
+  const params: any[] = [];
+  let sql = `SELECT s.item_type_id, t.name_en, t.name_ur,
+    COALESCE(SUM(CASE WHEN s.unit='roll' THEN s.quantity ELSE 0 END), 0) AS total_roll,
+    COALESCE(SUM(CASE WHEN s.unit='reel' THEN s.quantity ELSE 0 END), 0) AS total_reel_kg,
+    COALESCE(SUM(CASE WHEN s.unit='tota' THEN s.quantity ELSE 0 END), 0) AS total_tota_kg,
+    COUNT(*) AS lines,
+    SUM(CASE WHEN s.quantity <= 5 AND s.flagged = 0 THEN 1 ELSE 0 END) AS low
+  FROM stock_items s JOIN item_types t ON t.id = s.item_type_id WHERE 1=1`;
+  if (search) { sql += ' AND (t.name_en LIKE ? OR t.name_ur LIKE ? OR t.code LIKE ?)'; const s = `%${search}%`; params.push(s, s, s); }
+  sql += ' GROUP BY s.item_type_id ORDER BY t.sort_order, t.name_en';
+  return dbAll<any>(sql, params);
+};
 
 export const sizesFor = async (itemTypeId: number, unit: string) =>
   dbAll<{ size: number; quantity: number }>(
@@ -376,7 +429,7 @@ export async function addExpense(input: { category: string; detail: string; amou
 }
 
 export const listExpenses = async (from?: string, to?: string, category?: string) => {
-  const params: unknown[] = [];
+  const params: any[] = [];
   let sql = `SELECT * FROM expenses WHERE 1=1`;
   if (from) { sql += ' AND date(ts) >= ?'; params.push(from); }
   if (to) { sql += ' AND date(ts) <= ?'; params.push(to); }
@@ -384,6 +437,18 @@ export const listExpenses = async (from?: string, to?: string, category?: string
   sql += ' ORDER BY ts DESC';
   return dbAll<{ id: number; ts: string; category: string; detail: string; amount: number; actor: string }>(sql, params);
 };
+
+export async function updateExpense(id: number, input: { category: string; detail: string; amount: number }) {
+  await dbRun(`UPDATE expenses SET category = ?, detail = ?, amount = ? WHERE id = ?`,
+    [input.category, input.detail, input.amount, id]);
+  await logActivity('Expense updated', `${input.category}: ${input.detail} — PKR ${input.amount}`, 'system', 'owner');
+}
+
+export async function deleteExpense(id: number) {
+  const e = await dbGet<{ category: string; detail: string; amount: number }>(`SELECT * FROM expenses WHERE id = ?`, [id]);
+  await dbRun(`DELETE FROM expenses WHERE id = ?`, [id]);
+  if (e) await logActivity('Expense deleted', `${e.category}: ${e.detail} — PKR ${e.amount}`, 'warn', 'owner');
+}
 
 // ─── Data issues: resolve ─────────────────────────────────────────────────────
 export async function resolveIssue(issueId: number, note: string) {
@@ -407,15 +472,33 @@ export const getBill = async (id: number) => {
   return bill;
 };
 
-export const listBills = async (limit = 100) =>
-  dbAll<any>(
-    `SELECT b.id, b.receipt_no, b.ts, b.subtotal, b.rent, b.credit, b.kind, b.status,
+export const listBills = async (opts?: { limit?: number; offset?: number; search?: string; from?: string; to?: string; kind?: string; status?: string }) => {
+  const params: any[] = [];
+  let sql = `SELECT b.id, b.receipt_no, b.ts, b.subtotal, b.rent, b.credit, b.kind, b.status, b.note,
             c.name AS customer_name, c.code AS customer_code,
             (SELECT COUNT(*) FROM bill_lines WHERE bill_id = b.id) AS line_count
-     FROM bills b JOIN customers c ON c.id = b.customer_id
-     ORDER BY b.id DESC LIMIT ?`,
-    [limit],
-  );
+     FROM bills b JOIN customers c ON c.id = b.customer_id WHERE 1=1`;
+  if (opts?.search) { sql += ' AND (c.name LIKE ? OR c.code LIKE ? OR CAST(b.receipt_no AS TEXT) LIKE ?)'; const s = `%${opts.search}%`; params.push(s, s, s); }
+  if (opts?.from) { sql += ' AND date(b.ts) >= ?'; params.push(opts.from); }
+  if (opts?.to) { sql += ' AND date(b.ts) <= ?'; params.push(opts.to); }
+  if (opts?.kind) { sql += ' AND b.kind = ?'; params.push(opts.kind); }
+  if (opts?.status) { sql += ' AND b.status = ?'; params.push(opts.status); }
+  sql += ' ORDER BY b.id DESC';
+  if (opts?.limit) { sql += ' LIMIT ?'; params.push(opts.limit); } else { sql += ' LIMIT 50'; }
+  if (opts?.offset) { sql += ' OFFSET ?'; params.push(opts.offset); }
+  return dbAll<any>(sql, params);
+};
+
+export const countBills = async (opts?: { search?: string; from?: string; to?: string; kind?: string; status?: string }) => {
+  const params: any[] = [];
+  let sql = `SELECT COUNT(*) n FROM bills b JOIN customers c ON c.id = b.customer_id WHERE 1=1`;
+  if (opts?.search) { sql += ' AND (c.name LIKE ? OR c.code LIKE ? OR CAST(b.receipt_no AS TEXT) LIKE ?)'; const s = `%${opts.search}%`; params.push(s, s, s); }
+  if (opts?.from) { sql += ' AND date(b.ts) >= ?'; params.push(opts.from); }
+  if (opts?.to) { sql += ' AND date(b.ts) <= ?'; params.push(opts.to); }
+  if (opts?.kind) { sql += ' AND b.kind = ?'; params.push(opts.kind); }
+  if (opts?.status) { sql += ' AND b.status = ?'; params.push(opts.status); }
+  return (await dbGet<{ n: number }>(sql, params))?.n ?? 0;
+};
 
 export const recentActivity = async (limit = 40) =>
   dbAll<{ id: number; ts: string; level: string; actor: string; event: string; detail: string | null; bill_id: number | null }>(
@@ -427,13 +510,16 @@ export const dataIssues = async () =>
     `SELECT * FROM data_issues WHERE resolved = 0 ORDER BY severity, id`,
   );
 
-export async function dashboard() {
-  const today = new Date().toISOString().slice(0, 10);
+export async function dashboard(from?: string, to?: string) {
+  const date = from || new Date().toISOString().slice(0, 10);
+  const toDate = to || date;
   const q = async (sql: string, ...a: unknown[]) => dbGet<any>(sql, a);
+  const dateFilter = from || to ? `date(ts) >= ? AND date(ts) <= ?` : `date(ts) = ?`;
+  const dateParams = from || to ? [date, toDate] : [date];
   return {
-    billsToday:   await q(`SELECT COUNT(*) n, COALESCE(SUM(subtotal),0) v FROM bills WHERE date(ts)=?`, today),
-    creditToday:  await q(`SELECT COALESCE(SUM(credit),0) v FROM bills WHERE date(ts)=?`, today),
-    expensesToday:await q(`SELECT COALESCE(SUM(amount),0) v FROM expenses WHERE date(ts)=?`, today),
+    billsToday:   await q(`SELECT COUNT(*) n, COALESCE(SUM(subtotal),0) v FROM bills WHERE ${dateFilter}`, ...dateParams),
+    creditToday:  await q(`SELECT COALESCE(SUM(credit),0) v FROM bills WHERE ${dateFilter}`, ...dateParams),
+    expensesToday:await q(`SELECT COALESCE(SUM(amount),0) v FROM expenses WHERE ${dateFilter}`, ...dateParams),
     customers:    await q(`SELECT COUNT(*) n FROM customers WHERE active=1`),
     products:     await q(`SELECT COUNT(*) n FROM item_types WHERE active=1`),
     receivable:   await q(`SELECT COALESCE(SUM(debit+rent-credit),0) v FROM ledger_entries WHERE flagged = 0`),
@@ -442,4 +528,14 @@ export async function dashboard() {
     ),
     issues:       await q(`SELECT COUNT(*) n FROM data_issues WHERE resolved=0`),
   };
+}
+
+export async function customerRecentRate(customerId: number, itemTypeId: number): Promise<number | null> {
+  const r = await dbGet<{ rate: number }>(
+    `SELECT bl.rate FROM bill_lines bl JOIN bills b ON b.id = bl.bill_id
+     WHERE b.customer_id = ? AND bl.item_type_id = ? AND b.status = 'posted'
+     ORDER BY b.ts DESC LIMIT 1`,
+    [customerId, itemTypeId],
+  );
+  return r?.rate ?? null;
 }

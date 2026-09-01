@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCustomer, customerLedger, customerBalance } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
-import { editCustomer, deactivateCustomerAction } from '../actions';
+import { editCustomer, deactivateCustomerAction, reactivateCustomerAction } from '../actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +13,10 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
   const rows = await customerLedger(c.id);
   const balance = await customerBalance(c.id);
 
+  const whatsappText = `Customer Statement: ${c.name} (${c.code})\nBalance: PKR ${balance.toFixed(2)}\nEntries: ${rows.length}\n\nRecent:\n` +
+    rows.slice(-10).map(r => `${r.ts.slice(0,10)} | Dr ${r.debit || 0} | Cr ${r.credit || 0} | Bal ${r.balance}`).join('\n');
+  const whatsappUrl = c.contact ? `https://wa.me/${c.contact.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(whatsappText)}` : null;
+
   return (
     <>
       <div className="row between" style={{ marginBottom: 18 }}>
@@ -20,11 +24,12 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
           <h2>{c.name} <span className="mono t-muted" style={{ fontSize: 14 }}>{c.code}</span></h2>
           <p className="panel-desc">
             {c.kind === 'cash' ? 'Cash customer' : 'Ledger client'}
-            {c.contact ? ` · ${c.contact}` : ''}
-            {c.manual_ledger_page ? ` · paper register page ${c.manual_ledger_page}` : ''}
+            {c.contact ? ` \u00b7 ${c.contact}` : ''}
+            {c.manual_ledger_page ? ` \u00b7 paper register page ${c.manual_ledger_page}` : ''}
+            {!c.active && ' \u00b7 INACTIVE'}
           </p>
         </div>
-        <Link className="btn btn-ghost" href="/customers">← All customers</Link>
+        <Link className="btn btn-ghost" href="/customers">\u2190 All customers</Link>
       </div>
 
       <div className="grid grid-4" style={{ marginBottom: 20 }}>
@@ -48,6 +53,14 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
         </div>
       </div>
 
+      {whatsappUrl && (
+        <div style={{ marginBottom: 16 }}>
+          <a className="btn btn-ghost" href={whatsappUrl} target="_blank" rel="noopener" style={{ fontSize: 12 }}>
+            Send Statement via WhatsApp
+          </a>
+        </div>
+      )}
+
       <div className="split">
         <div className="table-wrap">
           <table>
@@ -62,11 +75,11 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
               {rows.map((r) => (
                 <tr key={r.id} className={r.flagged ? 'quarantined' : ''}>
                   <td className="num t-muted">{r.ts.slice(0, 10)}</td>
-                  <td className="num">{r.receipt_no ? `#${r.receipt_no}` : '—'}</td>
+                  <td className="num">{r.receipt_no ? `#${r.receipt_no}` : '\u2014'}</td>
                   <td style={{ maxWidth: 340 }}>{r.particulars}</td>
-                  <td className="right num">{r.debit ? fmtNum(r.debit) : '—'}</td>
-                  <td className="right num stat-green">{r.credit ? fmtNum(r.credit) : '—'}</td>
-                  <td className="right num">{r.rent ? fmtNum(r.rent) : '—'}</td>
+                  <td className="right num">{r.debit ? fmtNum(r.debit) : '\u2014'}</td>
+                  <td className="right num stat-green">{r.credit ? fmtNum(r.credit) : '\u2014'}</td>
+                  <td className="right num">{r.rent ? fmtNum(r.rent) : '\u2014'}</td>
                   <td className="right num t-strong">
                     {r.flagged
                       ? <span className="badge badge-red" title={r.flag_reason ?? ''}>EXCLUDED</span>
@@ -100,38 +113,40 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
             </form>
             {c.needs_review === 1 && (
               <div className="info-card warn" style={{ marginTop: 10 }}>
-                <div>Updating the name will clear the <b>CHECK</b> badge — use this when replacing
-                a 2022 placeholder name with the real one from the paper register.</div>
+                <div>Updating the name will clear the <b>CHECK</b> badge.</div>
               </div>
             )}
           </div>
 
-          <div className="card" style={{ borderColor: 'var(--accent-red-solid)' }}>
-            <div className="card-title" style={{ color: 'var(--accent-red-solid)' }}>DEACTIVATE</div>
-            <p className="t-muted" style={{ fontSize: 12, marginBottom: 10 }}>
-              The customer will no longer appear on the billing screen. Existing ledger
-              entries are preserved. This is not a delete — it can be reversed in the database.
-            </p>
-            <form action={deactivateCustomerAction}>
-              <input type="hidden" name="id" value={c.id} />
-              <button className="btn btn-block" style={{
-                background: 'var(--accent-red-solid)', color: '#fff',
-                border: 'none', cursor: 'pointer',
-              }}>
-                Deactivate Customer
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <div className="info-card good" style={{ marginTop: 16 }}>
-        <div>
-          The <b>Balance</b> column is calculated as it renders, by running down the
-          entries above. The 2022 system stored this number in every row — editing or
-          deleting any earlier entry silently corrupted every balance after it. That
-          failure mode does not exist here. Rows marked <b>EXCLUDED</b> carry amounts
-          the import judged impossible; they are kept visible but never move the balance.
+          {c.active ? (
+            <div className="card" style={{ borderColor: 'var(--accent-red-solid)' }}>
+              <div className="card-title" style={{ color: 'var(--accent-red-solid)' }}>DEACTIVATE</div>
+              <p className="t-muted" style={{ fontSize: 12, marginBottom: 10 }}>
+                Customer will no longer appear on billing screen. Existing entries preserved.
+              </p>
+              <form action={deactivateCustomerAction}>
+                <input type="hidden" name="id" value={c.id} />
+                <button className="btn btn-block" style={{
+                  background: 'var(--accent-red-solid)', color: '#fff',
+                  border: 'none', cursor: 'pointer',
+                }}>Deactivate Customer</button>
+              </form>
+            </div>
+          ) : (
+            <div className="card" style={{ borderColor: 'var(--accent-green-solid)' }}>
+              <div className="card-title" style={{ color: 'var(--accent-green-solid)' }}>REACTIVATE</div>
+              <p className="t-muted" style={{ fontSize: 12, marginBottom: 10 }}>
+                This customer is currently inactive. Reactivate to make them visible again.
+              </p>
+              <form action={reactivateCustomerAction}>
+                <input type="hidden" name="id" value={c.id} />
+                <button className="btn btn-block" style={{
+                  background: 'var(--accent-green-solid)', color: '#fff',
+                  border: 'none', cursor: 'pointer',
+                }}>Reactivate Customer</button>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     </>

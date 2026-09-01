@@ -14,7 +14,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const d = await dashboard();
-  const billsList = await listBills(999);
+  const billsList = await listBills({ limit: 999 });
   const counts = {
     bills: billsList.length,
     customers: d.customers?.n ?? 0,

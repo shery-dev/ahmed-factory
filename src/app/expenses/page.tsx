@@ -1,6 +1,7 @@
 import { listExpenses } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
 import { recordExpense } from './actions';
+import { ExpenseRow } from '@/components/ExpenseRow';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,11 +19,24 @@ export default async function ExpensesPage({
       <div className="panel-header">
         <h2>Expenses</h2>
         <p className="panel-desc">
-          One row per expense with a category. The 2022 system concatenated several
-          into one cell with <span className="mono">||</span>, making analysis impossible.
-          Type a detail and amount, pick a category, and it appears here.
+          One row per expense. Edit or delete any entry inline. Filter by date range or category.
         </p>
       </div>
+
+      <form className="row wrap" style={{ gap: 8, marginBottom: 16 }} method="get">
+        <input className="input" name="from" type="date" defaultValue={from || ''} style={{ flex: '0 1 160px' }} />
+        <input className="input" name="to" type="date" defaultValue={to || ''} style={{ flex: '0 1 160px' }} />
+        <select className="select" name="category" defaultValue={category || ''} style={{ flex: '0 1 150px' }}>
+          <option value="">All categories</option>
+          {categories.map((c) => (
+            <option key={c} value={c}>{c.toUpperCase()}</option>
+          ))}
+        </select>
+        <button className="btn btn-ghost" type="submit" style={{ padding: '6px 14px' }}>Filter</button>
+        {(from || to || category) && (
+          <a className="btn btn-ghost" href="/expenses" style={{ padding: '6px 14px' }}>Clear</a>
+        )}
+      </form>
 
       <div className="split">
         <div>
@@ -45,13 +59,7 @@ export default async function ExpensesPage({
                 {expenses.length === 0 ? (
                   <tr><td colSpan={5} className="t-muted" style={{ textAlign: 'center', padding: 24 }}>No expenses recorded yet</td></tr>
                 ) : expenses.map((e) => (
-                  <tr key={e.id}>
-                    <td className="num t-muted">{e.ts.slice(0, 10)}</td>
-                    <td><span className="badge badge-muted">{e.category}</span></td>
-                    <td>{e.detail}</td>
-                    <td className="right num t-strong">{fmtNum(e.amount)}</td>
-                    <td className="t-muted">{e.actor}</td>
-                  </tr>
+                  <ExpenseRow key={e.id} expense={e} />
                 ))}
               </tbody>
             </table>
@@ -80,13 +88,6 @@ export default async function ExpensesPage({
             </div>
             <button className="btn btn-primary btn-block">Record Expense</button>
           </form>
-          <div className="info-card good" style={{ marginTop: 14 }}>
-            <div>
-              This is the seed of agent A6 from the Scope of Work. Soon the owner
-              will be able to type <span className="mono">diesel 3000, chai 400, loading 1200</span> and
-              the system will split it into categorised rows for confirmation.
-            </div>
-          </div>
         </div>
       </div>
     </>

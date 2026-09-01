@@ -7,7 +7,8 @@ import {
   type SaleForm, type LineInput, type PricedLine,
 } from '@/lib/pricing';
 import { fmtNum, type DictKey } from '@/lib/i18n';
-import { submitBill } from '@/app/billing/actions';
+import { submitBill, getRecentRate } from '@/app/billing/actions';
+import { QuickAddCustomer } from './QuickAddCustomer';
 
 export interface CatalogueItem {
   id: number; name_en: string; name_ur: string; default_rate: number;
@@ -36,6 +37,7 @@ export function BillingForm({ items, customers }: { items: CatalogueItem[]; cust
   const [rent, setRent] = useState('0');
   const [credit, setCredit] = useState('0');
   const [creditMethod, setCreditMethod] = useState('Cash');
+  const [note, setNote] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
   const [result, setResult] = useState<null | { ok: boolean; receiptNo?: number; billId?: number; effects?: string[]; errors?: string[] }>(null);
   const [busy, setBusy] = useState(false);
@@ -51,6 +53,17 @@ export function BillingForm({ items, customers }: { items: CatalogueItem[]; cust
     () => billTotals(lines, Number(rent) || 0, Number(credit) || 0),
     [lines, rent, credit],
   );
+
+
+
+  // Auto-fill rate from customer's last purchase of this product
+  const prevRateRef = { current: '' };
+  if (customerId && typeId && prevRateRef.current !== customerId + '-' + typeId) {
+    prevRateRef.current = customerId + '-' + typeId;
+    getRecentRate(Number(customerId), Number(typeId)).then((r) => {
+      if (r.rate !== null && !rate) setRate(String(r.rate));
+    });
+  }
 
   const draft = (): LineInput => ({
     form,
@@ -93,10 +106,11 @@ export function BillingForm({ items, customers }: { items: CatalogueItem[]; cust
       rent: Number(rent) || 0,
       credit: Number(credit) || 0,
       creditMethod,
+      note: note || undefined,
     });
     setResult(res);
     setBusy(false);
-    if (res.ok) { setLines([]); setRent('0'); setCredit('0'); }
+    if (res.ok) { setLines([]); setRent('0'); setCredit('0'); setNote(''); }
   }
 
   // ── Success / failure panel ──
@@ -180,6 +194,12 @@ export function BillingForm({ items, customers }: { items: CatalogueItem[]; cust
               </span>
             </div>
           )}
+          {customer && customer.balance > 0 && (
+            <div className="info-card warn" style={{ marginTop: 10, fontSize: 12 }}>
+              <div>Outstanding balance: <b>PKR {fmtNum(customer.balance)}</b></div>
+            </div>
+          )}
+          <QuickAddCustomer onCreated={(id) => setCustomerId(id)} />
         </div>
 
         <div className="card">
@@ -284,6 +304,11 @@ export function BillingForm({ items, customers }: { items: CatalogueItem[]; cust
             ))}
           </div>
         )}
+
+        <div className="field" style={{ marginBottom: 12 }}>
+          <label>NOTE (OPTIONAL)</label>
+          <input className="input" name="bill-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Delivery note, special instruction..." />
+        </div>
 
         <div className="totals">
           <div className="total-row">
