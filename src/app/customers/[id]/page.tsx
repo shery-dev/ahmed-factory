@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCustomer, customerLedger, customerBalance } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
+import { getSettings } from '@/lib/settings';
+import { PrintButton } from '@/components/PrintButton';
 import { editCustomer, deactivateCustomerAction, reactivateCustomerAction } from '../actions';
 
 export const dynamic = 'force-dynamic';
@@ -10,8 +12,11 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
   const { id } = await params;
   const c = await getCustomer(Number(id));
   if (!c) notFound();
+  const settings = await getSettings();
   const rows = await customerLedger(c.id);
   const balance = await customerBalance(c.id);
+
+  const exportHref = `/api/export?type=ledger&customer_id=${c.id}`;
 
   const whatsappText = `Customer Statement: ${c.name} (${c.code})\nBalance: PKR ${balance.toFixed(2)}\nEntries: ${rows.length}\n\nRecent:\n` +
     rows.slice(-10).map(r => `${r.ts.slice(0,10)} | Dr ${r.debit || 0} | Cr ${r.credit || 0} | Bal ${r.balance}`).join('\n');
@@ -60,6 +65,64 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
           </a>
         </div>
       )}
+      <div style={{ marginBottom: 16 }}>
+        <a className="btn btn-ghost" style={{ padding: '6px 14px', fontSize: 12 }} href={exportHref}>Export Ledger CSV</a>
+      </div>
+
+
+      {/* Print-only statement */}
+      <div className="print-only statement-print">
+        <div style={{ borderBottom: '2px solid #111', paddingBottom: 10, marginBottom: 12 }}>
+          <h2 style={{ fontSize: 18, marginBottom: 2 }}>{settings.factory_name}</h2>
+          {settings.factory_name_ur && <div style={{ fontSize: 13, color: '#444' }}>{settings.factory_name_ur}</div>}
+          {settings.factory_address && <div style={{ fontSize: 11, color: '#666' }}>{settings.factory_address}</div>}
+          {settings.factory_phone && <div style={{ fontSize: 11, color: '#666' }}>{settings.factory_phone}</div>}
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, fontSize: 12 }}>
+          <div>
+            <div><b>{c.name}</b> ({c.code})</div>
+            {c.contact && <div>{c.contact}</div>}
+            <div>{c.kind === 'cash' ? 'Cash Customer' : 'Ledger Client'}</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div>Statement as of {new Date().toISOString().slice(0, 10)}</div>
+            <div><b>Outstanding: PKR {fmtNum(balance)}</b></div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>DATE</th><th>RECEIPT</th><th>PARTICULARS</th>
+              <th style={{ textAlign: 'right' }}>DEBIT</th><th style={{ textAlign: 'right' }}>CREDIT</th>
+              <th style={{ textAlign: 'right' }}>RENT</th><th style={{ textAlign: 'right' }}>BALANCE</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.id}>
+                <td>{r.ts.slice(0, 10)}</td>
+                <td>{r.receipt_no ? '#' + r.receipt_no : '\u2014'}</td>
+                <td style={{ maxWidth: 280 }}>{r.particulars}</td>
+                <td style={{ textAlign: 'right' }}>{r.debit ? fmtNum(r.debit) : ''}</td>
+                <td style={{ textAlign: 'right' }}>{r.credit ? fmtNum(r.credit) : ''}</td>
+                <td style={{ textAlign: 'right' }}>{r.rent ? fmtNum(r.rent) : ''}</td>
+                <td style={{ textAlign: 'right', fontWeight: 600 }}>{r.flagged ? 'EXCLUDED' : fmtNum(r.balance)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div style={{ marginTop: 14, paddingTop: 8, borderTop: '2px solid #111', display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontSize: 14 }}>
+          <span>Total Outstanding</span>
+          <span>PKR {fmtNum(balance)}</span>
+        </div>
+      </div>
+
+      <div className="no-print" style={{ marginBottom: 16 }}>
+        <PrintButton label="Print Statement" />
+      </div>
 
       <div className="split">
         <div className="table-wrap">

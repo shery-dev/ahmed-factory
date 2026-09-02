@@ -338,10 +338,47 @@ td.right, th.right { text-align: end; }
 .receipt tbody tr:hover td { background: transparent; }
 .receipt-head { border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 12px; }
 
+/* Print-only: hidden on screen, visible in print */
+.print-only { display: none; }
+
 @media print {
   .top-nav, .sidebar, .no-print { display: none !important; }
-  body, .main-content { overflow: visible !important; height: auto !important; background: #fff !important; }
+  body, .main-content { overflow: visible !important; height: auto !important; background: #fff !important; color: #111 !important; }
   .app-container { display: block; height: auto; }
   .main-content { padding: 0; }
-  .receipt { max-width: none; border: none; padding: 0; }
+
+  /* Receipt: clean A4 */
+  .receipt {
+    max-width: none; border: none; padding: 0;
+    font-size: 13px; color: #111;
+  }
+  .receipt table { font-size: 12px; }
+  .receipt thead th { background: #f0f0f0; color: #333; }
+
+  /* Show print-only elements */
+  .print-only { display: block; }
+  .print-only.print-flex { display: flex; }
+
+  /* Statement print layout */
+  .statement-print {
+    display: block;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 15mm;
+    font-size: 12px;
+    color: #111;
+  }
+  .statement-print table { font-size: 11px; width: 100%; }
+  .statement-print thead th { background: #f0f0f0; color: #333; font-size: 10px; padding: 8px 10px; }
+  .statement-print tbody td { padding: 6px 10px; border-color: #ddd; color: #222; }
+  .statement-print tbody tr:hover td { background: transparent; }
+
+  /* Page break handling */
+  .card { break-inside: avoid; }
+  table { break-inside: auto; }
+  tr { break-inside: avoid; break-after: auto; }
+  thead { display: table-header-group; }
+
+  /* Ensure links don't show underline */
+  a { text-decoration: none; }
 }

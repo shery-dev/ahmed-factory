@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { t, dirFor, type Lang, type DictKey } from '@/lib/i18n';
+import { logoutAction } from '@/app/login/actions';
 
 // ─── Language + theme context ─────────────────────────────────────────────────
 interface UiCtx { lang: Lang; setLang: (l: Lang) => void; tr: (k: DictKey) => string; }
@@ -55,11 +56,13 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
     { href: '/customers', label: 'customers', count: counts.customers },
     { href: '/stock',     label: 'stock' },
     { href: '/expenses',  label: 'expenses' as DictKey },
+    { href: '/reports',   label: 'reports' as DictKey },
   ];
   const setup: NavEntry[] = [
     { href: '/catalogue', label: 'catalogue', count: counts.products },
     { href: '/review',    label: 'review',    count: counts.issues, alert: counts.issues > 0 },
     { href: '/changes',   label: 'changes' },
+    { href: '/settings',  label: 'settings' as DictKey },
   ];
 
   const Item = ({ href, label: k, count, alert }: NavEntry) => {
@@ -95,6 +98,7 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
           >
             {lang === 'en' ? 'اردو' : 'EN'}
           </button>
+          <form action={logoutAction} style={{ display: 'inline' }}><button type="submit" className="icon-btn" title="Logout" style={{ fontSize: 11 }}>{"\u2398"}</button></form>
           <button className="icon-btn" onClick={() => setLight(!light)} title="Theme">
             {light ? '☾' : '☀'}
           </button>

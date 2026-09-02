@@ -4,9 +4,7 @@ import { useState } from 'react';
 import { editExpense, deleteExpenseAction } from '@/app/expenses/actions';
 import { fmtNum } from '@/lib/i18n';
 
-const CATEGORIES = ['general', 'diesel', 'transport', 'chai', 'loading', 'maintenance', 'rent', 'salary', 'other'];
-
-export function ExpenseRow({ expense }: { expense: { id: number; ts: string; category: string; detail: string; amount: number; actor: string } }) {
+export function ExpenseRow({ expense, categories }: { expense: { id: number; ts: string; category: string; detail: string; amount: number; actor: string }; categories: string[] }) {
   const [editing, setEditing] = useState(false);
   const [confirmDel, setConfirmDel] = useState(false);
 
@@ -18,7 +16,7 @@ export function ExpenseRow({ expense }: { expense: { id: number; ts: string; cat
           <form action={async (fd: FormData) => { await editExpense(fd); setEditing(false); }} className="row wrap" style={{ gap: 6 }}>
             <input type="hidden" name="id" value={expense.id} />
             <select className="select" name="category" defaultValue={expense.category} style={{ flex: '0 1 110px', padding: '4px 6px', fontSize: 11 }}>
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c.toUpperCase()}</option>)}
+              {categories.map((c) => <option key={c} value={c}>{c.toUpperCase()}</option>)}
             </select>
             <input className="input" name="detail" defaultValue={expense.detail} style={{ flex: '1 1 150px', padding: '4px 6px', fontSize: 11 }} />
             <input className="input num" name="amount" type="number" step="any" defaultValue={expense.amount} style={{ width: 90, padding: '4px 6px', fontSize: 11 }} />

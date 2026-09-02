@@ -4,6 +4,7 @@ import { getBill } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
 import { PrintButton } from '@/components/PrintButton';
 import { VoidBillForm } from '../VoidBillForm';
+import { getSettings } from '@/lib/settings';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,10 +13,11 @@ export default async function BillPage({ params }: { params: Promise<{ id: strin
   const bill = await getBill(Number(id));
   if (!bill) notFound();
 
+  const settings = await getSettings();
   const isVoid = bill.status === 'void';
   const net = bill.subtotal + bill.rent - bill.credit;
   const wa = `https://wa.me/${(bill.contact ?? '').replace(/\D/g, '')}?text=${encodeURIComponent(
-    `Ahmed Corrugation Machines\nReceipt #${bill.receipt_no}\nTotal: PKR ${fmtNum(bill.subtotal + bill.rent)}\nPaid: PKR ${fmtNum(bill.credit)}\nBalance: PKR ${fmtNum(net)}`,
+    `${settings.factory_name}\nReceipt #${bill.receipt_no}\nTotal: PKR ${fmtNum(bill.subtotal + bill.rent)}\nPaid: PKR ${fmtNum(bill.credit)}\nBalance: PKR ${fmtNum(net)}`,
   )}`;
 
   return (
@@ -43,8 +45,10 @@ export default async function BillPage({ params }: { params: Promise<{ id: strin
 
       <div className="receipt" style={isVoid ? { opacity: 0.5 } : undefined}>
         <div className="receipt-head">
-          <h3>Ahmed Corrugation Machines</h3>
-          <div style={{ fontSize: 11, color: '#666' }}>احمد کورو گیشن مشینز</div>
+          <h3>{settings.factory_name}</h3>
+          {settings.factory_name_ur && <div style={{ fontSize: 11, color: '#666', fontFamily: "'Noto Nastaliq Urdu', serif" }}>{settings.factory_name_ur}</div>}
+          {settings.factory_address && <div style={{ fontSize: 10, color: '#888' }}>{settings.factory_address}</div>}
+          {settings.factory_phone && <div style={{ fontSize: 10, color: '#888' }}>{settings.factory_phone}</div>}
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 12 }}>

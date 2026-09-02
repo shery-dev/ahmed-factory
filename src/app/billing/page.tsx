@@ -1,6 +1,7 @@
 import { BillingForm, type CatalogueItem, type CustomerOpt } from '@/components/BillingForm';
 import { PanelHeader } from '@/components/PanelHeader';
 import { listItemTypes, listCustomers, sizesFor, customerBalance } from '@/lib/repo';
+import { getSettings, getPaymentMethods } from '@/lib/settings';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,10 +20,13 @@ export default async function BillingPage() {
     id: c.id, code: c.code, name: c.name, kind: c.kind, balance: await customerBalance(c.id),
   })));
 
+  const settings = await getSettings();
+  const paymentMethods = getPaymentMethods(settings);
+
   return (
     <>
       <PanelHeader title="newBill" desc="newBillDesc" />
-      <BillingForm items={items} customers={customers} />
+      <BillingForm items={items} customers={customers} paymentMethods={paymentMethods} />
     </>
   );
 }

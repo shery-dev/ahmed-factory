@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Shell } from '@/components/Shell';
 import { dashboard, listBills } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
+import { headers } from 'next/headers';
 
 export const metadata: Metadata = {
   title: 'Ahmed Corrugation Machines — Factory System',
@@ -13,6 +14,19 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Don’t wrap the login page in the Shell
+  const h = headers();
+  const pathname = (await h).get('x-invoke-path') || '';
+  const isLogin = pathname.includes('/login');
+
+  if (isLogin) {
+    return (
+      <html lang="en">
+        <body>{children}</body>
+      </html>
+    );
+  }
+
   const d = await dashboard();
   const billsList = await listBills({ limit: 999 });
   const counts = {

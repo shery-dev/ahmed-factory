@@ -2,6 +2,7 @@ import { listExpenses } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
 import { recordExpense } from './actions';
 import { ExpenseRow } from '@/components/ExpenseRow';
+import { getSettings, getExpenseCategories } from '@/lib/settings';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,7 +13,8 @@ export default async function ExpensesPage({
   const expenses = await listExpenses(from, to, category);
   const total = expenses.reduce((s, e) => s + e.amount, 0);
 
-  const categories = ['general', 'diesel', 'transport', 'chai', 'loading', 'maintenance', 'rent', 'salary', 'other'];
+  const settings = await getSettings();
+  const categories = getExpenseCategories(settings);
 
   return (
     <>
@@ -38,6 +40,10 @@ export default async function ExpensesPage({
         )}
       </form>
 
+      <div style={{ marginBottom: 12 }}>
+        <a className="btn btn-ghost" style={{ padding: '6px 14px', fontSize: 12 }} href={`/api/export?type=expenses&from=${from || ''}&to=${to || ''}&category=${category || ''}`}>Export CSV</a>
+      </div>
+
       <div className="split">
         <div>
           <div className="card" style={{ marginBottom: 16 }}>
@@ -59,7 +65,7 @@ export default async function ExpensesPage({
                 {expenses.length === 0 ? (
                   <tr><td colSpan={5} className="t-muted" style={{ textAlign: 'center', padding: 24 }}>No expenses recorded yet</td></tr>
                 ) : expenses.map((e) => (
-                  <ExpenseRow key={e.id} expense={e} />
+                  <ExpenseRow key={e.id} expense={e} categories={categories} />
                 ))}
               </tbody>
             </table>

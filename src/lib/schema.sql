@@ -140,6 +140,23 @@ CREATE TABLE IF NOT EXISTS expenses (
   actor    TEXT NOT NULL DEFAULT 'owner'
 );
 
+-- ─── Settings ─────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS settings (
+  key   TEXT PRIMARY KEY,
+  value TEXT NOT NULL DEFAULT ''
+);
+
+-- ─── Users (Phase 3) ─────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS users (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  username      TEXT    NOT NULL UNIQUE,
+  password_hash TEXT    NOT NULL,
+  name          TEXT    NOT NULL,
+  role          TEXT    NOT NULL CHECK (role IN ('owner','counter','store')),
+  active        INTEGER NOT NULL DEFAULT 1,
+  created_at    TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+
 -- ─── Infrastructure ───────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS counters (
   name  TEXT    PRIMARY KEY,

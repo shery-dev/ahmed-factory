@@ -66,6 +66,10 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
         )}
       </form>
 
+      <div className="row" style={{ gap: 8, marginBottom: 12 }}>
+        <a className="btn btn-ghost" style={{ padding: '6px 14px', fontSize: 12 }} href={`/api/export?type=bills&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`}>Export CSV</a>
+      </div>
+
       {total > 0 && (
         <div className="t-muted" style={{ marginBottom: 8, fontSize: 12 }}>
           Showing {offset + 1}–{Math.min(offset + PAGE_SIZE, total)} of {total} bills

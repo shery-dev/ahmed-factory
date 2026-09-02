@@ -23,7 +23,7 @@ const UNIT_FOR: Partial<Record<SaleForm, 'roll' | 'reel' | 'tota'>> = {
   rolls: 'roll', reels: 'reel', totay: 'tota', packets: 'reel',
 };
 
-export function BillingForm({ items, customers }: { items: CatalogueItem[]; customers: CustomerOpt[] }) {
+export function BillingForm({ items, customers, paymentMethods }: { items: CatalogueItem[]; customers: CustomerOpt[]; paymentMethods: string[] }) {
   const { tr, lang } = useUi();
   const nameOf = (i: CatalogueItem) => (lang === 'ur' ? i.name_ur : i.name_en);
 
@@ -328,7 +328,7 @@ export function BillingForm({ items, customers }: { items: CatalogueItem[]; cust
             <span>{tr('paymentMethod')}</span>
             <select className="select" style={{ width: 130, padding: '4px 8px' }}
                     value={creditMethod} onChange={(e) => setCreditMethod(e.target.value)}>
-              <option>Cash</option><option>Cheque</option><option>Transfer</option>
+              {paymentMethods.map((m) => <option key={m}>{m}</option>)}
             </select>
           </div>
           <div className="total-row grand">

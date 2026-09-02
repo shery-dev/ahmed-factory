@@ -134,6 +134,15 @@ export const dict = {
   open:           { en: 'Open',             ur: 'کھلا' },
   resolveNote:    { en: 'Resolution note',  ur: 'حل کا نوٹ' },
 
+  // ── Phase 3 ──
+  settings:     { en: 'Settings',         ur: 'ترتیبات' },
+  reports:      { en: 'Reports',          ur: 'رپورٹس' },
+  export:       { en: 'Export',           ur: 'ایکسپورٹ' },
+  printStatement:{ en: 'Print Statement', ur: 'اسٹیٹمنٹ پرنٹ' },
+  users:        { en: 'Users',            ur: 'صارفین' },
+  login:        { en: 'Login',            ur: 'لاگ ان' },
+  logout:       { en: 'Logout',           ur: 'لاگ آؤٹ' },
+
   // ── Misc ──
   search:       { en: 'Search',          ur: 'تلاش' },
   add:          { en: 'Add',             ur: 'شامل کریں' },

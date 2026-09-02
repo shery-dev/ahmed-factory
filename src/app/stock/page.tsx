@@ -34,6 +34,10 @@ export default async function StockPage({
         {search && <a className="btn btn-ghost" href={`/stock?unit=${unit}&view=${view}`} style={{ padding: '6px 14px' }}>Clear</a>}
       </form>
 
+      <div style={{ marginBottom: 8 }}>
+        <a className="btn btn-ghost" style={{ padding: '6px 14px', fontSize: 12 }} href="/api/export?type=stock">Export Stock CSV</a>
+      </div>
+
       <div className="tabs">
         {(['roll', 'reel', 'tota'] as const).map((u) => (
           <a key={u} href={`/stock?unit=${u}&view=detail`} className={`tab ${unit === u && view === 'detail' ? 'active' : ''}`}>

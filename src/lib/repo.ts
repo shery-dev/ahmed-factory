@@ -530,6 +530,79 @@ export async function dashboard(from?: string, to?: string) {
   };
 }
 
+
+// ─── Reports (Phase 3) ─────────────────────────────────────────────────────
+export async function stockValuationReport() {
+  return dbAll<any>(
+    `SELECT s.item_type_id, t.name_en, t.name_ur, s.size, s.unit, s.quantity, s.rate,
+            ROUND(s.quantity * s.rate, 2) AS value,
+            CASE WHEN s.quantity <= 5 AND s.flagged = 0 THEN 1 ELSE 0 END AS is_low
+     FROM stock_items s JOIN item_types t ON t.id = s.item_type_id
+     WHERE s.flagged = 0
+     ORDER BY t.sort_order, t.name_en, s.size`
+  );
+}
+
+export async function topCustomersByVolume(limit = 10) {
+  return dbAll<any>(
+    `SELECT c.id, c.code, c.name, COUNT(b.id) AS bill_count,
+            COALESCE(SUM(b.subtotal), 0) AS total_volume
+     FROM customers c JOIN bills b ON b.customer_id = c.id
+     WHERE b.status = 'posted'
+     GROUP BY c.id ORDER BY total_volume DESC LIMIT ?`,
+    [limit]
+  );
+}
+
+export async function topCustomersByOutstanding(limit = 10) {
+  return dbAll<any>(
+    `SELECT c.id, c.code, c.name,
+            COALESCE(SUM(CASE WHEN l.flagged = 0 THEN l.debit + l.rent - l.credit ELSE 0 END), 0) AS balance
+     FROM customers c LEFT JOIN ledger_entries l ON l.customer_id = c.id
+     WHERE c.active = 1
+     GROUP BY c.id HAVING balance > 0.005
+     ORDER BY balance DESC LIMIT ?`,
+    [limit]
+  );
+}
+
+export async function periodSummary(from: string, to: string) {
+  const dateParams = [from, to];
+  const bills = await dbGet<any>(
+    `SELECT COUNT(*) n, COALESCE(SUM(subtotal), 0) revenue, COALESCE(SUM(credit), 0) collected
+     FROM bills WHERE date(ts) >= ? AND date(ts) <= ? AND status = 'posted'`, dateParams
+  );
+  const expenses = await dbGet<any>(
+    `SELECT COUNT(*) n, COALESCE(SUM(amount), 0) total
+     FROM expenses WHERE date(ts) >= ? AND date(ts) <= ?`, dateParams
+  );
+  // Previous period for comparison
+  const fromDt = new Date(from);
+  const toDt = new Date(to);
+  const days = Math.round((toDt.getTime() - fromDt.getTime()) / 86400000) + 1;
+  const prevFrom = new Date(fromDt.getTime() - days * 86400000).toISOString().slice(0, 10);
+  const prevTo = new Date(fromDt.getTime() - 86400000).toISOString().slice(0, 10);
+  const prevParams = [prevFrom, prevTo];
+  const prevBills = await dbGet<any>(
+    `SELECT COUNT(*) n, COALESCE(SUM(subtotal), 0) revenue, COALESCE(SUM(credit), 0) collected
+     FROM bills WHERE date(ts) >= ? AND date(ts) <= ? AND status = 'posted'`, prevParams
+  );
+  const prevExpenses = await dbGet<any>(
+    `SELECT COUNT(*) n, COALESCE(SUM(amount), 0) total
+     FROM expenses WHERE date(ts) >= ? AND date(ts) <= ?`, prevParams
+  );
+  return {
+    from, to, days,
+    bills: bills ?? { n: 0, revenue: 0, collected: 0 },
+    expenses: expenses ?? { n: 0, total: 0 },
+    prev: {
+      from: prevFrom, to: prevTo,
+      bills: prevBills ?? { n: 0, revenue: 0, collected: 0 },
+      expenses: prevExpenses ?? { n: 0, total: 0 },
+    },
+  };
+}
+
 export async function customerRecentRate(customerId: number, itemTypeId: number): Promise<number | null> {
   const r = await dbGet<{ rate: number }>(
     `SELECT bl.rate FROM bill_lines bl JOIN bills b ON b.id = bl.bill_id
