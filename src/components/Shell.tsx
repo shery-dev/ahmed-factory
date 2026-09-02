@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { t, dirFor, type Lang, type DictKey } from '@/lib/i18n';
 import { logoutAction } from '@/app/login/actions';
 
-// ─── Language + theme context ─────────────────────────────────────────────────
+// --- Language + theme context ---
 interface UiCtx { lang: Lang; setLang: (l: Lang) => void; tr: (k: DictKey) => string; }
 const Ui = createContext<UiCtx>({ lang: 'en', setLang: () => {}, tr: (k) => k });
 export const useUi = () => useContext(Ui);
@@ -19,13 +19,9 @@ export interface SidebarCounts {
 export function Shell({ children, counts }: { children: ReactNode; counts: SidebarCounts }) {
   const [lang, setLang] = useState<Lang>('en');
   const [light, setLight] = useState(false);
-  // Guards the save effect so it cannot write the default over a stored
-  // preference before the restore has been applied.
   const [restored, setRestored] = useState(false);
   const pathname = usePathname();
 
-  // Restore preferences. Wrapped because storage can throw (private windows,
-  // blocked site data) — a failure must still leave a usable page.
   useEffect(() => {
     try {
       const l = localStorage.getItem('acm-lang') as Lang | null;
@@ -39,7 +35,7 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
   useEffect(() => {
     document.body.setAttribute('dir', dirFor(lang));
     document.body.classList.toggle('light', light);
-    if (!restored) return;   // never persist before restore has run
+    if (!restored) return;
     try {
       localStorage.setItem('acm-lang', lang);
       localStorage.setItem('acm-theme', light ? 'light' : 'dark');
@@ -48,28 +44,28 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
 
   const tr = (k: DictKey) => t(k, lang);
 
-  type NavEntry = { href: string; label: DictKey; count?: number; alert?: boolean };
+  type NavEntry = { href: string; label: DictKey; count?: number; alert?: boolean; icon: string };
   const nav: NavEntry[] = [
-    { href: '/',          label: 'dashboard' },
-    { href: '/billing',   label: 'newBill' },
-    { href: '/bills',     label: 'bills',     count: counts.bills },
-    { href: '/customers', label: 'customers', count: counts.customers },
-    { href: '/stock',     label: 'stock' },
-    { href: '/expenses',  label: 'expenses' as DictKey },
-    { href: '/reports',   label: 'reports' as DictKey },
+    { href: '/',          label: 'dashboard',  icon: '\u2302' },
+    { href: '/billing',   label: 'newBill',    icon: '\u002B' },
+    { href: '/bills',     label: 'bills',      count: counts.bills, icon: '\u2637' },
+    { href: '/customers', label: 'customers',  count: counts.customers, icon: '\u263A' },
+    { href: '/stock',     label: 'stock',      icon: '\u25A3' },
+    { href: '/expenses',  label: 'expenses' as DictKey, icon: '\u20B9' },
+    { href: '/reports',   label: 'reports' as DictKey, icon: '\u2636' },
   ];
   const setup: NavEntry[] = [
-    { href: '/catalogue', label: 'catalogue', count: counts.products },
-    { href: '/review',    label: 'review',    count: counts.issues, alert: counts.issues > 0 },
-    { href: '/changes',   label: 'changes' },
-    { href: '/settings',  label: 'settings' as DictKey },
+    { href: '/catalogue', label: 'catalogue', count: counts.products, icon: '\u2630' },
+    { href: '/review',    label: 'review',    count: counts.issues, alert: counts.issues > 0, icon: '\u26A0' },
+    { href: '/changes',   label: 'changes',   icon: '\u21BA' },
+    { href: '/settings',  label: 'settings' as DictKey, icon: '\u2699' },
   ];
 
-  const Item = ({ href, label: k, count, alert }: NavEntry) => {
+  const Item = ({ href, label: k, count, alert, icon }: NavEntry) => {
     const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
     return (
       <Link href={href} className={`sidebar-item ${active ? 'active' : ''}`}>
-        <span className="item-dot" />
+        <span className="item-icon">{icon}</span>
         <span>{tr(k)}</span>
         {count !== undefined && (
           <span className={`item-count num ${alert ? 'alert' : ''}`}>{count}</span>
@@ -84,23 +80,25 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
         <div className="nav-left">
           <div className="nav-mark">AC</div>
           <span className="nav-title">{tr('appName')}</span>
-          <span className="nav-separator">|</span>
+          <span className="nav-separator">\u2502</span>
           <span className="nav-subtitle">
-            {lang === 'ur' ? 'بلنگ، کھاتہ اور اسٹاک' : 'Billing, Ledger & Stock'}
+            {lang === 'ur' ? '\u0628\u0644\u0646\u06AF\u060C \u06A9\u06BE\u0627\u062A\u06C1 \u0627\u0648\u0631 \u0627\u0633\u0679\u0627\u06A9' : 'Billing, Ledger & Stock'}
           </span>
         </div>
         <div className="nav-right">
-          <span className="nav-badge">PROTOTYPE</span>
+          <span className="nav-badge">FACTORY</span>
           <button
             className={`icon-btn ${lang === 'ur' ? 'on' : ''}`}
             onClick={() => setLang(lang === 'en' ? 'ur' : 'en')}
-            title="Switch language / زبان تبدیل کریں"
+            title="Switch language"
           >
-            {lang === 'en' ? 'اردو' : 'EN'}
+            {lang === 'en' ? '\u0627\u0631' : 'EN'}
           </button>
-          <form action={logoutAction} style={{ display: 'inline' }}><button type="submit" className="icon-btn" title="Logout" style={{ fontSize: 11 }}>{"\u2398"}</button></form>
+          <form action={logoutAction} style={{ display: 'inline' }}>
+            <button type="submit" className="icon-btn" title="Logout" style={{ fontSize: 14 }}>{'\u23FB'}</button>
+          </form>
           <button className="icon-btn" onClick={() => setLight(!light)} title="Theme">
-            {light ? '☾' : '☀'}
+            {light ? '\u263E' : '\u2600'}
           </button>
         </div>
       </nav>
