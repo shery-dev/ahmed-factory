@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { t, dirFor, type Lang, type DictKey } from '@/lib/i18n';
 import { logoutAction } from '@/app/login/actions';
 
-// --- Language + theme context ---
 interface UiCtx { lang: Lang; setLang: (l: Lang) => void; tr: (k: DictKey) => string; }
 const Ui = createContext<UiCtx>({ lang: 'en', setLang: () => {}, tr: (k) => k });
 export const useUi = () => useContext(Ui);
@@ -51,7 +50,7 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
     { href: '/bills',     label: 'bills',      count: counts.bills, icon: '\u2637' },
     { href: '/customers', label: 'customers',  count: counts.customers, icon: '\u263A' },
     { href: '/stock',     label: 'stock',      icon: '\u25A3' },
-    { href: '/expenses',  label: 'expenses' as DictKey, icon: '\u20B9' },
+    { href: '/expenses',  label: 'expenses' as DictKey, icon: '\u0024' },
     { href: '/reports',   label: 'reports' as DictKey, icon: '\u2636' },
   ];
   const setup: NavEntry[] = [
@@ -95,7 +94,7 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
             {lang === 'en' ? '\u0627\u0631' : 'EN'}
           </button>
           <form action={logoutAction} style={{ display: 'inline' }}>
-            <button type="submit" className="icon-btn" title="Logout" style={{ fontSize: 14 }}>{'\u23FB'}</button>
+            <button type="submit" className="icon-btn" title="Logout" style={{ fontSize: 14 }}>{'\u21A9'}</button>
           </form>
           <button className="icon-btn" onClick={() => setLight(!light)} title="Theme">
             {light ? '\u263E' : '\u2600'}
@@ -131,7 +130,6 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
   );
 }
 
-/** Small helper so server-rendered pages can still use translated labels. */
 export function T({ k }: { k: DictKey }) {
   const { tr } = useUi();
   return <>{tr(k)}</>;
