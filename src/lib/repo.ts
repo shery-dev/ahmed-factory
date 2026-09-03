@@ -644,15 +644,16 @@ export async function dailyReport(date: string) {
     "SELECT COALESCE(SUM(debit), 0) total_debit, COALESCE(SUM(credit), 0) total_credit, COALESCE(SUM(rent), 0) total_rent FROM ledger_entries WHERE date(ts) = ? AND flagged = 0", [d]
   );
 
+  const lm = ledgerMovement || { total_debit: 0, total_credit: 0, total_rent: 0 };
   const netPosition = cashCollected - expenseTotal;
 
   return {
     date: d, cashBills, ledgerBills, expenses, expenseByCategory,
     cashTotal, cashCollected, ledgerTotal, ledgerCollected, expenseTotal,
-    ledgerMovement, netPosition,
+    ledgerMovement: lm, netPosition,
     totalBills: cashBills.length + ledgerBills.length,
-    totalDebit: ledgerMovement.total_debit,
-    totalCredit: ledgerMovement.total_credit,
-    totalRent: ledgerMovement.total_rent,
+    totalDebit: lm.total_debit,
+    totalCredit: lm.total_credit,
+    totalRent: lm.total_rent,
   };
 }
