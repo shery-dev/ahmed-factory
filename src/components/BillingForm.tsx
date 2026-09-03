@@ -292,13 +292,13 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
             )}
             {spec.needsSize && (
               <div className="field">
-                <label>{tr('size')}</label>
+                <label>{tr('size')} (inches)</label>
                 <select className="select" value={size} disabled={!item}
                         onChange={(e) => setSize(e.target.value === '' ? '' : Number(e.target.value))}>
-                  <option value="">\u2014</option>
+                  <option value="">{'\u2014'}</option>
                   {sizeOpts.map((s) => (
                     <option key={s.size} value={s.size} disabled={s.quantity <= 0}>
-                      {s.size} ({fmtNum(s.quantity)}){s.quantity <= 0 ? ' \u2014 OUT' : ''}
+                      {`${s.size} (${fmtNum(s.quantity)})${s.quantity <= 0 ? ' \u2014 OUT' : ''}`}
                     </option>
                   ))}
                 </select>
@@ -331,7 +331,7 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
               );
             })}
             <div className="field">
-              <label>{tr('rate')} (PKR) \u2014 fixed</label>
+              <label>{tr('rate')} (PKR) {'\u2014'} fixed</label>
               <input className="input num" type="number" value={fixedRate} readOnly
                      style={{ opacity: 0.7, cursor: 'not-allowed' }} />
             </div>

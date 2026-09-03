@@ -68,7 +68,7 @@ export default async function Home({
           <div>
             <b>{d.issues?.n} items need attention.</b> The 2022 import contained
             values that failed sanity checks.{' '}
-            <Link href="/review" style={{ color: 'var(--accent-yellow)' }}>Review them \u2192</Link>
+            <Link href="/review" style={{ color: 'var(--accent-yellow)' }}>{'Review them \u2192'}</Link>
           </div>
         </div>
       )}

@@ -88,13 +88,13 @@ export default async function CustomersPage({
                   </div>
                   <div className="customer-card__details">
                     <span className={`badge ${c.kind === 'cash' ? 'badge-kraft' : 'badge-purple'}`}>{c.kind}</span>
-                    {c.contact && <span className="customer-card__chip">\u260E {c.contact}</span>}
-                    {c.manual_ledger_page && <span className="customer-card__chip">\u2637 p.{c.manual_ledger_page}</span>}
+                    {c.contact && <span className="customer-card__chip">{'\u260E'} {c.contact}</span>}
+                    {c.manual_ledger_page && <span className="customer-card__chip">{'\u2637'} p.{c.manual_ledger_page}</span>}
                     {!c.active && <span className="badge badge-muted">INACTIVE</span>}
                   </div>
                   <div className="customer-card__actions">
                     <Link className="customer-card__link" href={`/customers/${c.id}`}>
-                      View Ledger \u2192
+                      {'View Ledger \u2192'}
                     </Link>
                   </div>
                 </div>

@@ -152,7 +152,7 @@ export default async function StockPage({
               <div className="field">
                 <label>PRODUCT</label>
                 <select className="select" name="itemTypeId" required>
-                  <option value="">\u2014 Select \u2014</option>
+                  <option value="">{'\u2014'} Select {'\u2014'}</option>
                   {items.map((i) => (
                     <option key={i.id} value={i.id}>{i.name_en}</option>
                   ))}
@@ -196,7 +196,7 @@ export default async function StockPage({
               <div className="field">
                 <label>PRODUCT</label>
                 <select className="select" name="itemTypeId" required>
-                  <option value="">\u2014 Select \u2014</option>
+                  <option value="">{'\u2014'} Select {'\u2014'}</option>
                   {items.map((i) => (
                     <option key={i.id} value={i.id}>{i.name_en}</option>
                   ))}
