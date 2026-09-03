@@ -657,3 +657,49 @@ export async function dailyReport(date: string) {
     totalRent: lm.total_rent,
   };
 }
+
+// ─── Waste & Scrap Stock (Jutta, Raddi, Nali) ─────────────────────────────────
+
+async function ensureWasteTable() {
+  await dbRun(`CREATE TABLE IF NOT EXISTS waste_stock (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category TEXT NOT NULL CHECK (category IN ('jutta','raddi','nali')),
+    quantity_kg REAL NOT NULL DEFAULT 0,
+    rate REAL NOT NULL DEFAULT 0,
+    ts TEXT NOT NULL DEFAULT (datetime('now'))
+  )`, []);
+}
+
+export const listWasteStock = async (): Promise<{ category: string; total_kg: number }[]> => {
+  await ensureWasteTable();
+  return dbAll<{ category: string; total_kg: number }>(
+    `SELECT category, COALESCE(SUM(quantity_kg), 0) as total_kg FROM waste_stock GROUP BY category ORDER BY category`, []
+  );
+};
+
+export async function addWasteStock(category: 'jutta' | 'raddi' | 'nali', quantityKg: number, rate: number, note?: string) {
+  await ensureWasteTable();
+  await dbRun(
+    `INSERT INTO waste_stock (category, quantity_kg, rate) VALUES (?, ?, ?)`,
+    [category, quantityKg, rate]
+  );
+  await logActivity('Waste stock added', `${quantityKg} kg ${category}`, 'success', 'store');
+}
+
+export async function adjustWasteStock(category: string, deltaKg: number, reason: string) {
+  await ensureWasteTable();
+  await dbRun(
+    `INSERT INTO waste_stock (category, quantity_kg, rate) VALUES (?, ?, 0)`,
+    [category, deltaKg]
+  );
+  await logActivity('Waste stock adjusted', `${deltaKg > 0 ? '+' : ''}${deltaKg} kg ${category} — ${reason}`, 'system', 'store');
+}
+
+export const wasteStockOnHand = async (category: string): Promise<number> => {
+  await ensureWasteTable();
+  const r = await dbGet<{ total_kg: number }>(
+    `SELECT COALESCE(SUM(quantity_kg), 0) as total_kg FROM waste_stock WHERE category = ?`,
+    [category]
+  );
+  return r?.total_kg ?? 0;
+};

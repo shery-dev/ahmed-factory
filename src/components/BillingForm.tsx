@@ -23,7 +23,9 @@ const UNIT_FOR: Partial<Record<SaleForm, 'roll' | 'reel' | 'tota'>> = {
   rolls: 'roll', reels: 'reel', totay: 'tota', packets: 'reel',
 };
 
-export function BillingForm({ items, customers, paymentMethods }: { items: CatalogueItem[]; customers: CustomerOpt[]; paymentMethods: string[] }) {
+const WASTE_FORMS: Record<string, string> = { jutta: 'jutta', raddi: 'raddi', nali: 'nali' };
+
+export function BillingForm({ items, customers, paymentMethods, wasteStock }: { items: CatalogueItem[]; customers: CustomerOpt[]; paymentMethods: string[]; wasteStock?: Record<string, number> }) {
   const { tr, lang } = useUi();
   const nameOf = (i: CatalogueItem) => (lang === 'ur' ? i.name_ur : i.name_en);
 
@@ -49,6 +51,10 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
   const sizeOpts = item && unit ? item.sizes[unit] : [];
   const onHand = sizeOpts.find((s) => s.size === size)?.quantity ?? null;
   const customer = customers.find((c) => c.id === customerId);
+
+  // Waste stock on hand (for jutta, raddi, nali)
+  const wasteCategory = WASTE_FORMS[form];
+  const wasteOnHand = wasteCategory && wasteStock ? (wasteStock[wasteCategory] ?? 0) : null;
 
   // Fixed rate from catalogue
   const fixedRate = item?.default_rate ?? 0;
@@ -247,6 +253,11 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
             {onHand !== null && (
               <span className={`badge ${onHand <= 0 ? 'badge-red' : onHand <= 5 ? 'badge-yellow' : 'badge-green'}`}>
                 {tr('onHand')}: {fmtNum(onHand)} {unit}
+              </span>
+            )}
+            {wasteOnHand !== null && (
+              <span className={`badge ${wasteOnHand <= 0 ? 'badge-red' : 'badge-green'}`}>
+                On hand: {fmtNum(wasteOnHand)} kg
               </span>
             )}
           </div>

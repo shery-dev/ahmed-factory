@@ -1,8 +1,8 @@
 import { dbAll } from '@/lib/db';
-import { listStock, stockSummary, listItemTypes } from '@/lib/repo';
+import { listStock, stockSummary, listItemTypes, listWasteStock } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
 import { PanelHeader } from '@/components/PanelHeader';
-import { receiveDelivery, postPhysicalCount } from './actions';
+import { receiveDelivery, receiveWasteDelivery } from './actions';
 import StockCardGroup from '@/components/StockCardGroup';
 
 export const dynamic = 'force-dynamic';
@@ -11,8 +11,10 @@ export default async function StockPage({
   searchParams,
 }: { searchParams: Promise<{ unit?: string; search?: string; view?: string }> }) {
   const { unit = 'roll', search = '', view = 'detail' } = await searchParams;
-  const rows = view === 'combined' ? [] : await listStock({ unit, search: search || undefined });
+  const isWaste = view === 'waste';
+  const rows = (!isWaste && view !== 'combined') ? await listStock({ unit, search: search || undefined }) : [];
   const summary = view === 'combined' ? await stockSummary(search || undefined) : [];
+  const wasteStock = isWaste ? await listWasteStock() : [];
   const movements = await dbAll<any>(
     `SELECT m.*, t.name_en FROM stock_movements m
      LEFT JOIN item_types t ON t.id = m.item_type_id
@@ -40,6 +42,8 @@ export default async function StockPage({
   }));
 
   const unitLabel = unit === 'roll' ? 'rolls' : 'kg';
+  const wasteMap = new Map(wasteStock.map(w => [w.category, w.total_kg]));
+  const wasteTotal = wasteStock.reduce((s, w) => s + w.total_kg, 0);
 
   return (
     <>
@@ -48,7 +52,7 @@ export default async function StockPage({
       <form className="row wrap" style={{ gap: 8, marginBottom: 12 }} method="get">
         <input className="input" name="search" defaultValue={search} placeholder="Search product name..." style={{ flex: '1 1 200px' }} />
         <input type="hidden" name="view" value={view} />
-        {view !== 'combined' && <input type="hidden" name="unit" value={unit} />}
+        {!isWaste && view !== 'combined' && <input type="hidden" name="unit" value={unit} />}
         <button className="btn btn-ghost" type="submit" style={{ padding: '6px 14px' }}>Search</button>
         {search && <a className="btn btn-ghost" href={`/stock?unit=${unit}&view=${view}`} style={{ padding: '6px 14px' }}>Clear</a>}
       </form>
@@ -64,11 +68,89 @@ export default async function StockPage({
           </a>
         ))}
         <a href={`/stock?view=combined&search=${search}`} className={`tab ${view === 'combined' ? 'active' : ''}`}>
-          Combined View
+          Combined
+        </a>
+        <a href={`/stock?view=waste`} className={`tab ${isWaste ? 'active' : ''}`}>
+          Waste & Scrap
         </a>
       </div>
 
-      {view === 'combined' ? (
+      {isWaste ? (
+        <>
+          <div className="grid grid-4" style={{ marginBottom: 20 }}>
+            <div className="card tight">
+              <div className="card-title">TOTAL KG</div>
+              <div className="stat-big stat-accent num">{fmtNum(wasteTotal)}</div>
+            </div>
+            {(['jutta', 'raddi', 'nali'] as const).map((cat) => (
+              <div key={cat} className="card tight">
+                <div className="card-title">{cat.toUpperCase()}</div>
+                <div className="stat-big num">{fmtNum(wasteMap.get(cat) ?? 0)}</div>
+                <div className="stat-sub">kg on hand</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="split">
+            <div>
+              <div className="card">
+                <div className="card-title">WASTE & SCRAP INVENTORY</div>
+                <p className="t-muted" style={{ fontSize: 12, marginBottom: 12 }}>
+                  Jutta (scrap), Raddi (waste), and Nali (edge trim) are tracked by weight in kg.
+                </p>
+                <div className="table-wrap" style={{ border: 'none', boxShadow: 'none' }}>
+                  <table>
+                    <thead>
+                      <tr><th>CATEGORY</th><th className="right">ON HAND (KG)</th></tr>
+                    </thead>
+                    <tbody>
+                      {(['jutta', 'raddi', 'nali'] as const).map((cat) => (
+                        <tr key={cat}>
+                          <td className="t-strong">{cat.charAt(0).toUpperCase() + cat.slice(1)}</td>
+                          <td className="right num">{fmtNum(wasteMap.get(cat) ?? 0)}</td>
+                        </tr>
+                      ))}
+                      <tr style={{ borderTop: '2px solid var(--border)' }}>
+                        <td className="t-strong">TOTAL</td>
+                        <td className="right num t-strong">{fmtNum(wasteTotal)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-title">RECEIVE WASTE DELIVERY</div>
+              <form action={receiveWasteDelivery} className="stack sm">
+                <div className="field">
+                  <label>CATEGORY</label>
+                  <select className="select" name="category" required>
+                    <option value="jutta">Jutta (Scrap)</option>
+                    <option value="raddi">Raddi (Waste)</option>
+                    <option value="nali">Nali (Edge Trim)</option>
+                  </select>
+                </div>
+                <div className="row" style={{ gap: 8 }}>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label>QUANTITY (KG)</label>
+                    <input className="input num" name="quantity" type="number" step="any" required />
+                  </div>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label>RATE (PKR/KG)</label>
+                    <input className="input num" name="rate" type="number" step="any" defaultValue={0} />
+                  </div>
+                </div>
+                <div className="field">
+                  <label>VENDOR / NOTE</label>
+                  <input className="input" name="note" placeholder="Optional" />
+                </div>
+                <button className="btn btn-primary btn-block">Record Waste Delivery</button>
+              </form>
+            </div>
+          </div>
+        </>
+      ) : view === 'combined' ? (
         <>
           <div className="grid grid-3" style={{ marginBottom: 20 }}>
             <div className="card tight">
@@ -82,7 +164,7 @@ export default async function StockPage({
             <div className="card tight">
               <div className="card-title">LOW STOCK LINES</div>
               <div className={`stat-big num ${summary.reduce((s,r) => s + r.low, 0) > 0 ? 'stat-red' : ''}`}>
-                {summary.reduce((s, r) => s + r.low, 0)}
+                {summary.reduce((s,r) => s + r.low, 0)}
               </div>
             </div>
           </div>
@@ -146,89 +228,51 @@ export default async function StockPage({
       <div className="split" style={{ marginTop: 20 }}>
         <div></div>
         <div className="stack sm">
-          <div className="card">
-            <div className="card-title">RECEIVE DELIVERY</div>
-            <form action={receiveDelivery} className="stack sm">
-              <div className="field">
-                <label>PRODUCT</label>
-                <select className="select" name="itemTypeId" required>
-                  <option value="">{'\u2014'} Select {'\u2014'}</option>
-                  {items.map((i) => (
-                    <option key={i.id} value={i.id}>{i.name_en}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="row" style={{ gap: 8 }}>
-                <div className="field" style={{ flex: 1 }}>
-                  <label>SIZE (inches)</label>
-                  <input className="input num" name="size" type="number" required placeholder="e.g. 36" />
-                </div>
-                <div className="field" style={{ flex: 1 }}>
-                  <label>UNIT</label>
-                  <select className="select" name="unit" defaultValue={unit}>
-                    <option value="roll">Rolls</option>
-                    <option value="reel">Kg (Reel)</option>
-                    <option value="tota">Kg (Tota)</option>
+          {!isWaste && (
+            <div className="card">
+              <div className="card-title">RECEIVE DELIVERY</div>
+              <form action={receiveDelivery} className="stack sm">
+                <div className="field">
+                  <label>PRODUCT</label>
+                  <select className="select" name="itemTypeId" required>
+                    <option value="">{'\u2014'} Select {'\u2014'}</option>
+                    {items.map((i) => (
+                      <option key={i.id} value={i.id}>{i.name_en}</option>
+                    ))}
                   </select>
                 </div>
-              </div>
-              <div className="row" style={{ gap: 8 }}>
-                <div className="field" style={{ flex: 1 }}>
-                  <label>QUANTITY</label>
-                  <input className="input num" name="quantity" type="number" step="any" required />
+                <div className="row" style={{ gap: 8 }}>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label>SIZE (inches)</label>
+                    <input className="input num" name="size" type="number" required placeholder="e.g. 36" />
+                  </div>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label>UNIT</label>
+                    <select className="select" name="unit" defaultValue={unit}>
+                      <option value="roll">Rolls</option>
+                      <option value="reel">Kg (Reel)</option>
+                      <option value="tota">Kg (Tota)</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="field" style={{ flex: 1 }}>
-                  <label>RATE (PKR)</label>
-                  <input className="input num" name="rate" type="number" step="any" defaultValue={0} />
+                <div className="row" style={{ gap: 8 }}>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label>QUANTITY</label>
+                    <input className="input num" name="quantity" type="number" step="any" required />
+                  </div>
+                  <div className="field" style={{ flex: 1 }}>
+                    <label>RATE (PKR)</label>
+                    <input className="input num" name="rate" type="number" step="any" defaultValue={0} />
+                  </div>
                 </div>
-              </div>
-              <div className="field">
-                <label>VENDOR / NOTE</label>
-                <input className="input" name="note" placeholder="Optional" />
-              </div>
-              <button className="btn btn-primary btn-block">Record Delivery</button>
-            </form>
-          </div>
-
-          <div className="card">
-            <div className="card-title">PHYSICAL COUNT</div>
-            <form action={postPhysicalCount} className="stack sm">
-              <div className="field">
-                <label>PRODUCT</label>
-                <select className="select" name="itemTypeId" required>
-                  <option value="">{'\u2014'} Select {'\u2014'}</option>
-                  {items.map((i) => (
-                    <option key={i.id} value={i.id}>{i.name_en}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="row" style={{ gap: 8 }}>
-                <div className="field" style={{ flex: 1 }}>
-                  <label>SIZE (inches)</label>
-                  <input className="input num" name="size" type="number" required />
+                <div className="field">
+                  <label>VENDOR / NOTE</label>
+                  <input className="input" name="note" placeholder="Optional" />
                 </div>
-                <div className="field" style={{ flex: 1 }}>
-                  <label>UNIT</label>
-                  <select className="select" name="unit" defaultValue={unit}>
-                    <option value="roll">Rolls</option>
-                    <option value="reel">Kg (Reel)</option>
-                    <option value="tota">Kg (Tota)</option>
-                  </select>
-                </div>
-              </div>
-              <div className="field">
-                <label>COUNTED QUANTITY</label>
-                <input className="input num" name="newQuantity" type="number" step="any" required />
-              </div>
-              <div className="field">
-                <label>REASON (MANDATORY)</label>
-                <input className="input" name="reason" required placeholder="e.g. Physical count" />
-              </div>
-              <button className="btn btn-block" style={{
-                background: 'var(--accent)', color: '#fff', border: 'none', cursor: 'pointer',
-              }}>Post Count</button>
-            </form>
-          </div>
+                <button className="btn btn-primary btn-block">Record Delivery</button>
+              </form>
+            </div>
+          )}
 
           <div className="card">
             <div className="card-title">RECENT MOVEMENTS</div>
@@ -245,7 +289,7 @@ export default async function StockPage({
                     <span style={{ minWidth: 0 }}>
                       <span className="log-msg">
                         {m.direction === 'out' ? '\u2212' : m.direction === 'adjust' ? '\u00b1' : '+'}
-                        {fmtNum(m.quantity)} {m.unit} \u00b7 {m.name_en} {m.size}&quot;
+                        {fmtNum(m.quantity)} {m.unit} {'\u00b7'} {m.name_en} {m.size}&quot;
                       </span>
                       <span className="log-detail">
                         {m.note}{m.ref_type === 'bill' ? ` \u00b7 bill #${m.ref_id}` : ''}
