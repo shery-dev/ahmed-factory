@@ -7,6 +7,7 @@ export function QuickAddCustomer({ onCreated }: { onCreated: (id: number) => voi
   const [open, setOpen] = useState(false);
   const [error, setError] = useState('');
   const [pending, startTransition] = useTransition();
+  const [kind, setKind] = useState<'cash' | 'ledger'>('cash');
 
   function submit(formData: FormData) {
     startTransition(async () => {
@@ -35,12 +36,18 @@ export function QuickAddCustomer({ onCreated }: { onCreated: (id: number) => voi
       <div className="card-title" style={{ fontSize: 12 }}>QUICK ADD CUSTOMER</div>
       <form action={submit} className="stack sm">
         <div className="row wrap" style={{ gap: 8 }}>
-          <select className="select" name="kind" defaultValue="cash" style={{ flex: '0 1 120px' }}>
+          <select className="select" name="kind" value={kind} onChange={(e) => setKind(e.target.value as 'cash' | 'ledger')} style={{ flex: '0 1 120px' }}>
             <option value="cash">Cash</option>
             <option value="ledger">Ledger</option>
           </select>
           <input className="input" name="name" required placeholder="Name" style={{ flex: '1 1 150px' }} />
-          <input className="input" name="contact" placeholder="Phone (optional)" style={{ flex: '1 1 140px' }} />
+          <input className="input" name="contact" placeholder="Phone" style={{ flex: '1 1 140px' }} />
+          {kind === 'ledger' && (
+            <>
+              <input className="input" name="manual_ledger_page" placeholder="Ledger page ref" style={{ flex: '0 1 120px' }} />
+              <input className="input num" name="credit_limit" type="number" step="any" defaultValue={0} placeholder="Credit limit" style={{ flex: '0 1 120px' }} />
+            </>
+          )}
           <button className="btn btn-primary" type="submit" disabled={pending} style={{ padding: '6px 14px', fontSize: 12 }}>
             {pending ? '...' : 'Add'}
           </button>

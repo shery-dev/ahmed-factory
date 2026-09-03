@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { listCustomers, customerBalance } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
-import { addCustomer } from './actions';
+import { AddCustomerForm } from '@/components/AddCustomerForm';
 
 export const dynamic = 'force-dynamic';
 
@@ -105,32 +105,7 @@ export default async function CustomersPage({
 
         <div className="card">
           <div className="card-title">ADD A CUSTOMER</div>
-          <form action={addCustomer} className="stack sm">
-            <div className="field">
-              <label>ACCOUNT TYPE</label>
-              <select className="select" name="kind" defaultValue="cash">
-                <option value="cash">Cash (c-prefix code)</option>
-                <option value="ledger">Ledger (number code)</option>
-              </select>
-            </div>
-            <div className="field">
-              <label>NAME</label>
-              <input className="input" name="name" required placeholder="Customer or business name" />
-            </div>
-            <div className="field">
-              <label>CONTACT (PHONE / WHATSAPP)</label>
-              <input className="input" name="contact" placeholder="Optional" />
-            </div>
-            <div className="field">
-              <label>LEDGER PAGE REF</label>
-              <input className="input" name="manual_ledger_page" placeholder="Paper register page number" />
-            </div>
-            <div className="field">
-              <label>CREDIT LIMIT (PKR)</label>
-              <input className="input num" name="credit_limit" type="number" step="any" defaultValue={0} />
-            </div>
-            <button className="btn btn-primary btn-block">Add Customer</button>
-          </form>
+          <AddCustomerForm />
           <div className="info-card good" style={{ marginTop: 14 }}>
             <div>
               Walk-in cash customers can also be created directly from the billing screen.

@@ -167,11 +167,19 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
                 <label>CONTACT</label>
                 <input className="input" name="contact" defaultValue={c.contact ?? ''} />
               </div>
-              <div className="field">
-                <label>CREDIT LIMIT (PKR)</label>
-                <input className="input num" name="credit_limit" type="number" step="any"
-                       defaultValue={c.credit_limit} />
-              </div>
+              {c.kind === 'ledger' && (
+                <>
+                  <div className="field">
+                    <label>LEDGER PAGE REF</label>
+                    <input className="input" name="manual_ledger_page" defaultValue={c.manual_ledger_page ?? ''} placeholder="Paper register page number" />
+                  </div>
+                  <div className="field">
+                    <label>CREDIT LIMIT (PKR)</label>
+                    <input className="input num" name="credit_limit" type="number" step="any"
+                           defaultValue={c.credit_limit} />
+                  </div>
+                </>
+              )}
               <button className="btn btn-primary btn-block">Save Changes</button>
             </form>
             {c.needs_review === 1 && (

@@ -24,6 +24,7 @@ export async function editCustomer(form: FormData) {
     name,
     contact: String(form.get('contact') ?? '').trim() || undefined,
     credit_limit: Number(form.get('credit_limit')) || 0,
+    manual_ledger_page: String(form.get('manual_ledger_page') ?? '').trim() || undefined,
   });
   revalidatePath('/customers/' + id); revalidatePath('/customers'); revalidatePath('/billing');
 }

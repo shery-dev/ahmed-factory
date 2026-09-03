@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useUi } from './Shell';
 import {
   FORM_FIELDS, priceAndDescribe, billTotals, validateLine,
@@ -53,6 +53,17 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
     () => billTotals(lines, Number(rent) || 0, Number(credit) || 0),
     [lines, rent, credit],
   );
+
+  const isCash = customer?.kind === 'cash';
+
+  // Auto-set credit = full amount for cash customers (everything is paid immediately)
+  useEffect(() => {
+    if (isCash) {
+      const sub = lines.reduce((s, l) => s + l.amount, 0);
+      setCredit(String(sub + (Number(rent) || 0)));
+      setCreditMethod('Cash');
+    }
+  }, [isCash, lines, rent]);
 
 
 
@@ -319,18 +330,33 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
             <input className="input num" style={{ width: 110, padding: '4px 8px', textAlign: 'end' }}
                    type="number" min="0" step="any" value={rent} onChange={(e) => setRent(e.target.value)} />
           </div>
-          <div className="total-row">
-            <span>{tr('paidNow')}</span>
-            <input className="input num" style={{ width: 110, padding: '4px 8px', textAlign: 'end' }}
-                   type="number" min="0" step="any" value={credit} onChange={(e) => setCredit(e.target.value)} />
-          </div>
-          <div className="total-row">
-            <span>{tr('paymentMethod')}</span>
-            <select className="select" style={{ width: 130, padding: '4px 8px' }}
-                    value={creditMethod} onChange={(e) => setCreditMethod(e.target.value)}>
-              {paymentMethods.map((m) => <option key={m}>{m}</option>)}
-            </select>
-          </div>
+          {isCash ? (
+            <>
+              <div className="total-row">
+                <span>{tr('paidNow')}</span>
+                <span className="num stat-green">PKR {fmtNum(totals.subtotal + (Number(rent) || 0))}</span>
+              </div>
+              <div className="total-row">
+                <span>{tr('paymentMethod')}</span>
+                <span className="t-muted">Cash</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="total-row">
+                <span>{tr('paidNow')}</span>
+                <input className="input num" style={{ width: 110, padding: '4px 8px', textAlign: 'end' }}
+                       type="number" min="0" step="any" value={credit} onChange={(e) => setCredit(e.target.value)} />
+              </div>
+              <div className="total-row">
+                <span>{tr('paymentMethod')}</span>
+                <select className="select" style={{ width: 130, padding: '4px 8px' }}
+                        value={creditMethod} onChange={(e) => setCreditMethod(e.target.value)}>
+                  {paymentMethods.map((m) => <option key={m}>{m}</option>)}
+                </select>
+              </div>
+            </>
+          )}
           <div className="total-row grand">
             <span>{tr('netDue')}</span><span className="num">PKR {fmtNum(totals.net)}</span>
           </div>

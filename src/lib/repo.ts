@@ -116,15 +116,15 @@ export async function createCustomer(input: {
 }
 
 export async function updateCustomer(id: number, input: {
-  name: string; contact?: string; credit_limit?: number;
+  name: string; contact?: string; credit_limit?: number; manual_ledger_page?: string;
 }) {
   const prev = await getCustomer(id);
   if (!prev) return;
   await dbRun(
-    `UPDATE customers SET name = ?, contact = ?, credit_limit = ?,
+    `UPDATE customers SET name = ?, contact = ?, credit_limit = ?, manual_ledger_page = ?,
        needs_review = CASE WHEN ? != '' AND needs_review = 1 THEN 0 ELSE needs_review END
      WHERE id = ?`,
-    [input.name.trim(), input.contact ?? null, input.credit_limit ?? 0, input.name.trim(), id],
+    [input.name.trim(), input.contact ?? null, input.credit_limit ?? 0, input.manual_ledger_page ?? null, input.name.trim(), id],
   );
   await logActivity('Customer updated', `${prev.code} — ${input.name}`, 'system', 'counter');
 }
