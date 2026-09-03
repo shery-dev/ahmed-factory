@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 interface StockAdjustPopupProps {
   stockId: number;
@@ -54,11 +55,12 @@ export function StockAdjustPopup({ stockId, currentQty, unitLabel, sizeLabel, pr
   const isAdd = Number(delta) > 0;
   const isRemove = Number(delta) < 0;
 
-  return (
+  // Render via portal directly into document.body — no card DOM interference
+  return createPortal(
     <div
       style={{
-        position: 'fixed', inset: 0, zIndex: 9999,
-        background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+        position: 'fixed', inset: 0, zIndex: 99999,
+        background: 'rgba(0,0,0,0.55)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 16,
       }}
@@ -76,7 +78,7 @@ export function StockAdjustPopup({ stockId, currentQty, unitLabel, sizeLabel, pr
           </div>
           <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
             {productName && <span style={{ fontWeight: 600 }}>{productName}</span>}
-            {productName && sizeLabel && <span> — </span>}
+            {productName && sizeLabel && <span> {'\u2014'} </span>}
             {sizeLabel && <span>Size {sizeLabel}</span>}
           </div>
         </div>
@@ -118,7 +120,7 @@ export function StockAdjustPopup({ stockId, currentQty, unitLabel, sizeLabel, pr
                 color: isAdd ? 'var(--success)' : isRemove ? 'var(--danger)' : 'var(--text-muted)',
                 fontWeight: 600,
               }}>
-                {isAdd ? '+' : ''}{delta} {unitLabel} → New total: <strong>{newQty.toLocaleString()}</strong> {unitLabel}
+                {isAdd ? '+' : ''}{delta} {unitLabel} {'\u2192'} New total: <strong>{newQty.toLocaleString()}</strong> {unitLabel}
               </div>
             )}
           </div>
@@ -160,6 +162,7 @@ export function StockAdjustPopup({ stockId, currentQty, unitLabel, sizeLabel, pr
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
