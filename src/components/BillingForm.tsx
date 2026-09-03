@@ -298,7 +298,7 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
                   <option value="">\u2014</option>
                   {sizeOpts.map((s) => (
                     <option key={s.size} value={s.size} disabled={s.quantity <= 0}>
-                      {s.size}\u2033 ({fmtNum(s.quantity)}){s.quantity <= 0 ? ' \u2014 OUT' : ''}
+                      {s.size} ({fmtNum(s.quantity)}){s.quantity <= 0 ? ' \u2014 OUT' : ''}
                     </option>
                   ))}
                 </select>
