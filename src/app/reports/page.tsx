@@ -44,6 +44,12 @@ export default async function ReportsPage({
         <button className="btn btn-primary" type="submit" style={{ padding: '6px 16px' }}>Compare Period</button>
       </form>
 
+      <div className="row" style={{ marginBottom: 20 }}>
+        <Link href="/reports/daily" className="btn btn-ghost" style={{ padding: '8px 16px' }}>
+          Daily Report &rarr;
+        </Link>
+      </div>
+
       {/* Period comparison */}
       <div className="card" style={{ marginBottom: 20 }}>
         <div className="card-title">PERIOD COMPARISON: {period.from} TO {period.to} ({period.days} DAYS)</div>

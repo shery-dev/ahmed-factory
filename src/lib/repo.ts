@@ -612,3 +612,47 @@ export async function customerRecentRate(customerId: number, itemTypeId: number)
   );
   return r?.rate ?? null;
 }
+
+
+// --- Daily Report ---
+export async function dailyReport(date: string) {
+  const d = date || new Date().toISOString().slice(0, 10);
+
+  const cashBills = await dbAll<any>(
+    "SELECT b.id, b.receipt_no, b.ts, c.name, c.code, b.subtotal, b.credit, b.payment_method FROM bills b JOIN customers c ON c.id = b.customer_id WHERE date(b.ts) = ? AND c.kind = 'cash' AND b.status = 'posted' ORDER BY b.ts", [d]
+  );
+
+  const ledgerBills = await dbAll<any>(
+    "SELECT b.id, b.receipt_no, b.ts, c.name, c.code, b.subtotal, b.credit, b.payment_method FROM bills b JOIN customers c ON c.id = b.customer_id WHERE date(b.ts) = ? AND c.kind = 'ledger' AND b.status = 'posted' ORDER BY b.ts", [d]
+  );
+
+  const expenses = await dbAll<any>(
+    "SELECT id, ts, category, detail, amount, actor FROM expenses WHERE date(ts) = ? ORDER BY ts", [d]
+  );
+
+  const expenseByCategory = await dbAll<any>(
+    "SELECT category, COUNT(*) n, SUM(amount) total FROM expenses WHERE date(ts) = ? GROUP BY category ORDER BY total DESC", [d]
+  );
+
+  const cashTotal = cashBills.reduce((s: number, b: any) => s + (b.subtotal || 0), 0);
+  const cashCollected = cashBills.reduce((s: number, b: any) => s + (b.credit || 0), 0);
+  const ledgerTotal = ledgerBills.reduce((s: number, b: any) => s + (b.subtotal || 0), 0);
+  const ledgerCollected = ledgerBills.reduce((s: number, b: any) => s + (b.credit || 0), 0);
+  const expenseTotal = expenses.reduce((s: number, e: any) => s + (e.amount || 0), 0);
+
+  const ledgerMovement = await dbGet<any>(
+    "SELECT COALESCE(SUM(debit), 0) total_debit, COALESCE(SUM(credit), 0) total_credit, COALESCE(SUM(rent), 0) total_rent FROM ledger_entries WHERE date(ts) = ? AND flagged = 0", [d]
+  );
+
+  const netPosition = cashCollected - expenseTotal;
+
+  return {
+    date: d, cashBills, ledgerBills, expenses, expenseByCategory,
+    cashTotal, cashCollected, ledgerTotal, ledgerCollected, expenseTotal,
+    ledgerMovement, netPosition,
+    totalBills: cashBills.length + ledgerBills.length,
+    totalDebit: ledgerMovement.total_debit,
+    totalCredit: ledgerMovement.total_credit,
+    totalRent: ledgerMovement.total_rent,
+  };
+}
