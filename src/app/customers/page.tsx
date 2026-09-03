@@ -16,6 +16,10 @@ export default async function CustomersPage({
   });
   const customers = await Promise.all(customersList.map(async (c) => ({ ...c, balance: await customerBalance(c.id) })));
 
+  const totalBalance = customers.reduce((s, c) => s + c.balance, 0);
+  const cashCount = customers.filter(c => c.kind === 'cash').length;
+  const ledgerCount = customers.filter(c => c.kind === 'ledger').length;
+
   return (
     <>
       <div className="panel-header">
@@ -43,46 +47,60 @@ export default async function CustomersPage({
         )}
       </form>
 
+      <div className="grid grid-4" style={{ marginBottom: 20 }}>
+        <div className="card tight">
+          <div className="card-title">TOTAL</div>
+          <div className="stat-big num">{customers.length}</div>
+        </div>
+        <div className="card tight">
+          <div className="card-title">CASH</div>
+          <div className="stat-big num">{cashCount}</div>
+        </div>
+        <div className="card tight">
+          <div className="card-title">LEDGER</div>
+          <div className="stat-big num">{ledgerCount}</div>
+        </div>
+        <div className="card tight">
+          <div className="card-title">TOTAL RECEIVABLE</div>
+          <div className="stat-big stat-accent num">PKR {fmtNum(totalBalance)}</div>
+        </div>
+      </div>
+
       <div className="split">
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>CODE</th><th>NAME</th><th>TYPE</th><th>CONTACT</th>
-                <th>LEDGER PAGE</th><th className="right">BALANCE</th><th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {customers.length === 0 ? (
-                <tr><td colSpan={7} className="t-muted" style={{ textAlign: 'center', padding: 24 }}>No customers match your search</td></tr>
-              ) : customers.map((c) => (
-                <tr key={c.id} style={{ opacity: c.active ? 1 : 0.5 }}>
-                  <td className="mono t-strong">{c.code}</td>
-                  <td>
-                    <span className="t-strong">{c.name}</span>
-                    {c.needs_review === 1 && (
-                      <span className="badge badge-yellow" style={{ marginInlineStart: 8 }}>CHECK</span>
-                    )}
-                    {!c.active && (
-                      <span className="badge badge-muted" style={{ marginInlineStart: 8 }}>INACTIVE</span>
-                    )}
-                  </td>
-                  <td>
+        <div>
+          {customers.length === 0 ? (
+            <div className="empty">No customers match your search</div>
+          ) : (
+            <div className="customer-grid">
+              {customers.map((c) => (
+                <div key={c.id} className={`customer-card ${!c.active ? 'customer-card--inactive' : ''}`}>
+                  <div className="customer-card__top">
+                    <div>
+                      <div className="customer-card__name">
+                        {c.name}
+                        {c.needs_review === 1 && <span className="customer-card__review" style={{ marginInlineStart: 6 }}>CHECK</span>}
+                      </div>
+                      <div className="customer-card__code">{c.code}</div>
+                    </div>
+                    <div className={`customer-card__balance ${c.balance > 0 ? 'customer-card__balance--positive' : ''}`}>
+                      {fmtNum(c.balance)}
+                    </div>
+                  </div>
+                  <div className="customer-card__details">
                     <span className={`badge ${c.kind === 'cash' ? 'badge-kraft' : 'badge-purple'}`}>{c.kind}</span>
-                  </td>
-                  <td className="num t-muted">{c.contact || '\u2014'}</td>
-                  <td className="num t-muted">{c.manual_ledger_page || '\u2014'}</td>
-                  <td className={`right num t-strong ${c.balance > 0 ? 'stat-accent' : ''}`}>
-                    {fmtNum(c.balance)}
-                  </td>
-                  <td className="right">
-                    <Link className="btn btn-ghost" style={{ padding: '4px 10px', fontSize: 11 }}
-                          href={`/customers/${c.id}`}>Ledger</Link>
-                  </td>
-                </tr>
+                    {c.contact && <span className="customer-card__chip">\u260E {c.contact}</span>}
+                    {c.manual_ledger_page && <span className="customer-card__chip">\u2637 p.{c.manual_ledger_page}</span>}
+                    {!c.active && <span className="badge badge-muted">INACTIVE</span>}
+                  </div>
+                  <div className="customer-card__actions">
+                    <Link className="customer-card__link" href={`/customers/${c.id}`}>
+                      View Ledger \u2192
+                    </Link>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          )}
         </div>
 
         <div className="card">

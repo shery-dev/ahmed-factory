@@ -3,6 +3,7 @@ import { listStock, stockSummary, listItemTypes } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
 import { PanelHeader } from '@/components/PanelHeader';
 import { receiveDelivery, postPhysicalCount } from './actions';
+import StockCardGroup from '@/components/StockCardGroup';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +22,24 @@ export default async function StockPage({
   const items = await listItemTypes();
   const totalUnits = rows.reduce((s, r) => s + r.quantity, 0);
   const flagged = rows.filter((r) => r.flagged).length;
+
+  // Group stock rows by product name for card view
+  const groupMap = new Map<string, any[]>();
+  for (const r of rows) {
+    const key = r.name_en;
+    if (!groupMap.has(key)) groupMap.set(key, []);
+    groupMap.get(key)!.push(r);
+  }
+  const groups = Array.from(groupMap.entries()).map(([name, lines]) => ({
+    name,
+    lines: lines.map(l => ({ id: l.id, size: l.size, unit: l.unit, quantity: l.quantity, rate: l.rate, flagged: l.flagged, flag_reason: l.flag_reason })),
+    totalQty: lines.reduce((s, l) => s + l.quantity, 0),
+    lowCount: lines.filter(l => l.quantity > 0 && l.quantity <= 5 && !l.flagged).length,
+    outCount: lines.filter(l => l.quantity <= 0).length,
+    flaggedCount: lines.filter(l => l.flagged).length,
+  }));
+
+  const unitLabel = unit === 'roll' ? 'rolls' : 'kg';
 
   return (
     <>
@@ -99,8 +118,8 @@ export default async function StockPage({
         <>
           <div className="grid grid-4" style={{ marginBottom: 20 }}>
             <div className="card tight">
-              <div className="card-title">LINES</div>
-              <div className="stat-big num">{rows.length}</div>
+              <div className="card-title">PRODUCTS</div>
+              <div className="stat-big num">{groups.length}</div>
             </div>
             <div className="card tight">
               <div className="card-title">TOTAL {unit === 'roll' ? 'ROLLS' : 'KG'}</div>
@@ -116,32 +135,11 @@ export default async function StockPage({
             </div>
           </div>
 
-          <div className="table-wrap" style={{ maxHeight: 620, overflowY: 'auto' }}>
-            <table>
-              <thead>
-                <tr><th>PRODUCT</th><th className="right">SIZE</th><th className="right">ON HAND</th><th className="right">RATE</th><th></th></tr>
-              </thead>
-              <tbody>
-                {rows.length === 0 ? (
-                  <tr><td colSpan={5} className="t-muted" style={{ textAlign: 'center', padding: 24 }}>No stock items match</td></tr>
-                ) : rows.map((r) => (
-                  <tr key={r.id}>
-                    <td className="t-strong">{r.name_en}</td>
-                    <td className="right num">{r.size}&quot;</td>
-                    <td className="right num t-strong">{fmtNum(r.quantity)}</td>
-                    <td className="right num t-muted">{r.rate ? fmtNum(r.rate) : '\u2014'}</td>
-                    <td className="right">
-                      {r.flagged
-                        ? <span className="badge badge-red" title={r.flag_reason ?? ''}>QUARANTINED</span>
-                        : r.quantity <= 0 ? <span className="badge badge-red">OUT</span>
-                        : r.quantity <= 5 ? <span className="badge badge-yellow">LOW</span>
-                        : <span className="badge badge-green">OK</span>}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {groups.length === 0 ? (
+            <div className="empty">No stock items match</div>
+          ) : (
+            <StockCardGroup groups={groups} unitLabel={unitLabel} />
+          )}
         </>
       )}
 
