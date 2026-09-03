@@ -619,11 +619,11 @@ export async function dailyReport(date: string) {
   const d = date || new Date().toISOString().slice(0, 10);
 
   const cashBills = await dbAll<any>(
-    "SELECT b.id, b.receipt_no, b.ts, c.name, c.code, b.subtotal, b.credit, b.payment_method FROM bills b JOIN customers c ON c.id = b.customer_id WHERE date(b.ts) = ? AND c.kind = 'cash' AND b.status = 'posted' ORDER BY b.ts", [d]
+    "SELECT b.id, b.receipt_no, b.ts, c.name, c.code, b.subtotal, b.credit, b.credit_method FROM bills b JOIN customers c ON c.id = b.customer_id WHERE date(b.ts) = ? AND c.kind = 'cash' AND b.status = 'posted' ORDER BY b.ts", [d]
   );
 
   const ledgerBills = await dbAll<any>(
-    "SELECT b.id, b.receipt_no, b.ts, c.name, c.code, b.subtotal, b.credit, b.payment_method FROM bills b JOIN customers c ON c.id = b.customer_id WHERE date(b.ts) = ? AND c.kind = 'ledger' AND b.status = 'posted' ORDER BY b.ts", [d]
+    "SELECT b.id, b.receipt_no, b.ts, c.name, c.code, b.subtotal, b.credit, b.credit_method FROM bills b JOIN customers c ON c.id = b.customer_id WHERE date(b.ts) = ? AND c.kind = 'ledger' AND b.status = 'posted' ORDER BY b.ts", [d]
   );
 
   const expenses = await dbAll<any>(
