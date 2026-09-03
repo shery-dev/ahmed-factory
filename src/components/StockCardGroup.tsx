@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { fmtNum } from '@/lib/i18n';
 import { StockAdjustPopup } from './StockAdjustPopup';
+import { RateEditPopup } from './RateEditPopup';
 
 interface StockLine {
   id: number; size: number; unit: string; quantity: number; rate: number;
@@ -21,6 +22,8 @@ interface ProductGroup {
 function StockCard({ group, unitLabel }: { group: ProductGroup; unitLabel: string }) {
   const [hovered, setHovered] = useState(false);
   const [adjustingLine, setAdjustingLine] = useState<StockLine | null>(null);
+  const [editingRateLine, setEditingRateLine] = useState<StockLine | null>(null);
+  const modalOpen = !!adjustingLine || !!editingRateLine;
 
   const status = group.flaggedCount > 0 ? 'quarantined'
     : group.outCount > 0 ? 'out'
@@ -30,8 +33,8 @@ function StockCard({ group, unitLabel }: { group: ProductGroup; unitLabel: strin
   return (
     <div
       className={`stock-card stock-card--${status}`}
-      onMouseEnter={() => !adjustingLine && setHovered(true)}
-      onMouseLeave={() => !adjustingLine && setHovered(false)}
+      onMouseEnter={() => !modalOpen && setHovered(true)}
+      onMouseLeave={() => !modalOpen && setHovered(false)}
     >
       <div className="stock-card__header">
         <div className="stock-card__name">{group.name}</div>
@@ -66,7 +69,16 @@ function StockCard({ group, unitLabel }: { group: ProductGroup; unitLabel: strin
               >
                 <span className="stock-card__size num">{l.size}&quot;</span>
                 <span className="stock-card__qty num">{fmtNum(l.quantity)}</span>
-                {l.rate > 0 && <span className="stock-card__rate num">@{fmtNum(l.rate)}</span>}
+                {l.rate > 0 && (
+                  <span
+                    className="stock-card__rate num"
+                    onClick={(e) => { e.stopPropagation(); if (canAdjust) setEditingRateLine(l); }}
+                    style={{ cursor: canAdjust ? 'pointer' : 'default', textDecoration: canAdjust ? 'underline dotted' : 'none' }}
+                    title={canAdjust ? 'Click to edit rate' : undefined}
+                  >
+                    @{fmtNum(l.rate)}
+                  </span>
+                )}
                 <span className={`stock-card__dot stock-card__dot--${lineStatus}`} />
               </div>
             );
@@ -74,7 +86,7 @@ function StockCard({ group, unitLabel }: { group: ProductGroup; unitLabel: strin
         </div>
       </div>
 
-      {/* Full-screen modal popup */}
+      {/* Quantity adjust modal */}
       {adjustingLine && (
         <StockAdjustPopup
           stockId={adjustingLine.id}
@@ -83,6 +95,17 @@ function StockCard({ group, unitLabel }: { group: ProductGroup; unitLabel: strin
           sizeLabel={`${adjustingLine.size}"`}
           productName={group.name}
           onClose={() => setAdjustingLine(null)}
+        />
+      )}
+
+      {/* Rate edit modal */}
+      {editingRateLine && (
+        <RateEditPopup
+          stockId={editingRateLine.id}
+          currentRate={editingRateLine.rate}
+          sizeLabel={`${editingRateLine.size}"`}
+          productName={group.name}
+          onClose={() => setEditingRateLine(null)}
         />
       )}
     </div>
