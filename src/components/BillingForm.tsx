@@ -1,13 +1,13 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useUi } from './Shell';
 import {
   FORM_FIELDS, priceAndDescribe, billTotals, validateLine,
   type SaleForm, type LineInput, type PricedLine,
 } from '@/lib/pricing';
 import { fmtNum, type DictKey } from '@/lib/i18n';
-import { submitBill, getRecentRate } from '@/app/billing/actions';
+import { submitBill } from '@/app/billing/actions';
 import { QuickAddCustomer } from './QuickAddCustomer';
 
 export interface CatalogueItem {
@@ -31,7 +31,6 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
   const [form, setForm] = useState<SaleForm>('rolls');
   const [typeId, setTypeId] = useState<number | ''>('');
   const [size, setSize] = useState<number | ''>('');
-  const [rate, setRate] = useState<string>('');
   const [vals, setVals] = useState<Record<string, string>>({});
   const [lines, setLines] = useState<PricedLine[]>([]);
   const [rent, setRent] = useState('0');
@@ -41,6 +40,8 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
   const [errors, setErrors] = useState<string[]>([]);
   const [result, setResult] = useState<null | { ok: boolean; receiptNo?: number; billId?: number; effects?: string[]; errors?: string[] }>(null);
   const [busy, setBusy] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
 
   const spec = FORM_FIELDS[form];
   const unit = UNIT_FOR[form];
@@ -48,6 +49,29 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
   const sizeOpts = item && unit ? item.sizes[unit] : [];
   const onHand = sizeOpts.find((s) => s.size === size)?.quantity ?? null;
   const customer = customers.find((c) => c.id === customerId);
+
+  // Fixed rate from catalogue
+  const fixedRate = item?.default_rate ?? 0;
+
+  // Compute total stock per item (across the relevant unit)
+  const itemStock = useMemo(() => {
+    const map = new Map<number, number>();
+    for (const it of items) {
+      const u = UNIT_FOR[form];
+      const sizes = u ? it.sizes[u] ?? [] : [];
+      map.set(it.id, sizes.reduce((s, x) => s + x.quantity, 0));
+    }
+    return map;
+  }, [items, form]);
+
+  // Close item picker on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) setPickerOpen(false);
+    }
+    if (pickerOpen) document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [pickerOpen]);
 
   const totals = useMemo(
     () => billTotals(lines, Number(rent) || 0, Number(credit) || 0),
@@ -67,13 +91,9 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
 
 
 
-  // Auto-fill rate from customer's last purchase of this product
-  const prevRateRef = { current: '' };
-  if (customerId && typeId && prevRateRef.current !== customerId + '-' + typeId) {
-    prevRateRef.current = customerId + '-' + typeId;
-    getRecentRate(Number(customerId), Number(typeId)).then((r) => {
-      if (r.rate !== null && !rate) setRate(String(r.rate));
-    });
+  // Clear picker when switching tabs
+  function switchForm(f: SaleForm) {
+    setForm(f); setVals({}); setSize(''); setTypeId(''); setErrors([]); setPickerOpen(false);
   }
 
   const draft = (): LineInput => ({
@@ -86,16 +106,15 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
     grammage: vals.grammage ? Number(vals.grammage) : null,
     lengthIn: vals.lengthIn ? Number(vals.lengthIn) : null,
     widthIn: vals.widthIn ? Number(vals.widthIn) : null,
-    rate: Number(rate) || 0,
+    rate: fixedRate,
   });
 
   const preview = priceAndDescribe(draft());
 
-  function pickType(v: string) {
-    setTypeId(v === '' ? '' : Number(v));
+  function pickType(id: number) {
+    setTypeId(id);
     setSize('');
-    const it = items.find((i) => i.id === Number(v));
-    if (it) setRate(String(it.default_rate)); // rate comes from the catalogue, editable
+    setPickerOpen(false);
   }
 
   function addLine() {
@@ -217,7 +236,7 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
           <div className="tabs">
             {FORMS.map((f) => (
               <button key={f} className={`tab ${form === f ? 'active' : ''}`}
-                      onClick={() => { setForm(f); setVals({}); setSize(''); setTypeId(''); setRate(''); setErrors([]); }}>
+                      onClick={() => switchForm(f)}>
                 {tr(f as DictKey)}
               </button>
             ))}
@@ -236,10 +255,39 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
             {spec.needsType && (
               <div className="field" style={{ gridColumn: 'span 2' }}>
                 <label>{tr('paperType')}</label>
-                <select className="select" value={typeId} onChange={(e) => pickType(e.target.value)}>
-                  <option value="">—</option>
-                  {items.map((i) => <option key={i.id} value={i.id}>{nameOf(i)}</option>)}
-                </select>
+                <div ref={pickerRef} style={{ position: 'relative' }}>
+                  <button type="button" className="select" style={{ width: '100%', textAlign: 'left', cursor: 'pointer' }}
+                          onClick={() => setPickerOpen(!pickerOpen)}>
+                    {item ? nameOf(item) : '\u2014'}
+                  </button>
+                  {pickerOpen && (
+                    <div style={{
+                      position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100,
+                      background: 'var(--bg-surface)', border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius-sm)', boxShadow: 'var(--shadow-md)',
+                      maxHeight: 220, overflowY: 'auto', marginTop: 2,
+                    }}>
+                      {items.map((i) => {
+                        const stock = itemStock.get(i.id) ?? 0;
+                        const oos = stock <= 0;
+                        return (
+                          <div key={i.id}
+                               onClick={() => !oos && pickType(i.id)}
+                               style={{
+                                 padding: '8px 12px', cursor: oos ? 'not-allowed' : 'pointer',
+                                 fontSize: 13, display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                 textDecoration: oos ? 'line-through' : 'none',
+                                 opacity: oos ? 0.45 : 1,
+                                 background: typeId === i.id ? 'var(--bg-elevated)' : 'transparent',
+                               }}>
+                            <span>{nameOf(i)}</span>
+                            <span className="t-muted num" style={{ fontSize: 11 }}>{fmtNum(stock)} {unit}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
             {spec.needsSize && (
@@ -247,9 +295,11 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
                 <label>{tr('size')}</label>
                 <select className="select" value={size} disabled={!item}
                         onChange={(e) => setSize(e.target.value === '' ? '' : Number(e.target.value))}>
-                  <option value="">—</option>
+                  <option value="">\u2014</option>
                   {sizeOpts.map((s) => (
-                    <option key={s.size} value={s.size}>{s.size}″ ({fmtNum(s.quantity)})</option>
+                    <option key={s.size} value={s.size} disabled={s.quantity <= 0}>
+                      {s.size}\u2033 ({fmtNum(s.quantity)}){s.quantity <= 0 ? ' \u2014 OUT' : ''}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -262,14 +312,16 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
                     : f === 'grammage' ? tr('grammage')
                     : f === 'lengthIn' ? tr('length') : tr('width')}
                 </label>
-                <input className="input num" type="number" min="0" step="any" value={vals[f] ?? ''}
+                <input className="input num" type="number" min="0" step="any"
+                       max={f === 'qty' && onHand !== null ? onHand : undefined}
+                       value={vals[f] ?? ''}
                        onChange={(e) => setVals({ ...vals, [f]: e.target.value })} />
               </div>
             ))}
             <div className="field">
-              <label>{tr('rate')} (PKR)</label>
-              <input className="input num" type="number" min="0" step="any" value={rate}
-                     onChange={(e) => setRate(e.target.value)} />
+              <label>{tr('rate')} (PKR) \u2014 fixed</label>
+              <input className="input num" type="number" value={fixedRate} readOnly
+                     style={{ opacity: 0.7, cursor: 'not-allowed' }} />
             </div>
           </div>
 
