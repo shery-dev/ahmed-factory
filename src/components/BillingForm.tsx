@@ -252,7 +252,7 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
             <span className="formula-chip">{spec.formula}</span>
             {onHand !== null && (
               <span className={`badge ${onHand <= 0 ? 'badge-red' : onHand <= 5 ? 'badge-yellow' : 'badge-green'}`}>
-                {tr('onHand')}: {fmtNum(onHand)} {unit}
+                {tr('onHand')}: {fmtNum(onHand)} {unit === 'roll' ? 'rolls' : 'kg'}
               </span>
             )}
             {wasteOnHand !== null && (
@@ -292,7 +292,7 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
                                  background: typeId === i.id ? 'var(--bg-elevated)' : 'transparent',
                                }}>
                             <span>{nameOf(i)}</span>
-                            <span className="t-muted num" style={{ fontSize: 11 }}>{fmtNum(stock)} {unit}</span>
+                            <span className="t-muted num" style={{ fontSize: 11 }}>{fmtNum(stock)} {unit === 'roll' ? 'rolls' : 'kg'}</span>
                           </div>
                         );
                       })}
@@ -317,12 +317,17 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
             )}
             {spec.fields.map((f) => {
               const isQty = f === 'qty';
-              const maxStock = isQty && onHand !== null ? onHand : null;
+              const isWeight = f === 'weightKg';
+              // Cap qty (rolls) and weightKg (reels, totay) at available stock
+              const stockCap = (isQty || isWeight) && onHand !== null ? onHand : null;
+              // Cap weightKg for waste forms (jutta, raddi, nali) at waste stock
+              const wasteCap = isWeight && wasteOnHand !== null ? wasteOnHand : null;
+              const maxStock = stockCap ?? wasteCap;
               return (
                 <div className="field" key={f}>
                   <label>
                     {isQty ? `${tr('quantity')} (${spec.unitLabel})`
-                      : f === 'weightKg' ? tr('weight')
+                      : isWeight ? tr('weight')
                       : f === 'grammage' ? tr('grammage')
                       : f === 'lengthIn' ? tr('length') : tr('width')}
                     {maxStock !== null && <span className="t-muted" style={{ fontSize: 11, marginInlineStart: 6 }}>max: {fmtNum(maxStock)}</span>}
@@ -335,7 +340,7 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
                            let num = Number(raw);
                            if (isNaN(num) || num < 0) return;
                            if (maxStock !== null && num > maxStock) num = maxStock;
-                           if (isQty) num = Math.floor(num);
+                           if (isQty) num = Math.floor(num); // rolls are whole units only
                            setVals({ ...vals, [f]: String(num) });
                          }} />
                 </div>

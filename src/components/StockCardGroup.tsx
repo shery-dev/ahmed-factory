@@ -20,7 +20,7 @@ interface ProductGroup {
 
 function StockCard({ group, unitLabel }: { group: ProductGroup; unitLabel: string }) {
   const [hovered, setHovered] = useState(false);
-  const [adjustingId, setAdjustingId] = useState<number | null>(null);
+  const [adjustingLine, setAdjustingLine] = useState<StockLine | null>(null);
 
   const status = group.flaggedCount > 0 ? 'quarantined'
     : group.outCount > 0 ? 'out'
@@ -51,32 +51,40 @@ function StockCard({ group, unitLabel }: { group: ProductGroup; unitLabel: strin
         <div className="stock-card__list">
           {group.lines.map((l) => {
             const lineStatus = l.flagged ? 'quarantined' : l.quantity <= 0 ? 'out' : l.quantity <= 5 ? 'low' : 'ok';
+            const canAdjust = !l.flagged;
             return (
-              <div key={l.id} className={`stock-card__row stock-card__row--${lineStatus}`} style={{ position: 'relative' }}>
+              <div
+                key={l.id}
+                className={`stock-card__row stock-card__row--${lineStatus}`}
+                onClick={() => canAdjust && setAdjustingLine(l)}
+                style={{
+                  cursor: canAdjust ? 'pointer' : 'default',
+                  transition: 'background 0.15s',
+                }}
+                onMouseEnter={(e) => { if (canAdjust) (e.currentTarget as HTMLElement).style.background = 'var(--bg-main)'; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ''; }}
+              >
                 <span className="stock-card__size num">{l.size}&quot;</span>
-                <span
-                  className="stock-card__qty num"
-                  onClick={() => hovered && !l.flagged && setAdjustingId(l.id)}
-                  style={{ cursor: hovered && !l.flagged ? 'pointer' : 'default', textDecoration: hovered && !l.flagged ? 'underline' : 'none' }}
-                  title={hovered && !l.flagged ? 'Click to adjust stock' : undefined}
-                >
-                  {fmtNum(l.quantity)}
-                </span>
+                <span className="stock-card__qty num">{fmtNum(l.quantity)}</span>
                 {l.rate > 0 && <span className="stock-card__rate num">@{fmtNum(l.rate)}</span>}
                 <span className={`stock-card__dot stock-card__dot--${lineStatus}`} />
-                {adjustingId === l.id && (
-                  <StockAdjustPopup
-                    stockId={l.id}
-                    currentQty={l.quantity}
-                    unitLabel={unitLabel}
-                    onClose={() => setAdjustingId(null)}
-                  />
-                )}
               </div>
             );
           })}
         </div>
       </div>
+
+      {/* Full-screen modal popup */}
+      {adjustingLine && (
+        <StockAdjustPopup
+          stockId={adjustingLine.id}
+          currentQty={adjustingLine.quantity}
+          unitLabel={unitLabel}
+          sizeLabel={`${adjustingLine.size}"`}
+          productName={group.name}
+          onClose={() => setAdjustingLine(null)}
+        />
+      )}
     </div>
   );
 }
