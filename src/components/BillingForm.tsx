@@ -56,8 +56,9 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
   const wasteCategory = WASTE_FORMS[form];
   const wasteOnHand = wasteCategory && wasteStock ? (wasteStock[wasteCategory] ?? 0) : null;
 
-  // Fixed rate from catalogue
-  const fixedRate = item?.default_rate ?? 0;
+  // Rate from catalogue (auto-fills, but user can override)
+  const [rate, setRate] = useState(0);
+  useEffect(() => { setRate(item?.default_rate ?? 0); }, [item]);
 
   // Compute total stock per item (across the relevant unit)
   const itemStock = useMemo(() => {
@@ -99,7 +100,7 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
 
   // Clear picker when switching tabs
   function switchForm(f: SaleForm) {
-    setForm(f); setVals({}); setSize(''); setTypeId(''); setErrors([]); setPickerOpen(false);
+    setForm(f); setVals({}); setSize(''); setTypeId(''); setErrors([]); setPickerOpen(false); setRate(0);
   }
 
   const draft = (): LineInput => ({
@@ -112,7 +113,7 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
     grammage: vals.grammage ? Number(vals.grammage) : null,
     lengthIn: vals.lengthIn ? Number(vals.lengthIn) : null,
     widthIn: vals.widthIn ? Number(vals.widthIn) : null,
-    rate: fixedRate,
+    rate,
   });
 
   const preview = priceAndDescribe(draft());
@@ -339,7 +340,7 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
                            if (raw === '' || raw === '-') { setVals({ ...vals, [f]: raw }); return; }
                            let num = Number(raw);
                            if (isNaN(num) || num < 0) return;
-                           if (maxStock !== null && num > maxStock) num = maxStock;
+                           if (maxStock !== null && maxStock > 0 && num > maxStock) num = maxStock;
                            if (isQty) num = Math.floor(num); // rolls are whole units only
                            setVals({ ...vals, [f]: String(num) });
                          }} />
@@ -347,9 +348,9 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
               );
             })}
             <div className="field">
-              <label>{tr('rate')} (PKR) {'\u2014'} fixed</label>
-              <input className="input num" type="number" value={fixedRate} readOnly
-                     style={{ opacity: 0.7, cursor: 'not-allowed' }} />
+              <label>{tr('rate')} (PKR)</label>
+              <input className="input num" type="number" min="0" step="any" value={rate}
+                     onChange={(e) => setRate(Number(e.target.value))} />
             </div>
           </div>
 
