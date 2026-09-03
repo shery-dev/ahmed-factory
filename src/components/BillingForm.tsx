@@ -304,20 +304,32 @@ export function BillingForm({ items, customers, paymentMethods }: { items: Catal
                 </select>
               </div>
             )}
-            {spec.fields.map((f) => (
-              <div className="field" key={f}>
-                <label>
-                  {f === 'qty' ? `${tr('quantity')} (${spec.unitLabel})`
-                    : f === 'weightKg' ? tr('weight')
-                    : f === 'grammage' ? tr('grammage')
-                    : f === 'lengthIn' ? tr('length') : tr('width')}
-                </label>
-                <input className="input num" type="number" min="0" step="any"
-                       max={f === 'qty' && onHand !== null ? onHand : undefined}
-                       value={vals[f] ?? ''}
-                       onChange={(e) => setVals({ ...vals, [f]: e.target.value })} />
-              </div>
-            ))}
+            {spec.fields.map((f) => {
+              const isQty = f === 'qty';
+              const maxStock = isQty && onHand !== null ? onHand : null;
+              return (
+                <div className="field" key={f}>
+                  <label>
+                    {isQty ? `${tr('quantity')} (${spec.unitLabel})`
+                      : f === 'weightKg' ? tr('weight')
+                      : f === 'grammage' ? tr('grammage')
+                      : f === 'lengthIn' ? tr('length') : tr('width')}
+                    {maxStock !== null && <span className="t-muted" style={{ fontSize: 11, marginInlineStart: 6 }}>max: {fmtNum(maxStock)}</span>}
+                  </label>
+                  <input className="input num" type="number" min="0" step={isQty ? "1" : "any"}
+                         value={vals[f] ?? ''}
+                         onChange={(e) => {
+                           const raw = e.target.value;
+                           if (raw === '' || raw === '-') { setVals({ ...vals, [f]: raw }); return; }
+                           let num = Number(raw);
+                           if (isNaN(num) || num < 0) return;
+                           if (maxStock !== null && num > maxStock) num = maxStock;
+                           if (isQty) num = Math.floor(num);
+                           setVals({ ...vals, [f]: String(num) });
+                         }} />
+                </div>
+              );
+            })}
             <div className="field">
               <label>{tr('rate')} (PKR) \u2014 fixed</label>
               <input className="input num" type="number" value={fixedRate} readOnly
