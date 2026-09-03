@@ -1,6 +1,6 @@
 'use server';
 import { revalidatePath } from 'next/cache';
-import { createCustomer, updateCustomer, deactivateCustomer, reactivateCustomer } from '@/lib/repo';
+import { createCustomer, updateCustomer, deactivateCustomer, reactivateCustomer, receivePayment } from '@/lib/repo';
 
 export async function addCustomer(form: FormData) {
   const kind = String(form.get('kind') ?? 'cash') as 'cash' | 'ledger';
@@ -41,4 +41,18 @@ export async function reactivateCustomerAction(form: FormData) {
   if (!id) return;
   await reactivateCustomer(id);
   revalidatePath('/customers'); revalidatePath('/billing');
+}
+
+export async function receivePaymentAction(form: FormData) {
+  const customerId = Number(form.get('customerId'));
+  const amount = Number(form.get('amount'));
+  const method = String(form.get('method') ?? 'Cash').trim();
+  const note = String(form.get('note') ?? '').trim();
+
+  if (!customerId || !amount || amount <= 0) return { ok: false, error: 'Invalid amount' };
+
+  const result = await receivePayment({ customerId, amount, method, note: note || undefined });
+  revalidatePath('/customers/' + customerId);
+  revalidatePath('/customers');
+  return result;
 }

@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCustomer, customerLedger, customerBalance } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
-import { getSettings } from '@/lib/settings';
+import { getSettings, getPaymentMethods } from '@/lib/settings';
 import { PrintButton } from '@/components/PrintButton';
+import { ReceivePaymentForm } from '@/components/ReceivePaymentForm';
 import { editCustomer, deactivateCustomerAction, reactivateCustomerAction } from '../actions';
 
 export const dynamic = 'force-dynamic';
@@ -13,6 +14,7 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
   const c = await getCustomer(Number(id));
   if (!c) notFound();
   const settings = await getSettings();
+  const paymentMethods = getPaymentMethods(settings);
   const rows = await customerLedger(c.id);
   const balance = await customerBalance(c.id);
 
@@ -155,6 +157,9 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
         </div>
 
         <div className="stack sm">
+          {c.kind === 'ledger' && balance > 0 && (
+            <ReceivePaymentForm customerId={c.id} balance={balance} paymentMethods={paymentMethods} />
+          )}
           <div className="card">
             <div className="card-title">EDIT CUSTOMER</div>
             <form action={editCustomer} className="stack sm">

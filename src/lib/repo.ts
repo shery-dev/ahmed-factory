@@ -168,6 +168,30 @@ export async function customerLedger(customerId: number) {
   });
 }
 
+/**
+ * Record a payment received from a customer.
+ * Inserts a ledger entry with credit = amount, which reduces the outstanding balance.
+ */
+export async function receivePayment(input: {
+  customerId: number; amount: number; method: string; note?: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  if (input.amount <= 0) return { ok: false, error: 'Amount must be greater than zero' };
+  const c = await getCustomer(input.customerId);
+  if (!c) return { ok: false, error: 'Customer not found' };
+
+  try {
+    await dbRun(
+      `INSERT INTO ledger_entries (customer_id, particulars, debit, credit, credit_method, rent)
+       VALUES (?, ?, 0, ?, ?, 0)`,
+      [input.customerId, input.note || `Payment received`, input.amount, input.method],
+    );
+    await logActivity('Payment received', `${c.name} · PKR ${input.amount} via ${input.method}`, 'success', 'ledger', input.customerId);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
 export async function outstandingBalances() {
   return dbAll<{ id: number; code: string; name: string; kind: string;
                  contact: string | null; balance: number; last_activity: string | null }>(

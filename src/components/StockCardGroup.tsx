@@ -30,8 +30,8 @@ function StockCard({ group, unitLabel }: { group: ProductGroup; unitLabel: strin
   return (
     <div
       className={`stock-card stock-card--${status}`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => !adjustingLine && setHovered(true)}
+      onMouseLeave={() => !adjustingLine && setHovered(false)}
     >
       <div className="stock-card__header">
         <div className="stock-card__name">{group.name}</div>
