@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { listCustomers, customerBalance } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
-import { AddCustomerForm } from '@/components/AddCustomerForm';
+import { AddCustomerButton } from '@/components/AddCustomerModal';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,12 +22,15 @@ export default async function CustomersPage({
 
   return (
     <>
-      <div className="panel-header">
-        <h2>Customers</h2>
-        <p className="panel-desc">
-          Cash customers carry a <span className="mono">c</span>-prefixed code, ledger
-          clients a plain number. Balances are computed from the ledger every time.
-        </p>
+      <div className="row between" style={{ marginBottom: 18 }}>
+        <div className="panel-header" style={{ margin: 0 }}>
+          <h2>Customers</h2>
+          <p className="panel-desc">
+            Cash customers carry a <span className="mono">c</span>-prefixed code, ledger
+            clients a plain number. Balances are computed from the ledger every time.
+          </p>
+        </div>
+        <AddCustomerButton />
       </div>
 
       <form className="row wrap" style={{ gap: 8, marginBottom: 16 }} method="get">
@@ -66,54 +69,47 @@ export default async function CustomersPage({
         </div>
       </div>
 
-      <div className="split">
-        <div>
-          {customers.length === 0 ? (
-            <div className="empty">No customers match your search</div>
-          ) : (
-            <div className="customer-grid">
+      {customers.length === 0 ? (
+        <div className="card"><div className="empty">No customers match your search</div></div>
+      ) : (
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>CODE</th>
+                <th>NAME</th>
+                <th>TYPE</th>
+                <th>CONTACT</th>
+                <th className="right">BALANCE</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
               {customers.map((c) => (
-                <div key={c.id} className={`customer-card ${!c.active ? 'customer-card--inactive' : ''}`}>
-                  <div className="customer-card__top">
-                    <div>
-                      <div className="customer-card__name">
-                        {c.name}
-                        {c.needs_review === 1 && <span className="customer-card__review" style={{ marginInlineStart: 6 }}>CHECK</span>}
-                      </div>
-                      <div className="customer-card__code">{c.code}</div>
-                    </div>
-                    <div className={`customer-card__balance ${c.balance > 0 ? 'customer-card__balance--positive' : ''}`}>
-                      {fmtNum(c.balance)}
-                    </div>
-                  </div>
-                  <div className="customer-card__details">
+                <tr key={c.id} style={!c.active ? { opacity: 0.5 } : undefined}>
+                  <td className="mono t-muted">{c.code}</td>
+                  <td>
+                    <span className="t-strong">{c.name}</span>
+                    {c.needs_review === 1 && <span className="badge badge-yellow" style={{ marginInlineStart: 6, fontSize: 9, padding: '1px 5px' }}>CHECK</span>}
+                    {!c.active && <span className="badge badge-muted" style={{ marginInlineStart: 6, fontSize: 9, padding: '1px 5px' }}>INACTIVE</span>}
+                  </td>
+                  <td>
                     <span className={`badge ${c.kind === 'cash' ? 'badge-kraft' : 'badge-purple'}`}>{c.kind}</span>
-                    {c.contact && <span className="customer-card__chip">{'\u260E'} {c.contact}</span>}
-                    {c.manual_ledger_page && <span className="customer-card__chip">{'\u2637'} p.{c.manual_ledger_page}</span>}
-                    {!c.active && <span className="badge badge-muted">INACTIVE</span>}
-                  </div>
-                  <div className="customer-card__actions">
-                    <Link className="customer-card__link" href={`/customers/${c.id}`}>
-                      {'View Ledger \u2192'}
-                    </Link>
-                  </div>
-                </div>
+                  </td>
+                  <td className="t-muted">{c.contact || '\u2014'}</td>
+                  <td className="right num t-strong">
+                    {c.balance > 0 ? <span className="stat-accent">PKR {fmtNum(c.balance)}</span> : <span className="t-muted">PKR 0</span>}
+                  </td>
+                  <td className="right">
+                    <Link className="btn btn-ghost" style={{ padding: '4px 10px', fontSize: 11 }}
+                          href={`/customers/${c.id}`}>Ledger</Link>
+                  </td>
+                </tr>
               ))}
-            </div>
-          )}
+            </tbody>
+          </table>
         </div>
-
-        <div className="card">
-          <div className="card-title">ADD A CUSTOMER</div>
-          <AddCustomerForm />
-          <div className="info-card good" style={{ marginTop: 14 }}>
-            <div>
-              Walk-in cash customers can also be created directly from the billing screen.
-              Codes are generated automatically.
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </>
   );
 }
