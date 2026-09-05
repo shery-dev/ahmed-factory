@@ -38,11 +38,6 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
     <>
       <div className="panel-header">
         <h2>Bills</h2>
-        <p className="panel-desc">
-          Every bill carries a receipt number allocated from a database sequence
-          inside the posting transaction, so two bills raised at the same moment
-          can never share a number.
-        </p>
       </div>
 
       {/* Search + Filters */}

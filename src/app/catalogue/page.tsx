@@ -17,10 +17,7 @@ export default async function CataloguePage({
     <>
       <div className="panel-header">
         <h2>Catalogue</h2>
-        <p className="panel-desc">
-          Products are data rows, not hardcoded values. Add a product and it appears
-          on the billing screen immediately.
-        </p>
+        <p className="panel-desc">A new product appears on the billing screen immediately.</p>
       </div>
 
       <form className="row wrap" style={{ gap: 8, marginBottom: 16 }} method="get">

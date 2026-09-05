@@ -106,10 +106,8 @@ export default async function ChangesPage() {
       <div className="panel-header">
         <h2>What Changed</h2>
         <p className="panel-desc">
-          This prototype exists so the proposal can be checked rather than taken on
-          trust. Each item below names a specific defect in the 2022 system and
-          links to the screen where you can verify the fix yourself. Data is the
-          real factory catalogue imported from <span className="mono">book.xlsx</span>.
+          Each item names a defect in the 2022 system and links to the screen where
+          you can check the fix.
         </p>
       </div>
 

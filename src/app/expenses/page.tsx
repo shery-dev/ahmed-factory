@@ -20,9 +20,6 @@ export default async function ExpensesPage({
     <>
       <div className="panel-header">
         <h2>Expenses</h2>
-        <p className="panel-desc">
-          One row per expense. Edit or delete any entry inline. Filter by date range or category.
-        </p>
       </div>
 
       <form className="row wrap" style={{ gap: 8, marginBottom: 16 }} method="get">

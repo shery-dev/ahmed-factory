@@ -753,17 +753,66 @@ export async function dashboard(from?: string, to?: string) {
   const dateFilter = from || to ? `date(ts) >= ? AND date(ts) <= ?` : `date(ts) = ?`;
   const dateParams = from || to ? [date, toDate] : [date];
   return {
-    billsToday:   await q(`SELECT COUNT(*) n, COALESCE(SUM(subtotal),0) v FROM bills WHERE ${dateFilter}`, ...dateParams),
-    creditToday:  await q(`SELECT COALESCE(SUM(credit),0) v FROM bills WHERE ${dateFilter}`, ...dateParams),
+    // `status = 'posted'` matters: voidBill() marks a bill void rather than
+    // deleting it, so without this filter a voided bill kept inflating the
+    // dashboard's billed/collected figures forever. Every other aggregate in
+    // this file (periodSummary, topCustomersByVolume, the daily report) already
+    // filtered it — the dashboard was the one that didn't.
+    billsToday:   await q(`SELECT COUNT(*) n, COALESCE(SUM(subtotal),0) v FROM bills WHERE status = 'posted' AND ${dateFilter}`, ...dateParams),
+    creditToday:  await q(`SELECT COALESCE(SUM(credit),0) v FROM bills WHERE status = 'posted' AND ${dateFilter}`, ...dateParams),
     expensesToday:await q(`SELECT COALESCE(SUM(amount),0) v FROM expenses WHERE ${dateFilter}`, ...dateParams),
     customers:    await q(`SELECT COUNT(*) n FROM customers WHERE active=1`),
     products:     await q(`SELECT COUNT(*) n FROM item_types WHERE active=1`),
     receivable:   await q(`SELECT COALESCE(SUM(debit+rent-credit),0) v FROM ledger_entries WHERE flagged = 0`),
+    // Low means "below THIS product's reorder level", never a flat <= 5. The
+    // hardcoded 5 here disagreed with the Stock screen, which has used
+    // item_types.reorder_level since that column was added — the two screens
+    // could show different numbers of low sizes for the same stock.
     lowStock:     await dbAll<any>(
-      `SELECT t.name_en, t.name_ur, s.size, s.unit, s.quantity FROM stock_items s JOIN item_types t ON t.id=s.item_type_id WHERE s.quantity <= 5 AND s.flagged = 0 ORDER BY s.quantity LIMIT 8`,
+      `SELECT t.id AS item_type_id, t.name_en, t.name_ur, s.size, s.unit, s.quantity, t.reorder_level
+       FROM stock_items s JOIN item_types t ON t.id = s.item_type_id
+       WHERE s.flagged = 0 AND t.active = 1 AND s.quantity <= t.reorder_level
+       ORDER BY s.quantity LIMIT 8`,
+    ),
+    stockAlerts:  await q(
+      `SELECT COALESCE(SUM(CASE WHEN s.quantity <= 0 THEN 1 ELSE 0 END), 0) AS out,
+              COALESCE(SUM(CASE WHEN s.quantity > 0 AND s.quantity <= t.reorder_level THEN 1 ELSE 0 END), 0) AS low
+       FROM stock_items s JOIN item_types t ON t.id = s.item_type_id
+       WHERE s.flagged = 0 AND t.active = 1`,
     ),
     issues:       await q(`SELECT COUNT(*) n FROM data_issues WHERE resolved=0`),
   };
+}
+
+/**
+ * Billed and collected per day for the last `days` days, oldest first, with
+ * empty days filled in as zero rather than missing — a gap in the array would
+ * silently redraw the chart's shape and make a quiet day look like it never
+ * happened.
+ */
+export async function dailyBillingTrend(days = 7): Promise<
+  Array<{ date: string; billed: number; collected: number; bills: number }>
+> {
+  const today = new Date();
+  const start = new Date(today.getTime() - (days - 1) * 86400000);
+  const startStr = start.toISOString().slice(0, 10);
+
+  const rows = await dbAll<{ d: string; billed: number; collected: number; bills: number }>(
+    `SELECT date(ts) AS d, COALESCE(SUM(subtotal), 0) AS billed,
+            COALESCE(SUM(credit), 0) AS collected, COUNT(*) AS bills
+     FROM bills WHERE status = 'posted' AND date(ts) >= ?
+     GROUP BY date(ts)`,
+    [startStr],
+  );
+  const byDate = new Map(rows.map((r) => [r.d, r]));
+
+  const out: Array<{ date: string; billed: number; collected: number; bills: number }> = [];
+  for (let i = 0; i < days; i++) {
+    const d = new Date(start.getTime() + i * 86400000).toISOString().slice(0, 10);
+    const r = byDate.get(d);
+    out.push({ date: d, billed: r?.billed ?? 0, collected: r?.collected ?? 0, bills: r?.bills ?? 0 });
+  }
+  return out;
 }
 
 

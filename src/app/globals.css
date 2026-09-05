@@ -813,3 +813,167 @@ body[dir='rtl'] .chev { transform: scaleX(-1); }
   border-bottom: 1px solid var(--border); font-size: 11.5px;
 }
 .history-row:last-child { border-bottom: none; }
+
+/* ===========================================================================
+   Dashboard
+   ---------------------------------------------------------------------------
+   NOTE: .quick-actions / .quick-action-tile / .quick-action-label and
+   .card-title-icon were referenced by the Dashboard markup ported in from the
+   sibling project but their rules never came across with it, so the quick
+   action row rendered as bare stacked divs. They are defined here, once.
+   =========================================================================== */
+
+/* Segmented period picker - replaces two loose date inputs for the three
+   ranges anyone actually asks for. A custom from/to still works through the
+   query string; this is the shortcut, not a replacement for it. */
+.seg {
+  display: inline-flex; background: var(--bg-elevated);
+  border: 1px solid var(--border); border-radius: 9px; padding: 3px; gap: 2px;
+}
+.seg-btn {
+  padding: 6px 13px; border-radius: 7px; font-size: 12.5px; font-weight: 600;
+  color: var(--text-muted); transition: background .15s, color .15s; white-space: nowrap;
+}
+.seg-btn:hover { color: var(--text-secondary); }
+.seg-btn.active { background: var(--bg-surface); color: var(--accent-kraft); box-shadow: var(--shadow-sm); }
+
+/* The hero band. Three readings of the same day in one frame rather than
+   three identical cards: what was billed, how much of it actually arrived,
+   and the week's shape behind it. */
+.hero-band {
+  display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.15fr) minmax(0,1.1fr);
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+  margin-bottom: 18px; overflow: hidden;
+}
+.hero-cell { padding: 18px 20px; border-inline-end: 1px solid var(--border); min-width: 0; }
+.hero-cell:last-child { border-inline-end: none; }
+.hero-label {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .9px; text-transform: uppercase;
+  color: var(--text-faint);
+}
+.hero-pct {
+  margin-inline-start: auto; font-size: 11px; font-weight: 700; letter-spacing: 0;
+  color: var(--accent-green); background: var(--accent-green-bg);
+  padding: 2px 8px; border-radius: 20px;
+}
+.hero-figure {
+  font-size: 30px; font-weight: 800; color: var(--text-primary);
+  line-height: 1.1; letter-spacing: -.02em; white-space: nowrap;
+}
+.hero-figure.hero-green { color: var(--accent-green); }
+.hero-cur { font-size: 14px; font-weight: 600; color: var(--text-faint); letter-spacing: 0; }
+.hero-sub { font-size: 12px; color: var(--text-muted); margin-top: 7px; }
+
+/* Collected vs left on account. A proportion is the answer to "how did the
+   day go" - two separate PKR figures make you do the division yourself. */
+.split-bar {
+  height: 7px; border-radius: 20px; background: var(--accent-yellow-bg);
+  margin-top: 12px; overflow: hidden;
+}
+.split-fill {
+  display: block; height: 100%; border-radius: 20px;
+  background: linear-gradient(90deg, var(--accent-green-solid), var(--accent-green));
+  transition: width .4s ease;
+}
+
+/* Seven bars, no chart library. Enough to see a trend and spot a dead day. */
+.spark { display: flex; align-items: flex-end; gap: 7px; height: 82px; margin-top: 4px; }
+.spark-col {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: flex-end; height: 100%; gap: 5px; min-width: 0;
+}
+.spark-bar {
+  width: 100%; max-width: 26px; border-radius: 4px 4px 2px 2px;
+  background: var(--accent-kraft-bg); border-top: 2px solid var(--accent-kraft);
+  transition: background .15s;
+}
+.spark-bar.is-today { background: var(--accent-kraft); border-top-color: var(--accent-kraft-2); }
+.spark-col:hover .spark-bar { background: var(--accent-kraft); }
+.spark-tick { font-size: 9.5px; color: var(--text-faintest); font-variant-numeric: tabular-nums; }
+
+/* Standing-total tiles. They are links, so they get the affordance of one. */
+.stat-card { display: block; transition: border-color .15s, transform .15s, box-shadow .15s; }
+.stat-card:hover {
+  border-color: var(--border-hover); transform: translateY(-2px); box-shadow: var(--shadow-md);
+}
+
+/* Everything waiting on a person, in one line. The chips are links: a count
+   that cannot be acted on is just a number. */
+.attn-bar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 11px 16px; margin-bottom: 18px;
+  background: var(--accent-yellow-bg); border: 1px solid var(--accent-yellow-solid);
+  border-radius: var(--radius-md);
+}
+.attn-bar-lead {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12.5px; font-weight: 700; color: var(--accent-yellow);
+  margin-inline-end: 4px;
+}
+.attn-bar .attn-chip { margin: 0; }
+
+/* Quick actions - the six things done most in a day. */
+.quick-actions {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 12px;
+}
+.quick-action-tile {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; padding: 18px 12px;
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); text-align: center;
+  transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+.quick-action-tile:hover {
+  border-color: var(--accent-kraft); transform: translateY(-2px); box-shadow: var(--shadow-md);
+}
+.quick-action-label { font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
+
+.card-title-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--text-faint); margin-inline-end: 7px; vertical-align: -2px;
+}
+
+.link-more {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11.5px; font-weight: 600; color: var(--text-muted); white-space: nowrap;
+}
+.link-more:hover { color: var(--accent-kraft); }
+body[dir="rtl"] .link-more svg { transform: scaleX(-1); }
+
+/* Where the receivable is sitting, before whose name is on it. */
+.age-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+.age-cell {
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  background: var(--bg-elevated); border-inline-start: 3px solid var(--border);
+}
+.age-cell.tone-green { border-inline-start-color: var(--accent-green-solid); }
+.age-cell.tone-amber { border-inline-start-color: var(--accent-yellow-solid); }
+.age-cell.tone-red   { border-inline-start-color: var(--accent-red-solid); }
+.age-label { font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--text-faint); }
+.age-value { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-top: 4px; white-space: nowrap; }
+.age-count { font-size: 10.5px; color: var(--text-faint); margin-top: 2px; }
+.age-note { font-size: 10.5px; color: var(--text-faintest); margin-bottom: 14px; }
+
+.owed-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 9px 11px; background: var(--bg-elevated); border-radius: var(--radius-sm);
+  transition: background .12s;
+}
+.owed-row:hover { background: var(--bg-hover); }
+.owed-name { display: flex; align-items: baseline; gap: 7px; min-width: 0; }
+.owed-name > .t-strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.owed-code { font-size: 11px; flex-shrink: 0; }
+
+@media (max-width: 1100px) {
+  .hero-band { grid-template-columns: 1fr 1fr; }
+  .hero-cell:nth-child(2) { border-inline-end: none; }
+  .hero-cell:nth-child(3) { grid-column: 1 / -1; border-top: 1px solid var(--border); }
+}
+@media (max-width: 720px) {
+  .hero-band { grid-template-columns: 1fr; }
+  .hero-cell { border-inline-end: none; border-top: 1px solid var(--border); }
+  .hero-cell:first-child { border-top: none; }
+  .age-row { grid-template-columns: 1fr; }
+}

@@ -83,8 +83,8 @@ export const dict = {
   viewReceipt:  { en: 'View Receipt',    ur: 'رسید دیکھیں' },
 
   // ── Shop-floor page headers (Urdu primary, per the language policy) ──
-  newBillDesc:  { en: 'Seven sale forms, each with the pricing rule verified from the 2022 code. Stock is checked before anything is written; posting updates the ledger, the stock and the receipt sequence in a single transaction.',
-                  ur: 'سات فروخت کے فارم، ہر ایک کا ریٹ 2022 کے کوڈ سے تصدیق شدہ۔ کچھ لکھنے سے پہلے اسٹاک چیک ہوتا ہے؛ بل جمع کرنے پر کھاتہ، اسٹاک اور رسید نمبر ایک ہی ٹرانزیکشن میں اپ ڈیٹ ہوتے ہیں۔' },
+  newBillDesc:  { en: 'Seven sale forms. Stock is checked before anything posts.',
+                  ur: 'سات فروخت کے فارم۔ بل جمع کرنے سے پہلے اسٹاک چیک ہوتا ہے۔' },
   stockDesc:    { en: 'Rolls are counted; reels and totay are held in kilograms. Every movement names the bill that caused it.',
                   ur: 'رول گنتی میں، ریل اور ٹوٹے کلو میں۔ ہر حرکت اس بل کا نام بتاتی ہے جس کی وجہ سے ہوئی۔' },
   atomicNote:   { en: 'Posts ledger + stock + receipt in one transaction',
@@ -178,9 +178,9 @@ export const dict = {
   nameRequired:         { en: 'Name is required', ur: 'نام درکار ہے' },
   viewFullLedger:       { en: 'View full ledger', ur: 'مکمل کھاتہ دیکھیں' },
 
-  stockHomeDesc:{ en: 'Every paper is held in two thicknesses — moti and bareek — and in many widths. Pick a product to see its sizes and update what is on hand.',
-                  ur: 'ہر کاغذ دو موٹائیوں میں ہوتا ہے — موٹی اور باریک — اور کئی چوڑائیوں میں۔ سائز دیکھنے اور اسٹاک اپ ڈیٹ کرنے کے لیے پروڈکٹ منتخب کریں۔' },
-  stockProductDesc:{ en: 'Each tile is one width. Tap it to receive a delivery, issue paper out, or enter a physical count.',
+  stockHomeDesc:{ en: 'Pick a paper and a thickness to see its sizes.',
+                  ur: 'سائز دیکھنے کے لیے کاغذ اور موٹائی منتخب کریں۔' },
+  stockProductDesc:{ en: 'Each tile is one width. Tap it to receive, issue, or count.',
                   ur: 'ہر خانہ ایک چوڑائی ہے۔ آمد درج کرنے، اسٹاک نکالنے یا گنتی درج کرنے کے لیے اس پر ٹیپ کریں۔' },
 
   // ── Customers ──

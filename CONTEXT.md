@@ -186,6 +186,49 @@ Balances panels. The date-range filter and the Expenses stat card — both
 things this repo's dashboard had that the sibling project's never did —
 are untouched.
 
+**Deploy-time migrations, and the /stock 500 they were hiding.** `/stock`
+is the only screen that selects `item_types.reorder_level`. That column was
+added to `schema.sql` and to `scripts/migrate.mjs` during the Stock merge —
+but `schema.sql` is entirely `CREATE TABLE IF NOT EXISTS`, so it cannot add
+a column to a table that already exists, and `migrate.mjs` only ever ran
+from `npm run dev`. `npm run build` was plain `next build`, so a Vercel
+deploy migrated nothing. The production Turso database predates the column,
+and every request to /stock threw
+`SQLITE_ERROR: no such column: t.reorder_level`. `migrate.mjs` now replays
+`schema.sql` first and applies column migrations through an `addColumn()`
+helper that skips a table that does not exist yet, and `npm run build` runs
+it. In CI without `TURSO_DATABASE_URL` it warns and exits 0 rather than
+"migrating" a throwaway file in the build sandbox and reporting success.
+**Adding a column to `schema.sql` is never enough on its own — it must go
+into `migrate.mjs` too, or it works locally and 500s in production.**
+
+**Dashboard rebuild.** Replaced four same-sized stat cards with a hero band
+that answers the day in one frame: billed, how much of it was actually
+collected (a proportion bar, not two figures to divide in your head), and a
+seven-day bar strip from the new `dailyBillingTrend()`. Below it: four
+standing-total tiles that are links, a single "needs attention" bar merging
+out-of-stock / below-reorder / flagged-import counts into chips that each go
+somewhere, six quick actions, receivable split into under-30 / 30-60 / over-60
+day buckets (measured from each customer's last ledger movement — there is no
+invoice-level allocation, so a true ageing run is not derivable yet, and the
+heading says so), low stock, and the activity log. Three real bugs fixed on
+the way: `dashboard()` counted **voided** bills in its billed/collected
+figures (every other aggregate in `repo.ts` already filtered
+`status = 'posted'`; this one did not); its low-stock query used a hardcoded
+`quantity <= 5` and so disagreed with the Stock screen, which uses
+`reorder_level`; and `.quick-actions` / `.quick-action-tile` /
+`.quick-action-label` / `.card-title-icon` were referenced by the ported
+Dashboard markup but their CSS never came across with it, so the quick-action
+row rendered as bare stacked divs.
+
+**Page-header copy trimmed across ten screens.** Every screen carried a
+`panel-desc` paragraph explaining the implementation — "computed from the
+transaction tables", "verified from the 2022 code", "allocated from a
+database sequence". That copy was written to convince a reviewer the build is
+sound; nobody raising a bill needs it, and it was eating the top of every
+screen. Subtitles carrying live data (a bill's date and customer, a
+customer's kind and contact) were kept.
+
 ### What's NOT merged yet
 
 - **Shell.tsx / the sidebar** — still on unicode-symbol icons (`⌂`, `☎`,

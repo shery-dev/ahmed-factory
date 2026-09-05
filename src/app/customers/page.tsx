@@ -26,8 +26,7 @@ export default async function CustomersPage({
         <div className="panel-header" style={{ margin: 0 }}>
           <h2>Customers</h2>
           <p className="panel-desc">
-            Cash customers carry a <span className="mono">c</span>-prefixed code, ledger
-            clients a plain number. Balances are computed from the ledger every time.
+            Cash customers carry a <span className="mono">c</span>-prefixed code, ledger clients a plain number.
           </p>
         </div>
         <AddCustomerButton />

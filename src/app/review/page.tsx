@@ -25,9 +25,8 @@ export default async function ReviewPage({
       <div className="panel-header">
         <h2>Needs Attention</h2>
         <p className="panel-desc">
-          The import refused to silently trust bad data, and refused to silently drop
-          it. Anything that failed a sanity check was brought in as zero, flagged on
-          the record, and listed here for a human to resolve.
+          Values that failed a sanity check on import, brought in as zero and flagged
+          for someone to resolve.
         </p>
       </div>
 
