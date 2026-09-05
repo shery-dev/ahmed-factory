@@ -17,7 +17,8 @@ export default async function BillingPage() {
   })));
   const customersList = await listCustomers();
   const customers: CustomerOpt[] = await Promise.all(customersList.map(async (c) => ({
-    id: c.id, code: c.code, name: c.name, kind: c.kind, balance: await customerBalance(c.id),
+    id: c.id, code: c.code, name: c.name, kind: c.kind, contact: c.contact,
+    balance: await customerBalance(c.id),
   })));
 
   // Get waste stock for jutta, raddi, nali

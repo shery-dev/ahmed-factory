@@ -8,14 +8,12 @@ import {
 } from '@/lib/pricing';
 import { fmtNum, type DictKey } from '@/lib/i18n';
 import { submitBill } from '@/app/billing/actions';
-import { QuickAddCustomer } from './QuickAddCustomer';
+import { CustomerPanel, type CustomerOpt } from './CustomerPanel';
 
+export type { CustomerOpt };
 export interface CatalogueItem {
   id: number; name_en: string; name_ur: string; default_rate: number;
   sizes: { roll: { size: number; quantity: number }[]; reel: { size: number; quantity: number }[]; tota: { size: number; quantity: number }[] };
-}
-export interface CustomerOpt {
-  id: number; code: string; name: string; kind: 'cash' | 'ledger'; balance: number;
 }
 
 const FORMS: SaleForm[] = ['rolls', 'reels', 'packets', 'totay', 'jutta', 'raddi', 'nali'];
@@ -205,39 +203,16 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
     <div className="split">
       {/* Left: item entry */}
       <div className="stack">
-        <div className="card">
-          <div className="card-title">{tr('customer')}</div>
-          <select className="select" value={customerId}
-                  onChange={(e) => setCustomerId(e.target.value === '' ? '' : Number(e.target.value))}>
-            <option value="">— {tr('selectCustomer')} —</option>
-            <optgroup label={tr('cashCustomer')}>
-              {customers.filter((c) => c.kind === 'cash').map((c) => (
-                <option key={c.id} value={c.id}>{c.code} · {c.name}</option>
-              ))}
-            </optgroup>
-            <optgroup label={tr('ledgerClient')}>
-              {customers.filter((c) => c.kind === 'ledger').map((c) => (
-                <option key={c.id} value={c.id}>{c.code} · {c.name} (PKR {fmtNum(c.balance)})</option>
-              ))}
-            </optgroup>
-          </select>
-          {customer && (
-            <div className="row" style={{ marginTop: 10, gap: 8 }}>
-              <span className={`badge ${customer.kind === 'cash' ? 'badge-kraft' : 'badge-purple'}`}>
-                {customer.kind === 'cash' ? tr('cashCustomer') : tr('ledgerClient')}
-              </span>
-              <span className="t-muted">
-                {tr('balance')}: <span className="num t-strong">PKR {fmtNum(customer.balance)}</span>
-              </span>
-            </div>
-          )}
-          {customer && customer.balance > 0 && (
-            <div className="info-card warn" style={{ marginTop: 10, fontSize: 12 }}>
-              <div>Outstanding balance: <b>PKR {fmtNum(customer.balance)}</b></div>
-            </div>
-          )}
-          <QuickAddCustomer onCreated={(id) => setCustomerId(id)} />
-        </div>
+        <CustomerPanel
+          initialCustomers={customers}
+          customerId={customerId}
+          onSelect={(id) => setCustomerId(id)}
+        />
+        {customer && customer.balance > 0 && (
+          <div className="info-card warn" style={{ fontSize: 12 }}>
+            <div>Outstanding balance: <b>PKR {fmtNum(customer.balance)}</b></div>
+          </div>
+        )}
 
         <div className="card">
           <div className="tabs">

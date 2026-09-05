@@ -127,6 +127,26 @@ export const listCustomers = async (opts?: { kind?: 'cash' | 'ledger'; search?: 
 export const getCustomer = async (id: number): Promise<Customer | undefined> =>
   dbGet<Customer>(`SELECT * FROM customers WHERE id = ?`, [id]);
 
+/** Digits only, so "0300-1234567" and "03001234567" match the same person. */
+const normalizePhone = (s: string) => s.replace(/\D/g, '');
+
+/**
+ * A contact number already on an active customer of the same kind — the
+ * legacy system's own dedup key ("phone number as deduplication key for
+ * cash customers", per the original business briefing). Kind-scoped
+ * because a cash walk-in and a ledger account can legitimately share a
+ * household's phone number.
+ */
+export async function findCustomerByContact(kind: 'cash' | 'ledger', contact: string): Promise<Customer | undefined> {
+  const norm = normalizePhone(contact);
+  if (!norm) return undefined;
+  const candidates = await dbAll<Customer>(
+    `SELECT * FROM customers WHERE kind = ? AND active = 1 AND contact IS NOT NULL AND contact != ''`,
+    [kind],
+  );
+  return candidates.find((c) => normalizePhone(c.contact ?? '') === norm);
+}
+
 export async function createCustomer(input: {
   kind: 'cash' | 'ledger'; name: string; contact?: string;
   manual_ledger_page?: string; credit_limit?: number;
