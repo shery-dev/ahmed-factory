@@ -60,6 +60,7 @@ export function ProductStock({
   // nothing here is allowed to stop the factory.
   const [largeConfirmed, setLargeConfirmed] = useState(false);
   const [pending, setPending] = useState(false);
+  const [sizeFilter, setSizeFilter] = useState<'all' | 'low' | 'out' | 'flagged'>('all');
 
   const total = rows.reduce((s, r) => s + r.quantity, 0);
   // Not just how many — which ones. A count told nobody whether the low size
@@ -69,6 +70,13 @@ export function ProductStock({
   const flaggedSizes = rows.filter((r) => r.flagged).map((r) => r.size);
   const out = outSizes.length;
   const low = lowSizes.length;
+
+  // Narrows the table to exactly what's actionable — a product with 40
+  // sizes and one low one shouldn't need scrolling to find it.
+  const visibleRows = sizeFilter === 'all' ? rows
+    : sizeFilter === 'low' ? rows.filter((r) => lowSizes.includes(r.size))
+    : sizeFilter === 'out' ? rows.filter((r) => outSizes.includes(r.size))
+    : rows.filter((r) => flaggedSizes.includes(r.size));
 
   const moti = type.is_bareek ? sibling : type;
   const bareek = type.is_bareek ? type : sibling;
@@ -93,6 +101,14 @@ export function ProductStock({
   function setValueAndResetConfirm(v: number) {
     setValue(v);
     setLargeConfirmed(false);
+  }
+  // The size-table filter can hide the very row a chip points at — reset to
+  // "all" first so the jump always lands, regardless of which tab is open.
+  function jumpToSize(size: number) {
+    setSizeFilter('all');
+    requestAnimationFrame(() => {
+      document.getElementById(`size-${size}`)?.scrollIntoView({ block: 'center' });
+    });
   }
 
   const after = !open ? 0
@@ -188,13 +204,13 @@ export function ProductStock({
           ) : (
             <div style={{ marginTop: 4 }}>
               {outSizes.map((s) => (
-                <a key={`o${s}`} href={`#size-${s}`} className="attn-chip c-out">{s}″</a>
+                <button key={`o${s}`} type="button" onClick={() => jumpToSize(s)} className="attn-chip c-out">{s}″</button>
               ))}
               {lowSizes.map((s) => (
-                <a key={`l${s}`} href={`#size-${s}`} className="attn-chip c-low">{s}″</a>
+                <button key={`l${s}`} type="button" onClick={() => jumpToSize(s)} className="attn-chip c-low">{s}″</button>
               ))}
               {flaggedSizes.map((s) => (
-                <a key={`f${s}`} href={`#size-${s}`} className="attn-chip c-flag">{s}″</a>
+                <button key={`f${s}`} type="button" onClick={() => jumpToSize(s)} className="attn-chip c-flag">{s}″</button>
               ))}
             </div>
           )}
@@ -220,6 +236,32 @@ export function ProductStock({
               <Plus size={13} /> {tr('addSize')}
             </button>
           </div>
+
+          <div className="tabs" style={{ marginBottom: 10 }}>
+            <button type="button" className={`tab ${sizeFilter === 'all' ? 'active' : ''}`}
+                    onClick={() => setSizeFilter('all')}>
+              {tr('allSizes')} · {rows.length}
+            </button>
+            {out > 0 && (
+              <button type="button" className={`tab ${sizeFilter === 'out' ? 'active' : ''}`}
+                      onClick={() => setSizeFilter('out')}>
+                {tr('statusOut')} · {out}
+              </button>
+            )}
+            {low > 0 && (
+              <button type="button" className={`tab ${sizeFilter === 'low' ? 'active' : ''}`}
+                      onClick={() => setSizeFilter('low')}>
+                {tr('statusLow')} · {low}
+              </button>
+            )}
+            {flaggedSizes.length > 0 && (
+              <button type="button" className={`tab ${sizeFilter === 'flagged' ? 'active' : ''}`}
+                      onClick={() => setSizeFilter('flagged')}>
+                {tr('statusFlagged')} · {flaggedSizes.length}
+              </button>
+            )}
+          </div>
+
           <div className="size-table">
             <div className="size-table-head">
               <span className="size-col-size">{tr('size')}</span>
@@ -228,7 +270,9 @@ export function ProductStock({
               <span className="size-col-status">{tr('status')}</span>
               <span className="size-col-chev" />
             </div>
-            {rows.map((r) => {
+            {visibleRows.length === 0 ? (
+              <div className="size-row-ok" style={{ padding: '20px 16px' }}>{tr('allStockOk')}</div>
+            ) : visibleRows.map((r) => {
               const state = r.flagged ? 'flagged'
                 : r.quantity <= 0 ? 'out'
                 : r.quantity <= type.reorder_level ? 'low' : '';

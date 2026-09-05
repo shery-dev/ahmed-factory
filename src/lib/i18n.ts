@@ -104,6 +104,7 @@ export const dict = {
   outCount:     { en: 'Out',             ur: 'ختم' },
   quarantined:  { en: 'Quarantined',     ur: 'مشکوک' },
   allProducts:  { en: 'All products',    ur: 'تمام پروڈکٹس' },
+  allSizes:     { en: 'All sizes',       ur: 'تمام سائز' },
   needsAttentionOnly: { en: 'Needs attention', ur: 'توجہ درکار' },
   notStocked:   { en: 'Not stocked',     ur: 'موجود نہیں' },
   openProduct:  { en: 'Open',            ur: 'کھولیں' },
