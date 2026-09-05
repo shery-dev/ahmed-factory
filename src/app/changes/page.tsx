@@ -105,10 +105,6 @@ export default async function ChangesPage() {
     <>
       <div className="panel-header">
         <h2>What Changed</h2>
-        <p className="panel-desc">
-          Each item names a defect in the 2022 system and links to the screen where
-          you can check the fix.
-        </p>
       </div>
 
       <div className="grid grid-4" style={{ marginBottom: 22 }}>

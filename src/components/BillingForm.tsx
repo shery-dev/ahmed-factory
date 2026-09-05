@@ -182,8 +182,8 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
           <div className="info-card good" style={{ marginTop: 14 }}>
             <div>
               {result.ok
-                ? <>All of the above happened inside <b>one database transaction</b>. If any single step had failed, none of them would have been written. The 2022 system wrote these to separate spreadsheet sheets, which is why stock and money drifted apart.</>
-                : <>Nothing was written. The transaction rolled back completely, leaving stock and the ledger exactly as they were.</>}
+                ? <>All steps completed inside <b>one transaction</b> — stock, ledger, and receipt are in sync.</>
+                : <>Nothing was written. The transaction rolled back completely.</>}
             </div>
           </div>
 
@@ -422,9 +422,6 @@ export function BillingForm({ items, customers, paymentMethods, wasteStock }: { 
                 disabled={!customerId || !lines.length || busy} onClick={post}>
           {busy ? '…' : tr('postBill')}
         </button>
-        <div className="t-muted" style={{ marginTop: 8, textAlign: 'center', fontSize: 11 }}>
-          {tr('atomicNote')}
-        </div>
       </div>
     </div>
   );

@@ -59,9 +59,6 @@ export default async function StockPage({
             <div>
               <div className="card">
                 <div className="card-title">WASTE &amp; SCRAP INVENTORY</div>
-                <p className="t-muted" style={{ fontSize: 12, marginBottom: 12 }}>
-                  Jutta (scrap), Raddi (waste), and Nali (edge trim) are tracked by weight in kg.
-                </p>
                 <div className="table-wrap" style={{ border: 'none', boxShadow: 'none' }}>
                   <table>
                     <thead>

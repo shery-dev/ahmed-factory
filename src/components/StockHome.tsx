@@ -143,12 +143,28 @@ function ThicknessRow({ t, unit, label, bareek, tr }: {
   bareek?: boolean;
   tr: (k: DictKey) => string;
 }) {
-  if (!t || t.sizes === 0) {
+  if (!t) {
+    // Nothing to walk into — this thickness has no catalogue entry at all,
+    // not just an empty one. Add it from the Catalogue page instead.
     return (
       <div className="thickness-row empty-row">
         <span className={`thickness-tag ${bareek ? 'is-bareek' : ''}`}>{label}</span>
         <span className="thickness-meta">{tr('notStocked')}</span>
       </div>
+    );
+  }
+  if (t.sizes === 0) {
+    // The product exists and has a real page to receive stock on — it just
+    // has no sizes recorded yet (brand new, or its stock was reset for a
+    // clean manual recount). This used to render identically to the "no
+    // catalogue entry at all" case above: a dead div with no way in, which
+    // was the actual bug behind "I can't click it to add stock."
+    return (
+      <Link href={`/stock/${t.id}?unit=${unit}`} className="thickness-row empty-row is-open">
+        <span className={`thickness-tag ${bareek ? 'is-bareek' : ''}`}>{label}</span>
+        <span className="thickness-meta">{tr('notStocked')}</span>
+        <span className="thickness-end"><ChevronRight size={16} className="chev" /></span>
+      </Link>
     );
   }
   // Worst case wins — a size that's out says more than one that's merely low.

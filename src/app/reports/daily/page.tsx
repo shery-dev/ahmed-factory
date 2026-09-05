@@ -25,7 +25,6 @@ export default async function DailyReportPage({
         <button className="btn btn-ghost" type="submit" style={{ padding: '6px 14px' }}>Show Day</button>
         {d !== today && <a className="btn btn-ghost" href="/reports/daily" style={{ padding: '6px 14px' }}>Today</a>}
         <div className="spacer" />
-        <span className="t-muted" style={{ fontSize: 12 }}>Use Ctrl+P to print</span>
       </form>
 
       <div className="daily-report" style={{ maxWidth: 800 }}>
