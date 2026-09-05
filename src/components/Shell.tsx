@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { Eye, EyeOff, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { t, dirFor, type Lang, type DictKey } from '@/lib/i18n';
 import { logoutAction } from '@/app/login/actions';
 
@@ -25,6 +26,7 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
   // rather than the Dashboard alone so it travels with whichever page is open
   // when someone walks up.
   const [privacyOn, setPrivacyOn] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [restored, setRestored] = useState(false);
   const pathname = usePathname();
 
@@ -33,9 +35,11 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
       const l = localStorage.getItem('acm-lang') as Lang | null;
       const th = localStorage.getItem('acm-theme');
       const pr = localStorage.getItem('acm-privacy');
+      const sc = localStorage.getItem('acm-sidebar');
       if (l === 'ur' || l === 'en') setLang(l);
       if (th === 'light') setLight(true);
       if (pr === 'on') setPrivacyOn(true);
+      if (sc === 'collapsed') setSidebarCollapsed(true);
     } catch {}
     setRestored(true);
   }, []);
@@ -49,8 +53,9 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
       localStorage.setItem('acm-lang', lang);
       localStorage.setItem('acm-theme', light ? 'light' : 'dark');
       localStorage.setItem('acm-privacy', privacyOn ? 'on' : 'off');
+      localStorage.setItem('acm-sidebar', sidebarCollapsed ? 'collapsed' : 'expanded');
     } catch {}
-  }, [lang, light, privacyOn, restored]);
+  }, [lang, light, privacyOn, sidebarCollapsed, restored]);
 
   const tr = (k: DictKey) => t(k, lang);
 
@@ -98,6 +103,13 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
         <div className="nav-right">
           <span className="nav-badge">FACTORY</span>
           <button
+            className={`icon-btn privacy-btn ${privacyOn ? 'on' : ''}`}
+            onClick={() => setPrivacyOn(!privacyOn)}
+            title={privacyOn ? 'Show figures' : 'Hide figures'}
+          >
+            {privacyOn ? <EyeOff size={15} /> : <Eye size={15} />}
+          </button>
+          <button
             className={`icon-btn ${lang === 'ur' ? 'on' : ''}`}
             onClick={() => setLang(lang === 'en' ? 'ur' : 'en')}
             title="Switch language"
@@ -114,7 +126,14 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
       </nav>
 
       <div className="app-container">
-        <aside className="sidebar no-print">
+        <aside className={`sidebar no-print${sidebarCollapsed ? ' collapsed' : ''}`}>
+          <button
+            className="sidebar-collapse-btn"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {sidebarCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+          </button>
           <div className="sidebar-section">
             <div className="sidebar-label">{tr('operations')}</div>
             {nav.map((n) => <Item key={n.href} {...n} />)}

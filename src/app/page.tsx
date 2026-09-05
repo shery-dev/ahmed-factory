@@ -9,7 +9,6 @@ import { StatusBadge } from '@/components/StatusBadge';
 import { EmptyState } from '@/components/EmptyState';
 import { Sensitive } from '@/components/Sensitive';
 import { DashboardSections, HideButton, DashboardVisibility, RestoreButton } from '@/components/DashboardSections';
-import { PrivacyToggle } from '@/components/PrivacyToggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -74,7 +73,6 @@ export default async function Home({
           <h2>Dashboard</h2>
           <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
             <RestoreButton />
-            <PrivacyToggle />
             <div className="seg">
               {PRESETS.map((p) => (
                 <Link key={p.label} href={p.href} className={`seg-btn ${p.on ? 'active' : ''}`}>
