@@ -171,45 +171,38 @@ a { color: inherit; text-decoration: none; transition: color .15s; }
   border-color: var(--accent-yellow-solid); color: var(--accent-yellow); background: var(--accent-yellow-bg);
 }
 
-/* Privacy mode — blurs every .sensitive figure app-wide. One tap in the top
-   nav, so a manager can hide money and customer-balance figures the moment
-   someone walks up to the desk without navigating anywhere first. */
-html[data-privacy="on"] .sensitive {
-  filter: blur(7px);
-  user-select: none;
-  transition: filter .15s;
+/* Privacy mode — the <Sensitive> component reads privacyOn from context and
+   swaps values for •••••. The .sensitive class is kept as a marker so the
+   component can find it, but the actual hiding is done in React, not CSS. */
+
+/* Card hide toggle — small X in the corner of each dashboard card */
+.hide-card-btn {
+  background: none; border: none; cursor: pointer; padding: 2px;
+  color: var(--text-muted); border-radius: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .15s, color .15s, background .15s;
 }
+.hide-card-btn:hover { color: var(--accent-red-solid); background: var(--accent-red-bg); }
+.card:hover .hide-card-btn, .stat-card:hover .hide-card-btn { opacity: 1; }
 
 /* ── Layout ── */
 .app-container { display: flex; height: calc(100vh - 56px); }
 .sidebar {
-  width: 64px; flex-shrink: 0; background: var(--bg-surface);
+  width: 220px; flex-shrink: 0; background: var(--bg-surface);
   border-inline-end: 1px solid var(--border);
   display: flex; flex-direction: column; padding: 20px 0; overflow-y: auto;
   overflow-x: hidden;
-  transition: width .25s cubic-bezier(.4,0,.2,1), background .25s, border-color .25s;
+  transition: background .25s, border-color .25s;
   position: relative; z-index: 50;
-}
-.sidebar:hover {
-  width: 250px;
-}
-.sidebar:hover .sidebar-label,
-.sidebar:hover .sidebar-item span:nth-child(2),
-.sidebar:hover .item-count,
-.sidebar:hover .stat-row {
-  opacity: 1;
-  transition: opacity .2s ease .05s;
 }
 .sidebar .sidebar-label,
 .sidebar .sidebar-item span:nth-child(2),
 .sidebar .item-count,
 .sidebar .stat-row {
-  opacity: 0;
-  transition: opacity .15s ease;
+  opacity: 1;
   white-space: nowrap;
 }
-.sidebar:hover .sidebar-section { padding: 0 14px; }
-.sidebar .sidebar-section { padding: 0 10px; transition: padding .25s; }
+.sidebar .sidebar-section { padding: 0 14px; }
 .sidebar-section { padding: 0 14px; margin-bottom: 24px; }
 .sidebar-label {
   font-size: 10px; font-weight: 700; color: var(--text-faintest);
@@ -362,6 +355,12 @@ td.right, th.right { text-align: end; }
 .t-strong { color: var(--text-primary); font-weight: 600; }
 .t-muted { color: var(--text-faint); font-size: 12px; }
 
+/* Customer table improvements */
+.customer-row { cursor: default; }
+.customer-row:hover td { background: var(--bg-hover); }
+.customer-name-link { color: var(--text-primary); text-decoration: none; }
+.customer-name-link:hover { color: var(--accent-kraft); text-decoration: underline; }
+
 /* ── Badges ── */
 .badge {
   display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
@@ -385,6 +384,16 @@ td.right, th.right { text-align: end; }
 .log-time { color: var(--text-faintest); font-variant-numeric: tabular-nums; flex-shrink: 0; font-size: 11px; font-weight: 500; }
 .log-msg { color: var(--text-muted); }
 .log-detail { color: var(--text-faint); font-size: 11px; display: block; margin-top: 3px; }
+
+/* A receipt number that traces back to a real bill — in the customer ledger
+   and the stock movement log alike, so "why did this number change" is
+   always one click from "here is the exact bill that caused it." */
+.receipt-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--accent-blue); font-weight: 600;
+}
+.receipt-link:hover { text-decoration: underline; }
+.log-detail .receipt-link { font-size: 11px; font-weight: 600; }
 .log-system { background: var(--bg-elevated); }
 .log-agent { background: var(--log-agent-bg); border-inline-start: 2px solid var(--accent-blue); }
 .log-agent .log-msg { color: var(--accent-blue); }
@@ -656,6 +665,10 @@ a.family-name:hover { color: var(--accent-kraft); }
 body[dir='rtl'] .chev { transform: scaleX(-1); }
 .thickness-row.empty-row { cursor: default; opacity: .45; }
 .thickness-row.empty-row:hover { background: transparent; }
+/* A product with zero recorded sizes still has a real page to receive stock
+   on — only a thickness with no catalogue entry at all is a true dead end. */
+.thickness-row.empty-row.is-open { cursor: pointer; opacity: .7; }
+.thickness-row.empty-row.is-open:hover { background: var(--bg-elevated); opacity: 1; }
 
 /* Control bar (unit + thickness pickers) - one framed, deliberate group
    rather than two loose rows of pills. */

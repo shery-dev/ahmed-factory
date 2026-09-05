@@ -7,6 +7,9 @@ import { dashboard, recentActivity, outstandingBalances, dailyBillingTrend } fro
 import { fmtNum } from '@/lib/i18n';
 import { StatusBadge } from '@/components/StatusBadge';
 import { EmptyState } from '@/components/EmptyState';
+import { Sensitive } from '@/components/Sensitive';
+import { DashboardSections, HideButton, DashboardVisibility, RestoreButton } from '@/components/DashboardSections';
+import { PrivacyToggle } from '@/components/PrivacyToggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,13 +21,6 @@ const LEVEL: Record<string, string> = {
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 const daysAgo = (n: number) => iso(new Date(Date.now() - n * 86400000));
 
-/**
- * The dashboard answers four questions, in the order a counter actually asks
- * them: what came in today, what is owed to us, what needs a decision right
- * now, and what happened. The stat cards it replaced answered the first one
- * four times over — bills, cash, expenses, receivable, all the same size, none
- * of them saying whether the day was going well.
- */
 export default async function Home({
   searchParams,
 }: { searchParams: Promise<{ from?: string; to?: string }> }) {
@@ -40,8 +36,6 @@ export default async function Home({
   const billed = d.billsToday?.v ?? 0;
   const collected = d.creditToday?.v ?? 0;
   const onAccount = Math.max(0, billed - collected);
-  // A day with no billing has no collection rate — showing 0% would read as a
-  // bad day rather than an empty one.
   const collectedPct = billed > 0 ? Math.round((collected / billed) * 100) : null;
 
   const outCount = Number(d.stockAlerts?.out ?? 0);
@@ -49,10 +43,6 @@ export default async function Home({
   const issueCount = Number(d.issues?.n ?? 0);
   const needsAttention = outCount + lowCount + issueCount > 0;
 
-  // Ageing by time since the customer last moved money, not by invoice date:
-  // there is no invoice-level allocation in the ledger, so a true 30/60/90 is
-  // not derivable yet. "Nothing for 60 days" is still the signal worth seeing,
-  // and the heading says exactly that rather than implying a real ageing run.
   const buckets = [
     { key: 'recent', label: 'Under 30 days', tone: 'green', total: 0, n: 0 },
     { key: 'mid', label: '30 – 60 days', tone: 'amber', total: 0, n: 0 },
@@ -78,11 +68,13 @@ export default async function Home({
   ];
 
   return (
-    <>
+    <DashboardVisibility>
       <div className="panel-header">
         <div className="panel-header-row">
           <h2>Dashboard</h2>
           <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
+            <RestoreButton />
+            <PrivacyToggle />
             <div className="seg">
               {PRESETS.map((p) => (
                 <Link key={p.label} href={p.href} className={`seg-btn ${p.on ? 'active' : ''}`}>
@@ -97,19 +89,17 @@ export default async function Home({
         </div>
       </div>
 
-      {/* ── The day itself: billed, how much of it actually came in, and the
-          shape of the week behind it. One band, because they are one story. ── */}
       <section className="hero-band">
         <div className="hero-cell">
           <div className="hero-label">
             <span className="icon-badge amber"><Receipt size={13} /></span>
             Billed · {periodLabel}
           </div>
-          <div className="hero-figure num sensitive">
+          <Sensitive className="hero-figure num">
             <span className="hero-cur">PKR</span> {fmtNum(billed)}
-          </div>
+          </Sensitive>
           <div className="hero-sub">
-            {d.billsToday?.n ?? 0} {(d.billsToday?.n ?? 0) === 1 ? 'bill' : 'bills'} posted
+            <Sensitive>{d.billsToday?.n ?? 0} {(d.billsToday?.n ?? 0) === 1 ? 'bill' : 'bills'} posted</Sensitive>
           </div>
         </div>
 
@@ -117,19 +107,19 @@ export default async function Home({
           <div className="hero-label">
             <span className="icon-badge green"><Banknote size={13} /></span>
             Collected
-            {collectedPct !== null && <span className="hero-pct sensitive">{collectedPct}%</span>}
+            {collectedPct !== null && <Sensitive className="hero-pct">{collectedPct}%</Sensitive>}
           </div>
-          <div className="hero-figure num hero-green sensitive">
+          <Sensitive className="hero-figure num hero-green">
             <span className="hero-cur">PKR</span> {fmtNum(collected)}
-          </div>
+          </Sensitive>
           {billed > 0 ? (
             <>
               <div className="split-bar" role="img"
                    aria-label={`${collectedPct}% of billing collected, the rest on account`}>
                 <span className="split-fill" style={{ width: `${collectedPct}%` }} />
               </div>
-              <div className="hero-sub sensitive">
-                PKR {fmtNum(onAccount)} left on account
+              <div className="hero-sub">
+                <Sensitive>PKR {fmtNum(onAccount)} left on account</Sensitive>
               </div>
             </>
           ) : (
@@ -158,47 +148,46 @@ export default async function Home({
         </div>
       </section>
 
-      {/* ── Standing totals: true regardless of which period is selected. ── */}
-      <div className="grid grid-4" style={{ marginBottom: 18 }}>
-        <Link href="/customers" className="card stat-card">
-          <div className="row between" style={{ alignItems: 'flex-start' }}>
-            <div className="card-title">TOTAL RECEIVABLE</div>
-            <span className="icon-badge lg amber"><Landmark size={17} /></span>
-          </div>
-          <div className="stat-big stat-accent num sensitive">PKR {fmtNum(d.receivable?.v ?? 0)}</div>
-          <div className="stat-sub">Across {owedAll.length} customers</div>
-        </Link>
+      <DashboardSections id="stats">
+        <div className="grid grid-4" style={{ marginBottom: 18 }}>
+          <Link href="/customers" className="card stat-card">
+            <div className="row between" style={{ alignItems: 'flex-start' }}>
+              <div className="card-title">TOTAL RECEIVABLE</div>
+              <span className="icon-badge lg amber"><Landmark size={17} /></span>
+            </div>
+            <Sensitive className="stat-big stat-accent num">PKR {fmtNum(d.receivable?.v ?? 0)}</Sensitive>
+            <div className="stat-sub">Across <Sensitive>{owedAll.length}</Sensitive> customers</div>
+          </Link>
 
-        <Link href="/expenses" className="card stat-card">
-          <div className="row between" style={{ alignItems: 'flex-start' }}>
-            <div className="card-title">EXPENSES · {periodLabel.toUpperCase()}</div>
-            <span className="icon-badge lg red"><Coins size={17} /></span>
-          </div>
-          <div className="stat-big num sensitive">PKR {fmtNum(d.expensesToday?.v ?? 0)}</div>
-          <div className="stat-sub">Recorded against this period</div>
-        </Link>
+          <Link href="/expenses" className="card stat-card">
+            <div className="row between" style={{ alignItems: 'flex-start' }}>
+              <div className="card-title">EXPENSES · {periodLabel.toUpperCase()}</div>
+              <span className="icon-badge lg red"><Coins size={17} /></span>
+            </div>
+            <Sensitive className="stat-big num">PKR {fmtNum(d.expensesToday?.v ?? 0)}</Sensitive>
+            <div className="stat-sub">Recorded against this period</div>
+          </Link>
 
-        <Link href="/customers" className="card stat-card">
-          <div className="row between" style={{ alignItems: 'flex-start' }}>
-            <div className="card-title">CUSTOMERS</div>
-            <span className="icon-badge lg neutral"><Users size={17} /></span>
-          </div>
-          <div className="stat-big num">{fmtNum(d.customers?.n ?? 0)}</div>
-          <div className="stat-sub">Cash and ledger accounts</div>
-        </Link>
+          <Link href="/customers" className="card stat-card">
+            <div className="row between" style={{ alignItems: 'flex-start' }}>
+              <div className="card-title">CUSTOMERS</div>
+              <span className="icon-badge lg neutral"><Users size={17} /></span>
+            </div>
+            <div className="stat-big num">{fmtNum(d.customers?.n ?? 0)}</div>
+            <div className="stat-sub">Cash and ledger accounts</div>
+          </Link>
 
-        <Link href="/catalogue" className="card stat-card">
-          <div className="row between" style={{ alignItems: 'flex-start' }}>
-            <div className="card-title">CATALOGUE</div>
-            <span className="icon-badge lg neutral"><Tags size={17} /></span>
-          </div>
-          <div className="stat-big num">{fmtNum(d.products?.n ?? 0)}</div>
-          <div className="stat-sub">Paper types in moti and bareek</div>
-        </Link>
-      </div>
+          <Link href="/catalogue" className="card stat-card">
+            <div className="row between" style={{ alignItems: 'flex-start' }}>
+              <div className="card-title">CATALOGUE</div>
+              <span className="icon-badge lg neutral"><Tags size={17} /></span>
+            </div>
+            <div className="stat-big num">{fmtNum(d.products?.n ?? 0)}</div>
+            <div className="stat-sub">Paper types in moti and bareek</div>
+          </Link>
+        </div>
+      </DashboardSections>
 
-      {/* ── One line for everything waiting on a person. Absent when there is
-          nothing waiting, rather than a permanent green "all clear" banner. ── */}
       {needsAttention && (
         <div className="attn-bar">
           <span className="attn-bar-lead">
@@ -250,97 +239,110 @@ export default async function Home({
       </div>
 
       <div className="split">
-        <div className="card">
-          <div className="row between" style={{ marginBottom: 12 }}>
-            <div className="card-title" style={{ marginBottom: 0 }}>
-              <span className="card-title-icon"><Landmark size={13} /></span>
-              OUTSTANDING BALANCES
-            </div>
-            <Link href="/customers" className="link-more">
-              All customers <ArrowRight size={13} />
-            </Link>
-          </div>
-
-          {owedAll.length === 0 ? (
-            <EmptyState emoji="✅" heading="All settled up" message="No customer owes anything right now." />
-          ) : (
-            <>
-              {/* Where the money is sitting, before who it is sitting with. */}
-              <div className="age-row">
-                {buckets.map((b) => (
-                  <div key={b.key} className={`age-cell tone-${b.tone}`}>
-                    <div className="age-label">{b.label}</div>
-                    <div className="age-value num sensitive">PKR {fmtNum(b.total)}</div>
-                    <div className="age-count">{b.n} {b.n === 1 ? 'customer' : 'customers'}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="age-note">Measured from each customer&apos;s last ledger movement.</div>
-
-              <div className="stack sm">
-                {owed.map((c) => (
-                  <Link key={c.id} href={`/customers/${c.id}`} className="owed-row">
-                    <span className="owed-name sensitive">
-                      <span className="t-strong">{c.name}</span>
-                      <span className="t-muted mono owed-code">{c.code}</span>
-                    </span>
-                    <span className="num t-strong sensitive">PKR {fmtNum(c.balance)}</span>
-                  </Link>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-
-        <div className="stack">
+        <DashboardSections id="outstanding">
           <div className="card">
             <div className="row between" style={{ marginBottom: 12 }}>
               <div className="card-title" style={{ marginBottom: 0 }}>
-                <span className="card-title-icon"><Package size={13} /></span>
-                LOW STOCK
+                <span className="card-title-icon"><Landmark size={13} /></span>
+                OUTSTANDING BALANCES
               </div>
-              <Link href="/stock" className="link-more">
-                Stock <ArrowRight size={13} />
-              </Link>
+              <div className="row" style={{ gap: 12, alignItems: 'center' }}>
+                <HideButton id="outstanding" />
+                <Link href="/customers" className="link-more">
+                  All customers <ArrowRight size={13} />
+                </Link>
+              </div>
             </div>
-            {d.lowStock.length === 0 ? (
-              <EmptyState emoji="📦" heading="Stock looks healthy" message="Nothing is below its reorder level." />
+
+            {owedAll.length === 0 ? (
+              <EmptyState emoji="✅" heading="All settled up" message="No customer owes anything right now." />
             ) : (
-              <div className="stack sm">
-                {d.lowStock.map((s: any, i: number) => (
-                  <Link key={i} href={`/stock/${s.item_type_id}?unit=${s.unit}`} className="owed-row">
-                    <span className="owed-name">
-                      <span className="t-strong" style={{ fontSize: 12.5 }}>{s.name_en}</span>
-                      <span className="t-muted owed-code">{s.size}&quot;</span>
-                    </span>
-                    <StatusBadge status={s.quantity <= 0 ? 'out' : 'low'}>
-                      {fmtNum(s.quantity)} {s.unit}
-                    </StatusBadge>
-                  </Link>
-                ))}
-              </div>
+              <>
+                <div className="age-row">
+                  {buckets.map((b) => (
+                    <div key={b.key} className={`age-cell tone-${b.tone}`}>
+                      <div className="age-label">{b.label}</div>
+                      <Sensitive className="age-value num">PKR {fmtNum(b.total)}</Sensitive>
+                      <div className="age-count"><Sensitive>{b.n}</Sensitive> {b.n === 1 ? 'customer' : 'customers'}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="stack sm">
+                  {owed.map((c) => (
+                    <Link key={c.id} href={`/customers/${c.id}`} className="owed-row">
+                      <span className="owed-name">
+                        <Sensitive className="t-strong">{c.name}</Sensitive>
+                        <span className="t-muted mono owed-code">{c.code}</span>
+                      </span>
+                      <Sensitive className="num t-strong">PKR {fmtNum(c.balance)}</Sensitive>
+                    </Link>
+                  ))}
+                </div>
+              </>
             )}
           </div>
+        </DashboardSections>
 
-          <div className="card">
-            <div className="card-title">
-              <span className="card-title-icon"><Activity size={13} /></span>
-              ACTIVITY
-            </div>
-            <div className="log-body" style={{ maxHeight: 260 }}>
-              {log.map((l) => (
-                <div key={l.id} className={`log-entry ${LEVEL[l.level] ?? 'log-system'}`}>
-                  <span className="log-time">{l.ts.slice(11, 16)}</span>
-                  <span style={{ minWidth: 0 }}>
-                    <span className="log-msg">{l.event}</span>
-                    {l.detail && <span className="log-detail">{l.detail}</span>}
-                  </span>
+        <div className="stack">
+          <DashboardSections id="low-stock">
+            <div className="card">
+              <div className="row between" style={{ marginBottom: 12 }}>
+                <div className="card-title" style={{ marginBottom: 0 }}>
+                  <span className="card-title-icon"><Package size={13} /></span>
+                  LOW STOCK
                 </div>
-              ))}
+                <div className="row" style={{ gap: 12, alignItems: 'center' }}>
+                  <HideButton id="low-stock" />
+                  <Link href="/stock" className="link-more">
+                    Stock <ArrowRight size={13} />
+                  </Link>
+                </div>
+              </div>
+              {d.lowStock.length === 0 ? (
+                <EmptyState emoji="📦" heading="Stock looks healthy" message="Nothing is below its reorder level." />
+              ) : (
+                <div className="stack sm">
+                  {d.lowStock.map((s: any, i: number) => (
+                    <Link key={i} href={`/stock/${s.item_type_id}?unit=${s.unit}`} className="owed-row">
+                      <span className="owed-name">
+                        <span className="t-strong" style={{ fontSize: 12.5 }}>{s.name_en}</span>
+                        <span className="t-muted owed-code">{s.size}&quot;</span>
+                      </span>
+                      <StatusBadge status={s.quantity <= 0 ? 'out' : 'low'}>
+                        {fmtNum(s.quantity)} {s.unit}
+                      </StatusBadge>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
+          </DashboardSections>
+
+          <DashboardSections id="activity">
+            <div className="card">
+              <div className="row between" style={{ marginBottom: 12 }}>
+                <div className="card-title" style={{ marginBottom: 0 }}>
+                  <span className="card-title-icon"><Activity size={13} /></span>
+                  ACTIVITY
+                </div>
+                <HideButton id="activity" />
+              </div>
+              <div className="log-body" style={{ maxHeight: 260 }}>
+                {log.map((l) => (
+                  <div key={l.id} className={`log-entry ${LEVEL[l.level] ?? 'log-system'}`}>
+                    <span className="log-time">{l.ts.slice(11, 16)}</span>
+                    <span style={{ minWidth: 0 }}>
+                      <span className="log-msg">{l.event}</span>
+                      {l.detail && <span className="log-detail">{l.detail}</span>}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </DashboardSections>
         </div>
       </div>
-    </>
+    </DashboardVisibility>
   );
 }

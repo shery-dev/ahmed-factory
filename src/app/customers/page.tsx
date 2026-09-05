@@ -1,7 +1,10 @@
 import Link from 'next/link';
+import { Users, Wallet, Landmark, UserCheck } from 'lucide-react';
 import { listCustomers, customerBalance } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
 import { AddCustomerButton } from '@/components/AddCustomerModal';
+import { Sensitive } from '@/components/Sensitive';
+import { AutoFilter } from '@/components/AutoFilter';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,39 +32,52 @@ export default async function CustomersPage({
         <AddCustomerButton />
       </div>
 
-      <form className="row wrap" style={{ gap: 8, marginBottom: 16 }} method="get">
-        <input className="input" name="search" defaultValue={search} placeholder="Search name, code, contact..." style={{ flex: '1 1 220px' }} />
-        <select className="select" name="kind" defaultValue={kind} style={{ flex: '0 1 150px' }}>
-          <option value="">All types</option>
-          <option value="cash">Cash</option>
-          <option value="ledger">Ledger</option>
-        </select>
-        <label className="row" style={{ gap: 6, fontSize: 12, color: 'var(--text-muted)', alignItems: 'center' }}>
-          <input type="checkbox" name="show_inactive" value="1" defaultChecked={show_inactive === '1'} />
-          Show inactive
-        </label>
-        <button className="btn btn-ghost" type="submit" style={{ padding: '6px 14px' }}>Filter</button>
-        {(search || kind || show_inactive) && (
-          <a className="btn btn-ghost" href="/customers" style={{ padding: '6px 14px' }}>Clear</a>
-        )}
-      </form>
+      <AutoFilter>
+        <div className="row wrap" style={{ gap: 8, marginBottom: 16 }}>
+          <input className="input" name="search" defaultValue={search} placeholder="Search name, code, contact..." style={{ flex: '1 1 220px' }} />
+          <select className="select" name="kind" defaultValue={kind} style={{ flex: '0 1 150px' }}>
+            <option value="">All types</option>
+            <option value="cash">Cash</option>
+            <option value="ledger">Ledger</option>
+          </select>
+          <label className="row" style={{ gap: 6, fontSize: 12, color: 'var(--text-muted)', alignItems: 'center' }}>
+            <input type="checkbox" name="show_inactive" value="1" defaultChecked={show_inactive === '1'} />
+            Show inactive
+          </label>
+          {(search || kind || show_inactive) && (
+            <a className="btn btn-ghost" href="/customers" style={{ padding: '6px 14px' }}>Clear</a>
+          )}
+        </div>
+      </AutoFilter>
 
       <div className="grid grid-4" style={{ marginBottom: 20 }}>
         <div className="card tight">
-          <div className="card-title">TOTAL</div>
+          <div className="row between" style={{ alignItems: 'flex-start' }}>
+            <div className="card-title">TOTAL</div>
+            <span className="icon-badge lg neutral"><Users size={17} /></span>
+          </div>
           <div className="stat-big num">{customers.length}</div>
         </div>
         <div className="card tight">
-          <div className="card-title">CASH</div>
+          <div className="row between" style={{ alignItems: 'flex-start' }}>
+            <div className="card-title">CASH</div>
+            <span className="icon-badge lg amber"><Wallet size={17} /></span>
+          </div>
           <div className="stat-big num">{cashCount}</div>
         </div>
         <div className="card tight">
-          <div className="card-title">LEDGER</div>
+          <div className="row between" style={{ alignItems: 'flex-start' }}>
+            <div className="card-title">LEDGER</div>
+            <span className="icon-badge lg neutral"><Landmark size={17} /></span>
+          </div>
           <div className="stat-big num">{ledgerCount}</div>
         </div>
         <div className="card tight">
-          <div className="card-title">TOTAL RECEIVABLE</div>
-          <div className="stat-big stat-accent num">PKR {fmtNum(totalBalance)}</div>
+          <div className="row between" style={{ alignItems: 'flex-start' }}>
+            <div className="card-title">RECEIVABLE</div>
+            <span className="icon-badge lg red"><UserCheck size={17} /></span>
+          </div>
+          <Sensitive className="stat-big stat-accent num">PKR {fmtNum(totalBalance)}</Sensitive>
         </div>
       </div>
 
@@ -82,10 +98,12 @@ export default async function CustomersPage({
             </thead>
             <tbody>
               {customers.map((c) => (
-                <tr key={c.id} style={!c.active ? { opacity: 0.5 } : undefined}>
+                <tr key={c.id} className="customer-row" style={!c.active ? { opacity: 0.5 } : undefined}>
                   <td className="mono t-muted">{c.code}</td>
                   <td>
-                    <span className="t-strong">{c.name}</span>
+                    <Link href={`/customers/${c.id}`} className="t-strong customer-name-link">
+                      {c.name}
+                    </Link>
                     {c.needs_review === 1 && <span className="badge badge-yellow" style={{ marginInlineStart: 6, fontSize: 9, padding: '1px 5px' }}>CHECK</span>}
                     {!c.active && <span className="badge badge-muted" style={{ marginInlineStart: 6, fontSize: 9, padding: '1px 5px' }}>INACTIVE</span>}
                   </td>
@@ -93,8 +111,10 @@ export default async function CustomersPage({
                     <span className={`badge ${c.kind === 'cash' ? 'badge-kraft' : 'badge-purple'}`}>{c.kind}</span>
                   </td>
                   <td className="t-muted">{c.contact || '\u2014'}</td>
-                  <td className="right num t-strong">
-                    {c.balance > 0 ? <span className="stat-accent">PKR {fmtNum(c.balance)}</span> : <span className="t-muted">PKR 0</span>}
+                  <td className="right num">
+                    <Sensitive className={c.balance > 0 ? 'stat-accent t-strong' : 't-muted'}>
+                      PKR {fmtNum(c.balance)}
+                    </Sensitive>
                   </td>
                   <td className="right">
                     <Link className="btn btn-ghost" style={{ padding: '4px 10px', fontSize: 11 }}

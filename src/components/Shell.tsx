@@ -3,12 +3,11 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, EyeOff } from 'lucide-react';
 import { t, dirFor, type Lang, type DictKey } from '@/lib/i18n';
 import { logoutAction } from '@/app/login/actions';
 
-interface UiCtx { lang: Lang; setLang: (l: Lang) => void; tr: (k: DictKey) => string; }
-const Ui = createContext<UiCtx>({ lang: 'en', setLang: () => {}, tr: (k) => k });
+interface UiCtx { lang: Lang; setLang: (l: Lang) => void; tr: (k: DictKey) => string; privacyOn: boolean; setPrivacyOn: (v: boolean) => void; }
+const Ui = createContext<UiCtx>({ lang: 'en', setLang: () => {}, tr: (k) => k, privacyOn: false, setPrivacyOn: () => {} });
 export const useUi = () => useContext(Ui);
 
 export interface SidebarCounts {
@@ -86,7 +85,7 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
   };
 
   return (
-    <Ui.Provider value={{ lang, setLang, tr }}>
+    <Ui.Provider value={{ lang, setLang, tr, privacyOn, setPrivacyOn }}>
       <nav className="top-nav no-print">
         <div className="nav-left">
           <div className="nav-mark">AC</div>
@@ -98,13 +97,6 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
         </div>
         <div className="nav-right">
           <span className="nav-badge">FACTORY</span>
-          <button
-            className={`icon-btn privacy-btn ${privacyOn ? 'on' : ''}`}
-            onClick={() => setPrivacyOn(!privacyOn)}
-            title={privacyOn ? 'Show figures' : 'Hide figures — a customer or visitor is at the desk'}
-          >
-            {privacyOn ? <EyeOff size={15} /> : <Eye size={15} />}
-          </button>
           <button
             className={`icon-btn ${lang === 'ur' ? 'on' : ''}`}
             onClick={() => setLang(lang === 'en' ? 'ur' : 'en')}
@@ -135,11 +127,11 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
             <div className="sidebar-label">{tr('activity')}</div>
             <div className="stat-row">
               <span>{tr('todaysSales')}</span>
-              <span className="stat-value">{counts.salesToday}</span>
+              <span className="stat-value sensitive">{counts.salesToday}</span>
             </div>
             <div className="stat-row">
               <span>{tr('receivable')}</span>
-              <span className="stat-value">{counts.receivable}</span>
+              <span className="stat-value sensitive">{counts.receivable}</span>
             </div>
           </div>
         </aside>

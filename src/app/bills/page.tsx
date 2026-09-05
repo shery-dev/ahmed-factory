@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { listBills, countBills } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
+import { Sensitive } from '@/components/Sensitive';
+import { AutoFilter } from '@/components/AutoFilter';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,25 +43,26 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
       </div>
 
       {/* Search + Filters */}
-      <form method="GET" className="row wrap" style={{ gap: 8, marginBottom: 16 }}>
-        <input className="input" name="q" defaultValue={q} placeholder="Search customer, receipt #…" style={{ minWidth: 220, flex: '1 1 200px' }} />
-        <input className="input" type="date" name="from" defaultValue={from} style={{ flex: '0 1 150px' }} />
-        <input className="input" type="date" name="to" defaultValue={to} style={{ flex: '0 1 150px' }} />
-        <select className="select" name="kind" defaultValue={kind} style={{ flex: '0 1 120px' }}>
-          <option value="">All types</option>
-          <option value="cash">Cash</option>
-          <option value="ledger">Ledger</option>
-        </select>
-        <select className="select" name="status" defaultValue={status} style={{ flex: '0 1 120px' }}>
-          <option value="">All status</option>
-          <option value="posted">Posted</option>
-          <option value="void">Void</option>
-        </select>
-        <button className="btn btn-primary" type="submit" style={{ padding: '6px 16px' }}>Filter</button>
-        {(q || from || to || kind || status) && (
-          <a href="/bills" className="btn btn-ghost" style={{ padding: '6px 12px' }}>Clear</a>
-        )}
-      </form>
+      <AutoFilter>
+        <div className="row wrap" style={{ gap: 8, marginBottom: 16 }}>
+          <input className="input" name="q" defaultValue={q} placeholder="Search customer, receipt #…" style={{ minWidth: 220, flex: '1 1 200px' }} />
+          <input className="input" type="date" name="from" defaultValue={from} style={{ flex: '0 1 150px' }} />
+          <input className="input" type="date" name="to" defaultValue={to} style={{ flex: '0 1 150px' }} />
+          <select className="select" name="kind" defaultValue={kind} style={{ flex: '0 1 120px' }}>
+            <option value="">All types</option>
+            <option value="cash">Cash</option>
+            <option value="ledger">Ledger</option>
+          </select>
+          <select className="select" name="status" defaultValue={status} style={{ flex: '0 1 120px' }}>
+            <option value="">All status</option>
+            <option value="posted">Posted</option>
+            <option value="void">Void</option>
+          </select>
+          {(q || from || to || kind || status) && (
+            <a href="/bills" className="btn btn-ghost" style={{ padding: '6px 12px' }}>Clear</a>
+          )}
+        </div>
+      </AutoFilter>
 
       <div className="row" style={{ gap: 8, marginBottom: 12 }}>
         <a className="btn btn-ghost" style={{ padding: '6px 14px', fontSize: 12 }} href={`/api/export?type=bills&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`}>Export CSV</a>
@@ -98,8 +101,8 @@ export default async function BillsPage({ searchParams }: { searchParams: Promis
                     </span>
                   </td>
                   <td className="right num">{b.line_count}</td>
-                  <td className="right num t-strong">{fmtNum(b.subtotal)}</td>
-                  <td className="right num stat-green">{fmtNum(b.credit)}</td>
+                  <td className="right num"><Sensitive>{fmtNum(b.subtotal)}</Sensitive></td>
+                  <td className="right num stat-green"><Sensitive>{fmtNum(b.credit)}</Sensitive></td>
                   <td>
                     {b.status === 'void'
                       ? <span className="badge badge-red">VOID</span>

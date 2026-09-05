@@ -1,6 +1,8 @@
 import { stockValuationReport, topCustomersByVolume, topCustomersByOutstanding, periodSummary } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
 import Link from 'next/link';
+import { Sensitive } from '@/components/Sensitive';
+import { AutoFilter } from '@/components/AutoFilter';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,11 +37,12 @@ export default async function ReportsPage({
       </div>
 
       {/* Period selector */}
-      <form className="row wrap" style={{ gap: 8, marginBottom: 20 }} method="get">
-        <input className="input" name="from" type="date" defaultValue={periodFrom} style={{ flex: '0 1 160px' }} />
-        <input className="input" name="to" type="date" defaultValue={periodTo} style={{ flex: '0 1 160px' }} />
-        <button className="btn btn-primary" type="submit" style={{ padding: '6px 16px' }}>Compare Period</button>
-      </form>
+      <AutoFilter>
+        <div className="row wrap" style={{ gap: 8, marginBottom: 20 }}>
+          <input className="input" name="from" type="date" defaultValue={periodFrom} style={{ flex: '0 1 160px' }} />
+          <input className="input" name="to" type="date" defaultValue={periodTo} style={{ flex: '0 1 160px' }} />
+        </div>
+      </AutoFilter>
 
       <div className="row" style={{ marginBottom: 20 }}>
         <Link href="/reports/daily" className="btn btn-ghost" style={{ padding: '8px 16px' }}>
@@ -58,18 +61,18 @@ export default async function ReportsPage({
           </div>
           <div>
             <div className="t-muted" style={{ fontSize: 11 }}>REVENUE</div>
-            <div className="stat-big stat-accent num">PKR {fmtNum(period.bills.revenue)}</div>
-            <div className="t-muted" style={{ fontSize: 11 }}>prev: PKR {fmtNum(period.prev.bills.revenue)} ({pct(period.bills.revenue, period.prev.bills.revenue)})</div>
+            <Sensitive className="stat-big stat-accent num">PKR {fmtNum(period.bills.revenue)}</Sensitive>
+            <div className="t-muted" style={{ fontSize: 11 }}>prev: <Sensitive>PKR {fmtNum(period.prev.bills.revenue)}</Sensitive> ({pct(period.bills.revenue, period.prev.bills.revenue)})</div>
           </div>
           <div>
             <div className="t-muted" style={{ fontSize: 11 }}>COLLECTED</div>
-            <div className="stat-big stat-green num">PKR {fmtNum(period.bills.collected)}</div>
-            <div className="t-muted" style={{ fontSize: 11 }}>prev: PKR {fmtNum(period.prev.bills.collected)}</div>
+            <Sensitive className="stat-big stat-green num">PKR {fmtNum(period.bills.collected)}</Sensitive>
+            <div className="t-muted" style={{ fontSize: 11 }}>prev: <Sensitive>PKR {fmtNum(period.prev.bills.collected)}</Sensitive></div>
           </div>
           <div>
             <div className="t-muted" style={{ fontSize: 11 }}>EXPENSES</div>
-            <div className="stat-big num">PKR {fmtNum(period.expenses.total)}</div>
-            <div className="t-muted" style={{ fontSize: 11 }}>prev: PKR {fmtNum(period.prev.expenses.total)} ({pct(period.expenses.total, period.prev.expenses.total)})</div>
+            <Sensitive className="stat-big num">PKR {fmtNum(period.expenses.total)}</Sensitive>
+            <div className="t-muted" style={{ fontSize: 11 }}>prev: <Sensitive>PKR {fmtNum(period.prev.expenses.total)}</Sensitive> ({pct(period.expenses.total, period.prev.expenses.total)})</div>
           </div>
         </div>
       </div>
@@ -81,7 +84,7 @@ export default async function ReportsPage({
             <div className="card-title">STOCK VALUATION</div>
             <div className="row between" style={{ marginBottom: 12 }}>
               <div>
-                <span className="stat-big stat-accent num">PKR {fmtNum(totalValue)}</span>
+                <Sensitive className="stat-big stat-accent num">PKR {fmtNum(totalValue)}</Sensitive>
                 <span className="t-muted" style={{ marginLeft: 10, fontSize: 12 }}>{valuation.length} lines</span>
               </div>
               {lowStockCount > 0 && <span className="badge badge-yellow">{lowStockCount} LOW</span>}
@@ -100,8 +103,8 @@ export default async function ReportsPage({
                       <td className="t-strong">{r.name_en}</td>
                       <td className="right num">{r.size}&quot;</td>
                       <td className="right num">{fmtNum(r.quantity)} {r.unit}</td>
-                      <td className="right num t-muted">{fmtNum(r.rate)}</td>
-                      <td className="right num t-strong">PKR {fmtNum(r.value)}</td>
+                      <td className="right num t-muted"><Sensitive>{fmtNum(r.rate)}</Sensitive></td>
+                      <td className="right num t-strong"><Sensitive>PKR {fmtNum(r.value)}</Sensitive></td>
                       <td>{r.is_low ? <span className="badge badge-yellow">LOW</span> : null}</td>
                     </tr>
                   ))}
@@ -132,7 +135,7 @@ export default async function ReportsPage({
                       <span className="t-strong">{c.name}</span>{' '}
                       <span className="t-muted mono">{c.code}</span>
                     </span>
-                    <span className="num t-strong">PKR {fmtNum(c.total_volume)} <span className="t-muted">({c.bill_count})</span></span>
+                    <span className="num t-strong"><Sensitive>PKR {fmtNum(c.total_volume)} <span className="t-muted">({c.bill_count})</span></Sensitive></span>
                   </Link>
                 ))}
               </div>
@@ -154,7 +157,7 @@ export default async function ReportsPage({
                       <span className="t-strong">{c.name}</span>{' '}
                       <span className="t-muted mono">{c.code}</span>
                     </span>
-                    <span className="num stat-accent" style={{ fontWeight: 600 }}>PKR {fmtNum(c.balance)}</span>
+                    <Sensitive className="num stat-accent" style={{ fontWeight: 600 }}>PKR {fmtNum(c.balance)}</Sensitive>
                   </Link>
                 ))}
               </div>

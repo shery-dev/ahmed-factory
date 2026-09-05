@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { editExpense, deleteExpenseAction } from '@/app/expenses/actions';
 import { fmtNum } from '@/lib/i18n';
+import { Sensitive } from './Sensitive';
 
 export function ExpenseRow({ expense, categories }: { expense: { id: number; ts: string; category: string; detail: string; amount: number; actor: string }; categories: string[] }) {
   const [editing, setEditing] = useState(false);
@@ -33,7 +34,7 @@ export function ExpenseRow({ expense, categories }: { expense: { id: number; ts:
       <td className="num t-muted">{expense.ts.slice(0, 10)}</td>
       <td><span className="badge badge-muted">{expense.category}</span></td>
       <td>{expense.detail}</td>
-      <td className="right num t-strong">{fmtNum(expense.amount)}</td>
+      <td className="right num t-strong"><Sensitive>{fmtNum(expense.amount)}</Sensitive></td>
       <td className="t-muted">
         <div className="row" style={{ gap: 4, justifyContent: 'flex-end' }}>
           <span>{expense.actor}</span>

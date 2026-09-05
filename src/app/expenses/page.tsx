@@ -3,6 +3,8 @@ import { fmtNum } from '@/lib/i18n';
 import { recordExpense } from './actions';
 import { ExpenseRow } from '@/components/ExpenseRow';
 import { getSettings, getExpenseCategories } from '@/lib/settings';
+import { Sensitive } from '@/components/Sensitive';
+import { AutoFilter } from '@/components/AutoFilter';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,20 +24,21 @@ export default async function ExpensesPage({
         <h2>Expenses</h2>
       </div>
 
-      <form className="row wrap" style={{ gap: 8, marginBottom: 16 }} method="get">
-        <input className="input" name="from" type="date" defaultValue={from || ''} style={{ flex: '0 1 160px' }} />
-        <input className="input" name="to" type="date" defaultValue={to || ''} style={{ flex: '0 1 160px' }} />
-        <select className="select" name="category" defaultValue={category || ''} style={{ flex: '0 1 150px' }}>
-          <option value="">All categories</option>
-          {categories.map((c) => (
-            <option key={c} value={c}>{c.toUpperCase()}</option>
-          ))}
-        </select>
-        <button className="btn btn-ghost" type="submit" style={{ padding: '6px 14px' }}>Filter</button>
-        {(from || to || category) && (
-          <a className="btn btn-ghost" href="/expenses" style={{ padding: '6px 14px' }}>Clear</a>
-        )}
-      </form>
+      <AutoFilter>
+        <div className="row wrap" style={{ gap: 8, marginBottom: 16 }}>
+          <input className="input" name="from" type="date" defaultValue={from || ''} style={{ flex: '0 1 160px' }} />
+          <input className="input" name="to" type="date" defaultValue={to || ''} style={{ flex: '0 1 160px' }} />
+          <select className="select" name="category" defaultValue={category || ''} style={{ flex: '0 1 150px' }}>
+            <option value="">All categories</option>
+            {categories.map((c) => (
+              <option key={c} value={c}>{c.toUpperCase()}</option>
+            ))}
+          </select>
+          {(from || to || category) && (
+            <a className="btn btn-ghost" href="/expenses" style={{ padding: '6px 14px' }}>Clear</a>
+          )}
+        </div>
+      </AutoFilter>
 
       <div style={{ marginBottom: 12 }}>
         <a className="btn btn-ghost" style={{ padding: '6px 14px', fontSize: 12 }} href={`/api/export?type=expenses&from=${from || ''}&to=${to || ''}&category=${category || ''}`}>Export CSV</a>
@@ -44,9 +47,9 @@ export default async function ExpensesPage({
       <div className="split">
         <div>
           <div className="card" style={{ marginBottom: 16 }}>
-            <div className="stat-big stat-accent num" style={{ marginBottom: 4 }}>
+            <Sensitive className="stat-big stat-accent num" style={{ marginBottom: 4 }}>
               PKR {fmtNum(total)}
-            </div>
+            </Sensitive>
             <div className="stat-sub">{expenses.length} entries shown</div>
           </div>
 
