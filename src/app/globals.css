@@ -31,6 +31,8 @@
   --accent-red-solid: #ef4444;
   --accent-purple: #a78bfa;
   --accent-cyan: #22d3ee;
+  --accent-orange: #fb923c;
+  --accent-orange-solid: #f97316;
 
   --accent-kraft-bg: #e8a85414;
   --accent-blue-bg: #5b8def14;
@@ -38,6 +40,7 @@
   --accent-yellow-bg: #f59e0b14;
   --accent-red-bg: #ef444414;
   --accent-purple-bg: #a78bfa14;
+  --accent-orange-bg: #fb923c14;
 
   --shadow-sm: 0 1px 2px rgba(0,0,0,.3);
   --shadow-md: 0 4px 12px rgba(0,0,0,.25);
@@ -82,6 +85,8 @@ body.light {
   --accent-red-solid: #dc2626;
   --accent-purple: #7c3aed;
   --accent-cyan: #0891b2;
+  --accent-orange: #ea580c;
+  --accent-orange-solid: #c2410c;
 
   --accent-kraft-bg: #b8762e0c;
   --accent-blue-bg: #3b82f60c;
@@ -89,6 +94,7 @@ body.light {
   --accent-yellow-bg: #d977060c;
   --accent-red-bg: #dc26260c;
   --accent-purple-bg: #7c3aed0c;
+  --accent-orange-bg: #ea580c0c;
 
   --shadow-sm: 0 1px 3px rgba(0,0,0,.06);
   --shadow-md: 0 4px 12px rgba(0,0,0,.06);
@@ -551,3 +557,224 @@ td.right, th.right { text-align: end; }
 .customer-card__link:hover { border-color: var(--accent-kraft); color: var(--accent-kraft); background: var(--accent-kraft-bg); }
 .customer-card--inactive { opacity: .5; }
 .customer-card__review { background: var(--accent-yellow-bg); color: var(--accent-yellow); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 8px; letter-spacing: .5px; }
+
+/* ===========================================================================
+   Ported from the sibling "Ahmed Factory System" project — icon system,
+   status-badge colours, and the Stock module's family/thickness/size
+   navigation. Deliberately additive: nothing above this line was touched,
+   so the existing Professional v3 redesign (shadows, radius scale, the
+   customer/stock card components) keeps working exactly as it did.
+   =========================================================================== */
+
+.badge-orange { background: var(--accent-orange-bg); color: var(--accent-orange); }
+
+.sidebar-item:focus-visible, .icon-btn:focus-visible, .btn:focus-visible,
+.control-btn:focus-visible, .quick-action-tile:focus-visible {
+  outline: 2px solid var(--accent-kraft); outline-offset: 2px;
+}
+
+/* Loading spinner - lucide-react's Loader2, spun with plain CSS */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin .8s linear infinite; }
+
+/* Icon badge - one small icon in a flat, muted-tint circle. Every new icon
+   in the app sits in one of these; the tint reuses the existing *-bg
+   tokens, so this is not a second palette, just this one applied
+   consistently. Fixed per meaning (amber = act on this; gray = everything
+   else; green/red/orange = status), never swapped on hover. */
+.icon-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  transition: background .15s, color .15s, transform .15s;
+}
+.icon-badge.sm { width: 20px; height: 20px; }
+.icon-badge.lg { width: 36px; height: 36px; }
+.icon-badge.amber   { background: var(--accent-kraft-bg);  color: var(--accent-kraft); }
+.icon-badge.neutral { background: var(--border);           color: var(--text-muted); }
+.icon-badge.green   { background: var(--accent-green-bg);  color: var(--accent-green); }
+.icon-badge.red     { background: var(--accent-red-bg);    color: var(--accent-red); }
+.icon-badge.orange  { background: var(--accent-orange-bg); color: var(--accent-orange); }
+.sidebar-item:hover .icon-badge,
+.quick-action-tile:hover .icon-badge { transform: scale(1.06); }
+
+.panel-header-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+
+.empty-state { padding: 36px 20px; text-align: center; }
+.empty-emoji { font-size: 32px; line-height: 1; margin-bottom: 10px; }
+.empty-heading { font-weight: 700; font-size: 13.5px; color: var(--text-secondary); margin-bottom: 4px; }
+.empty-message { font-size: 12px; color: var(--text-faint); max-width: 300px; margin: 0 auto; line-height: 1.5; }
+
+/* ===========================================================================
+   Stock module - family -> thickness -> size navigation. Built for a store
+   man who is standing, holding paper in one hand, and cannot read English.
+   Targets are large, and state is carried by colour as well as text.
+   =========================================================================== */
+
+.family-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px; }
+.family-card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden; transition: border-color .2s;
+}
+.family-card:hover { border-color: var(--border-hover); }
+.family-head {
+  display: flex; align-items: center;
+  gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--border);
+}
+.family-name { color: var(--text-primary); font-weight: 600; font-size: 14px; cursor: pointer; }
+a.family-name:hover { color: var(--accent-kraft); }
+.thickness-row {
+  display: flex; align-items: center; gap: 12px; padding: 13px 16px;
+  border-bottom: 1px solid var(--border); border-inline-start: 3px solid transparent;
+  cursor: pointer; transition: background .15s; min-height: 52px;
+}
+.thickness-row:last-child { border-bottom: none; }
+.thickness-row:hover { background: var(--bg-elevated); }
+.thickness-row.attn-red    { border-inline-start-color: var(--accent-red-solid); }
+.thickness-row.attn-yellow { border-inline-start-color: var(--accent-yellow-solid); }
+.thickness-row.attn-purple { border-inline-start-color: var(--accent-orange-solid); }
+.thickness-tag {
+  font-size: 12px; font-weight: 700; padding: 5px 11px; border-radius: 7px;
+  background: var(--bg-elevated); color: var(--text-secondary);
+  min-width: 66px; text-align: center; flex-shrink: 0;
+}
+.thickness-tag.is-bareek { color: var(--accent-blue); background: var(--accent-blue-bg); }
+.thickness-meta { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+.thickness-end { margin-inline-start: auto; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.chev { color: var(--text-faintest); font-size: 18px; }
+body[dir='rtl'] .chev { transform: scaleX(-1); }
+.thickness-row.empty-row { cursor: default; opacity: .45; }
+.thickness-row.empty-row:hover { background: transparent; }
+
+/* Control bar (unit + thickness pickers) - one framed, deliberate group
+   rather than two loose rows of pills. */
+.control-bar {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px;
+}
+.control-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.control-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--text-faint);
+  min-width: 64px; flex-shrink: 0;
+}
+.control-divider { height: 1px; background: var(--border); margin: 0 -16px; }
+.control-btn {
+  display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px;
+  border-radius: 9px; border: 1px solid var(--border); background: var(--bg-elevated);
+  color: var(--text-muted); font-weight: 600; font-size: 13px; cursor: pointer;
+  transition: all .15s; font-family: inherit;
+}
+.control-btn:hover { color: var(--text-secondary); border-color: var(--border-hover); }
+.control-btn svg { flex-shrink: 0; opacity: .85; }
+.control-btn.active {
+  background: var(--accent-kraft-bg); color: var(--accent-kraft); border-color: var(--accent-kraft);
+}
+.control-btn.active.is-bareek {
+  background: var(--accent-blue-bg); color: var(--accent-blue); border-color: var(--accent-blue);
+}
+.control-btn.faint { opacity: .4; cursor: default; }
+
+/* Attention chips - which sizes, not just how many */
+.attn-chip {
+  display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; margin: 3px 4px 0 0; font-variant-numeric: tabular-nums;
+}
+.attn-chip.c-out { background: var(--accent-red-bg); color: var(--accent-red); }
+.attn-chip.c-low { background: var(--accent-yellow-bg); color: var(--accent-yellow); }
+.attn-chip.c-flag { background: var(--accent-orange-bg); color: var(--accent-orange); }
+.attn-chip:hover { filter: brightness(1.15); }
+
+/* Size tiles (product detail) */
+.size-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(94px, 1fr)); gap: 10px; }
+.size-tile {
+  position: relative;
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px 8px; min-height: 88px; cursor: pointer; font-family: inherit;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; transition: transform .12s, border-color .15s, background .15s;
+}
+.size-tile-status { position: absolute; top: 6px; inset-inline-end: 6px; }
+.size-tile:hover { border-color: var(--accent-kraft); transform: translateY(-2px); }
+.size-tile:focus-visible { outline: 2px solid var(--accent-kraft); outline-offset: 2px; }
+.size-label { font-size: 12px; font-weight: 700; color: var(--text-faint); letter-spacing: .3px; }
+.size-qty {
+  font-size: 23px; font-weight: 700; color: var(--text-primary); line-height: 1.1;
+  font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums;
+}
+.size-foot { font-size: 10px; color: var(--text-faintest); letter-spacing: .4px; }
+.size-tile.low { border-color: var(--accent-yellow-solid); background: var(--accent-yellow-bg); }
+.size-tile.low .size-qty, .size-tile.low .size-label { color: var(--accent-yellow); }
+.size-tile.out { border-color: var(--accent-red-solid); background: var(--accent-red-bg); }
+.size-tile.out .size-qty, .size-tile.out .size-label { color: var(--accent-red); }
+.size-tile.flagged { border-style: dashed; border-color: var(--accent-orange); background: var(--accent-orange-bg); }
+.size-tile.flagged .size-qty, .size-tile.flagged .size-label { color: var(--accent-orange); }
+.size-tile:target { outline: 2px solid var(--accent-kraft); outline-offset: 2px; }
+
+.size-grid-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 10px; flex-wrap: wrap;
+}
+.btn-add-size {
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
+  border-radius: 8px; border: 1px dashed var(--border-hover); background: transparent;
+  color: var(--text-muted); font-weight: 600; font-size: 12.5px; cursor: pointer;
+  transition: all .15s; font-family: inherit;
+}
+.btn-add-size:hover { border-color: var(--accent-kraft); color: var(--accent-kraft); border-style: solid; }
+
+/* Update sheet (Receive / Issue / Set Count) */
+.sheet-backdrop {
+  position: fixed; inset: 0; background: var(--overlay-bg); z-index: 200;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.sheet {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: 16px 16px 0 0; width: 100%; max-width: 470px; padding: 20px;
+  display: flex; flex-direction: column; gap: 15px;
+  max-height: 92vh; overflow-y: auto;
+}
+@media (min-width: 700px) {
+  .sheet-backdrop { align-items: center; }
+  .sheet { border-radius: 16px; }
+}
+.sheet-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.sheet-title { font-size: 17px; font-weight: 700; color: var(--text-primary); }
+.sheet-sub { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.mode-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.mode-btn {
+  padding: 14px 6px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--bg-elevated); color: var(--text-muted);
+  font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit;
+  transition: all .15s;
+}
+.mode-btn:hover { color: var(--text-secondary); border-color: var(--border-hover); }
+.mode-btn.on.m-receive { border-color: var(--accent-green-solid); color: var(--accent-green); background: var(--accent-green-bg); }
+.mode-btn.on.m-issue   { border-color: var(--accent-yellow-solid); color: var(--accent-yellow); background: var(--accent-yellow-bg); }
+.mode-btn.on.m-count   { border-color: var(--accent-kraft); color: var(--accent-kraft); background: var(--accent-kraft-bg); }
+.stepper { display: flex; align-items: center; gap: 10px; }
+.step-btn {
+  width: 54px; height: 54px; flex-shrink: 0; border-radius: 12px;
+  border: 1px solid var(--border); background: var(--bg-elevated);
+  color: var(--text-primary); font-size: 24px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: all .15s;
+}
+.step-btn:hover { border-color: var(--accent-kraft); color: var(--accent-kraft); }
+.step-input {
+  flex: 1; min-width: 0; height: 54px; text-align: center;
+  font-size: 26px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: 12px; color: var(--text-primary);
+}
+.step-input:focus { outline: none; border-color: var(--accent-kraft); }
+.quick-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip {
+  padding: 9px 15px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--bg-elevated); color: var(--text-muted);
+  font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+  font-variant-numeric: tabular-nums; transition: all .15s;
+}
+.chip:hover { border-color: var(--accent-kraft); color: var(--accent-kraft); }
+.preview-line {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+  padding: 11px 13px; background: var(--bg-elevated); border-radius: 9px; font-size: 13px;
+}
+.preview-line b { color: var(--text-primary); font-size: 17px; font-family: 'JetBrains Mono', monospace; }

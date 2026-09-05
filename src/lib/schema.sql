@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS item_types (
   description_en TEXT,
   description_ur TEXT,
   default_rate   REAL    NOT NULL DEFAULT 0, -- PKR, per unit of the sale form
+  reorder_level  REAL    NOT NULL DEFAULT 5, -- per-product low-stock threshold
   active         INTEGER NOT NULL DEFAULT 1,
   sort_order     INTEGER NOT NULL DEFAULT 0,
   created_at     TEXT    NOT NULL DEFAULT (datetime('now'))

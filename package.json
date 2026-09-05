@@ -5,7 +5,8 @@
   "description": "Ahmed Corrugation Machines - billing, ledger, stock. Working prototype.",
   "scripts": {
     "seed": "node scripts/seed.mjs",
-    "dev": "npm run seed && next dev -p 3210",
+    "migrate": "node scripts/migrate.mjs",
+    "dev": "npm run seed && npm run migrate && next dev -p 3210",
     "dev:noseed": "next dev -p 3210",
     "build": "next build",
     "start": "next start -p 3210",

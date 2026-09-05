@@ -90,6 +90,99 @@ export const dict = {
   atomicNote:   { en: 'Posts ledger + stock + receipt in one transaction',
                   ur: 'کھاتہ، اسٹاک اور رسید ایک ساتھ جمع ہوتے ہیں' },
 
+  // ── Stock module ──
+  // Moti and bareek are trade terms for thickness — transliterated, not
+  // translated. "Thick" and "thin" are not what anyone on the floor says.
+  moti:         { en: 'Moti',            ur: 'موٹی' },
+  bareek:       { en: 'Bareek',          ur: 'باریک' },
+  thickness:    { en: 'Thickness',       ur: 'موٹائی' },
+  sizesTracked: { en: 'Sizes',           ur: 'سائز' },
+  lowCount:     { en: 'Low',             ur: 'کم' },
+  outCount:     { en: 'Out',             ur: 'ختم' },
+  quarantined:  { en: 'Quarantined',     ur: 'مشکوک' },
+  allProducts:  { en: 'All products',    ur: 'تمام پروڈکٹس' },
+  needsAttentionOnly: { en: 'Needs attention', ur: 'توجہ درکار' },
+  notStocked:   { en: 'Not stocked',     ur: 'موجود نہیں' },
+  openProduct:  { en: 'Open',            ur: 'کھولیں' },
+  backToStock:  { en: 'All stock',       ur: 'تمام اسٹاک' },
+
+  // Updating a size
+  receive:      { en: 'Receive',         ur: 'آمد' },
+  issue:        { en: 'Issue',           ur: 'اجراء' },
+  setCount:     { en: 'Set count',       ur: 'گنتی' },
+  currentlyOnHand:{ en: 'On hand now',   ur: 'اس وقت موجود' },
+  addQty:       { en: 'How many received?', ur: 'کتنے آئے؟' },
+  issueQty:     { en: 'How many going out?', ur: 'کتنے جا رہے ہیں؟' },
+  reasonRequired:{ en: 'Reason is required', ur: 'وجہ لکھنا ضروری ہے' },
+  cancel:       { en: 'Cancel',          ur: 'منسوخ' },
+  confirm:      { en: 'Confirm',         ur: 'تصدیق کریں' },
+  afterThis:    { en: 'After this',      ur: 'اس کے بعد' },
+  chooseSize:   { en: 'Tap a size to update it', ur: 'اپ ڈیٹ کے لیے سائز پر ٹیپ کریں' },
+  addSize:      { en: 'Add size',        ur: 'نیا سائز' },
+  newSizeInches:{ en: 'New size (inches)', ur: 'نیا سائز (انچ)' },
+  reorderLevel: { en: 'Low below',       ur: 'کم شمار کریں' },
+  movements:    { en: 'Movements',       ur: 'اسٹاک کی حرکت' },
+  noMovements:  { en: 'No movements yet', ur: 'ابھی کوئی حرکت نہیں' },
+  sizesOutOf:   { en: 'sizes out of stock', ur: 'سائز ختم' },
+  sizesLow:     { en: 'sizes running low', ur: 'سائز کم' },
+
+  // Concurrency guard: someone else changed this size while the sheet was
+  // open. Never silently write over what they did.
+  stockChanged: { en: 'Stock changed while this was open', ur: 'یہ کھلا تھا جب اسٹاک بدل گیا' },
+  nowOnHand:    { en: 'Now on hand',      ur: 'اب موجود' },
+  tapAgainToConfirm: { en: 'Tap Confirm again to proceed', ur: 'جاری رکھنے کے لیے دوبارہ تصدیق پر ٹیپ کریں' },
+
+  // Large-quantity soft warning — never a hard block, just one extra tap.
+  largeQtyWarning: { en: 'That is a large quantity — is it correct?', ur: 'یہ زیادہ مقدار ہے — کیا یہ درست ہے؟' },
+  confirmAnyway:   { en: 'Yes, confirm',  ur: 'ہاں، تصدیق کریں' },
+
+  // Illustrative examples of the kind of note staff already write by hand —
+  // shown as-is regardless of language, since they are the note itself.
+  reasonExampleReceive: { en: 'e.g. Ahmed Sheikh ka truck Gujrat se aaya, size 17',
+                           ur: 'e.g. Ahmed Sheikh ka truck Gujrat se aaya, size 17' },
+  reasonExampleIssue:   { en: 'e.g. maal kharab tha, wapis bheja',
+                           ur: 'e.g. maal kharab tha, wapis bheja' },
+  reasonExampleCount:   { en: 'e.g. floor count by Ali, weekly check',
+                           ur: 'e.g. floor count by Ali, weekly check' },
+
+  // Replaces the flat SIZES/LOW/OUT/QUARANTINED number row — a status line
+  // that says something, plus (on the product page) exactly which sizes.
+  allStockOk:      { en: 'Every tracked size is within its reorder level',
+                     ur: 'ہر ٹریک شدہ سائز اپنی مقررہ حد میں ہے' },
+  needsAttention:  { en: 'Needs attention', ur: 'توجہ درکار' },
+  productsAffected: { en: 'products affected', ur: 'پروڈکٹس متاثر' },
+
+  // Empty-state heading + one sentence, for the shop-floor screens that are
+  // translated (management screens hardcode English, per the language
+  // policy above, so their empty states do too).
+  emptyBillHeading:      { en: 'No items yet', ur: 'ابھی کوئی چیز نہیں' },
+  emptyBillMessage:      { en: 'Add a line above to start the bill.', ur: 'بل شروع کرنے کے لیے اوپر ایک لائن شامل کریں۔' },
+  emptyMovementsHeading: { en: 'No movements yet', ur: 'ابھی کوئی حرکت نہیں' },
+  emptyMovementsMessage: { en: 'Receive, issue or count this product to start its history.',
+                            ur: 'اس پروڈکٹ کی تاریخ شروع کرنے کے لیے آمد، اجراء یا گنتی درج کریں۔' },
+  emptyStockHeading:     { en: 'Nothing needs attention', ur: 'کچھ توجہ درکار نہیں' },
+  emptyStockMessage:     { en: 'Every product is within its reorder level.',
+                            ur: 'ہر پروڈکٹ اپنی مقررہ حد میں ہے۔' },
+
+  // Billing: customer search / quick-add / purchase history
+  searchCustomer:      { en: 'Search by name or phone', ur: 'نام یا فون سے تلاش کریں' },
+  noMatchesFound:      { en: 'No match — add them below', ur: 'کوئی نہیں ملا — نیچے شامل کریں' },
+  newCashCustomer:      { en: 'New Cash Customer', ur: 'نیا نقد گاہک' },
+  newLedgerCustomer:    { en: 'New Ledger Customer', ur: 'نیا کھاتہ گاہک' },
+  ledgerPageField:      { en: 'Manual ledger page', ur: 'رجسٹر کا صفحہ' },
+  createAndSelect:      { en: 'Create & select', ur: 'بنائیں اور منتخب کریں' },
+  change:                { en: 'Change', ur: 'تبدیل کریں' },
+  matchedExisting:      { en: 'Already on file — matched to', ur: 'پہلے سے موجود ہے — اس سے ملایا گیا' },
+  purchaseHistory:      { en: 'Purchase History', ur: 'خریداری کی تاریخ' },
+  noHistoryYet:        { en: 'No purchases yet', ur: 'ابھی کوئی خریداری نہیں' },
+  nameRequired:         { en: 'Name is required', ur: 'نام درکار ہے' },
+  viewFullLedger:       { en: 'View full ledger', ur: 'مکمل کھاتہ دیکھیں' },
+
+  stockHomeDesc:{ en: 'Every paper is held in two thicknesses — moti and bareek — and in many widths. Pick a product to see its sizes and update what is on hand.',
+                  ur: 'ہر کاغذ دو موٹائیوں میں ہوتا ہے — موٹی اور باریک — اور کئی چوڑائیوں میں۔ سائز دیکھنے اور اسٹاک اپ ڈیٹ کرنے کے لیے پروڈکٹ منتخب کریں۔' },
+  stockProductDesc:{ en: 'Each tile is one width. Tap it to receive a delivery, issue paper out, or enter a physical count.',
+                  ur: 'ہر خانہ ایک چوڑائی ہے۔ آمد درج کرنے، اسٹاک نکالنے یا گنتی درج کرنے کے لیے اس پر ٹیپ کریں۔' },
+
   // ── Customers ──
   addCustomer:    { en: 'Add Customer',     ur: 'گاہک شامل کریں' },
   editCustomer:   { en: 'Edit Customer',    ur: 'گاہک تبدیل کریں' },
