@@ -11,6 +11,8 @@ export interface Customer {
   id: number; code: string; kind: 'cash' | 'ledger'; name: string;
   contact: string | null; manual_ledger_page: string | null;
   credit_limit: number; needs_review: number; active: number;
+  address: string | null; business_name: string | null;
+  cnic: string | null; secondary_contact: string | null;
 }
 export interface StockRow {
   id: number; item_type_id: number; size: number; unit: string;
@@ -150,6 +152,7 @@ export async function findCustomerByContact(kind: 'cash' | 'ledger', contact: st
 export async function createCustomer(input: {
   kind: 'cash' | 'ledger'; name: string; contact?: string;
   manual_ledger_page?: string; credit_limit?: number;
+  address?: string; business_name?: string; cnic?: string; secondary_contact?: string;
 }) {
   const prefix = input.kind === 'cash' ? 'c' : '';
   const row = await dbGet<{ n: number }>(
@@ -158,8 +161,10 @@ export async function createCustomer(input: {
   );
   const code = `${prefix}${(row?.n ?? 0) + 1}`;
   const info = await dbRun(
-    `INSERT INTO customers (code, kind, name, contact, manual_ledger_page, credit_limit) VALUES (?,?,?,?,?,?)`,
-    [code, input.kind, input.name.trim(), input.contact ?? null, input.manual_ledger_page ?? null, input.credit_limit ?? 0],
+    `INSERT INTO customers (code, kind, name, contact, manual_ledger_page, credit_limit, address, business_name, cnic, secondary_contact)
+     VALUES (?,?,?,?,?,?,?,?,?,?)`,
+    [code, input.kind, input.name.trim(), input.contact ?? null, input.manual_ledger_page ?? null, input.credit_limit ?? 0,
+     input.address ?? null, input.business_name ?? null, input.cnic ?? null, input.secondary_contact ?? null],
   );
   await logActivity('Customer created', `${code} — ${input.name}`, 'success', 'counter');
   return info.lastInsertRowid;
@@ -167,14 +172,18 @@ export async function createCustomer(input: {
 
 export async function updateCustomer(id: number, input: {
   name: string; contact?: string; credit_limit?: number; manual_ledger_page?: string;
+  address?: string; business_name?: string; cnic?: string; secondary_contact?: string;
 }) {
   const prev = await getCustomer(id);
   if (!prev) return;
   await dbRun(
     `UPDATE customers SET name = ?, contact = ?, credit_limit = ?, manual_ledger_page = ?,
+       address = ?, business_name = ?, cnic = ?, secondary_contact = ?,
        needs_review = CASE WHEN ? != '' AND needs_review = 1 THEN 0 ELSE needs_review END
      WHERE id = ?`,
-    [input.name.trim(), input.contact ?? null, input.credit_limit ?? 0, input.manual_ledger_page ?? null, input.name.trim(), id],
+    [input.name.trim(), input.contact ?? null, input.credit_limit ?? 0, input.manual_ledger_page ?? null,
+     input.address ?? null, input.business_name ?? null, input.cnic ?? null, input.secondary_contact ?? null,
+     input.name.trim(), id],
   );
   await logActivity('Customer updated', `${prev.code} — ${input.name}`, 'system', 'counter');
 }
@@ -206,7 +215,7 @@ export async function customerBalance(customerId: number): Promise<number> {
 
 export async function customerLedger(customerId: number) {
   const rows = await dbAll<{
-    id: number; ts: string; receipt_no: number | null; particulars: string;
+    id: number; ts: string; bill_id: number | null; receipt_no: number | null; particulars: string;
     debit: number; credit: number; credit_method: string | null; rent: number;
     manual_page: string | null; flagged: number; flag_reason: string | null;
   }>(`SELECT * FROM ledger_entries WHERE customer_id = ? ORDER BY ts, id`, [customerId]);
@@ -364,13 +373,24 @@ export const sizeRows = async (itemTypeId: number, unit: string): Promise<SizeRo
     [itemTypeId, unit],
   );
 
+/**
+ * Movement history for one product, newest first. `ref_id` on a bill-caused
+ * row is the bill's internal id (what postBill() actually stores — see
+ * there), not the receipt number printed on paper, so this joins bills to
+ * surface `receipt_no` too — showing the raw internal id as if it were the
+ * receipt would point an admin at the wrong number when tracing "which
+ * receipt caused this stock to move".
+ */
 export const movementsFor = async (itemTypeId: number, limit = 20) =>
   dbAll<{
     id: number; ts: string; direction: string; size: number | null; unit: string | null;
     quantity: number; rate: number; ref_type: string | null; ref_id: number | null;
-    note: string | null; actor: string;
+    receipt_no: number | null; note: string | null; actor: string;
   }>(
-    `SELECT * FROM stock_movements WHERE item_type_id = ? ORDER BY id DESC LIMIT ?`,
+    `SELECT m.*, b.receipt_no AS receipt_no
+     FROM stock_movements m
+     LEFT JOIN bills b ON m.ref_type = 'bill' AND b.id = m.ref_id
+     WHERE m.item_type_id = ? ORDER BY m.id DESC LIMIT ?`,
     [itemTypeId, limit],
   );
 

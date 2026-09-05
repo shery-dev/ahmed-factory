@@ -147,6 +147,16 @@ async function unifyFamily(wrongFamily, correctFamily, note) {
 await unifyFamily('Boxboard 2.5 No', 'Boxboard 2.5', 'Boxboard 2.5 family split');
 await unifyFamily('Boxboard 3 No', 'Boxboard 3', 'Boxboard 3 family split');
 
+// Fuller customer record-keeping — not evidenced in the 2022 legacy data or
+// either rebuild's own import, added on request. `address` applies to either
+// kind; the other three matter mainly for a ledger (credit) account. All
+// nullable, so every existing customer row just gets NULLs here — nothing
+// to backfill.
+await addColumn('customers', 'address', `address TEXT`, 'customers.address added');
+await addColumn('customers', 'business_name', `business_name TEXT`, 'customers.business_name added');
+await addColumn('customers', 'cnic', `cnic TEXT`, 'customers.cnic added');
+await addColumn('customers', 'secondary_contact', `secondary_contact TEXT`, 'customers.secondary_contact added');
+
 for (const d of done) console.log(`\u2713 ${d}`);
 for (const s of skipped) console.log(`\u00b7 ${s}`);
 

@@ -144,13 +144,14 @@ function ThicknessRow({ t, unit, label, bareek, tr }: {
   tr: (k: DictKey) => string;
 }) {
   if (!t) {
-    // Nothing to walk into — this thickness has no catalogue entry at all,
-    // not just an empty one. Add it from the Catalogue page instead.
+    // No catalogue entry at all for this thickness — link to the catalogue
+    // so the user can add or re-activate the product type.
     return (
-      <div className="thickness-row empty-row">
+      <Link href="/catalogue" className="thickness-row empty-row is-open">
         <span className={`thickness-tag ${bareek ? 'is-bareek' : ''}`}>{label}</span>
         <span className="thickness-meta">{tr('notStocked')}</span>
-      </div>
+        <span className="thickness-end"><ChevronRight size={16} className="chev" /></span>
+      </Link>
     );
   }
   if (t.sizes === 0) {

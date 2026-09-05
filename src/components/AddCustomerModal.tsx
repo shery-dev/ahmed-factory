@@ -64,8 +64,24 @@ function AddCustomerModal({ onClose }: { onClose: () => void }) {
             <label>CONTACT (PHONE / WHATSAPP)</label>
             <input className="input" name="contact" placeholder="Phone number" />
           </div>
+          <div className="field">
+            <label>ADDRESS</label>
+            <input className="input" name="address" placeholder="Optional" />
+          </div>
           {kind === 'ledger' && (
             <>
+              <div className="field">
+                <label>BUSINESS / SHOP NAME</label>
+                <input className="input" name="business_name" placeholder="If different from the name above" />
+              </div>
+              <div className="field">
+                <label>CNIC</label>
+                <input className="input" name="cnic" placeholder="Optional" />
+              </div>
+              <div className="field">
+                <label>SECONDARY CONTACT</label>
+                <input className="input" name="secondary_contact" placeholder="Backup phone number" />
+              </div>
               <div className="field">
                 <label>LEDGER PAGE REF</label>
                 <input className="input" name="manual_ledger_page" placeholder="Paper register page number" />

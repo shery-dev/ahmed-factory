@@ -12,6 +12,10 @@ export async function addCustomer(form: FormData) {
     contact: String(form.get('contact') ?? '').trim() || undefined,
     manual_ledger_page: String(form.get('manual_ledger_page') ?? '').trim() || undefined,
     credit_limit: Number(form.get('credit_limit')) || 0,
+    address: String(form.get('address') ?? '').trim() || undefined,
+    business_name: String(form.get('business_name') ?? '').trim() || undefined,
+    cnic: String(form.get('cnic') ?? '').trim() || undefined,
+    secondary_contact: String(form.get('secondary_contact') ?? '').trim() || undefined,
   });
   revalidatePath('/customers'); revalidatePath('/billing'); revalidatePath('/');
 }
@@ -25,6 +29,10 @@ export async function editCustomer(form: FormData) {
     contact: String(form.get('contact') ?? '').trim() || undefined,
     credit_limit: Number(form.get('credit_limit')) || 0,
     manual_ledger_page: String(form.get('manual_ledger_page') ?? '').trim() || undefined,
+    address: String(form.get('address') ?? '').trim() || undefined,
+    business_name: String(form.get('business_name') ?? '').trim() || undefined,
+    cnic: String(form.get('cnic') ?? '').trim() || undefined,
+    secondary_contact: String(form.get('secondary_contact') ?? '').trim() || undefined,
   });
   revalidatePath('/customers/' + id); revalidatePath('/customers'); revalidatePath('/billing');
 }

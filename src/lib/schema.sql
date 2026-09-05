@@ -71,7 +71,18 @@ CREATE TABLE IF NOT EXISTS customers (
   credit_limit        REAL    NOT NULL DEFAULT 0,
   needs_review        INTEGER NOT NULL DEFAULT 0,
   active              INTEGER NOT NULL DEFAULT 1,
-  created_at          TEXT    NOT NULL DEFAULT (datetime('now'))
+  created_at          TEXT    NOT NULL DEFAULT (datetime('now')),
+  -- Record-keeping fields, not evidenced in the 2022 legacy system or either
+  -- rebuild's own data (nothing beyond name/contact/manual_ledger_page ever
+  -- existed there) — added on the owner's request for a fuller ledger-
+  -- customer file. `address` applies to either kind, the other three are
+  -- meaningful mainly for a ledger (credit) account and are left blank for
+  -- most cash customers. None of these are selected onto a bill/receipt
+  -- (see getBill() in repo.ts) — a receipt only ever shows name/code/contact.
+  address             TEXT,
+  business_name       TEXT,                  -- the shop/firm, if different from the contact person
+  cnic                TEXT,                  -- national ID, for a credit account's paperwork
+  secondary_contact   TEXT                   -- backup phone, useful for chasing an overdue ledger balance
 );
 CREATE INDEX IF NOT EXISTS idx_cust_kind ON customers(kind, active);
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, X, Plus, Loader2, PackagePlus, PackageMinus, ClipboardList, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Plus, Loader2, PackagePlus, PackageMinus, ClipboardList, ArrowRight, ExternalLink } from 'lucide-react';
 import { useUi } from './Shell';
 import { fmtNum, type DictKey } from '@/lib/i18n';
 import type { ItemType, SizeRow } from '@/lib/repo';
@@ -24,7 +24,7 @@ import { EmptyState } from './EmptyState';
 type Mode = 'receive' | 'issue' | 'count';
 type Movement = {
   id: number; ts: string; direction: string; size: number | null; unit: string | null;
-  quantity: number; ref_type: string | null; ref_id: number | null;
+  quantity: number; ref_type: string | null; ref_id: number | null; receipt_no: number | null;
   note: string | null; actor: string;
 };
 
@@ -318,7 +318,13 @@ export function ProductStock({
                       {fmtNum(Math.abs(m.quantity))} {m.unit ?? unit} · {m.size}″
                     </span>
                     <span className="log-detail">
-                      {m.note}{m.ref_type === 'bill' ? ` · bill #${m.ref_id}` : ''} · {m.actor}
+                      {m.note}
+                      {m.ref_type === 'bill' && m.ref_id && (
+                        <> · <Link href={`/bills/${m.ref_id}`} className="receipt-link">
+                          receipt #{m.receipt_no ?? m.ref_id} <ExternalLink size={10} />
+                        </Link></>
+                      )}
+                      {' · '}{m.actor}
                     </span>
                   </span>
                 </div>

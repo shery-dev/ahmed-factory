@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ExternalLink } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { getCustomer, customerLedger, customerBalance } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
@@ -140,7 +141,13 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
               {rows.map((r) => (
                 <tr key={r.id} className={r.flagged ? 'quarantined' : ''}>
                   <td className="num t-muted">{r.ts.slice(0, 10)}</td>
-                  <td className="num">{r.receipt_no ? `#${r.receipt_no}` : '\u2014'}</td>
+                  <td className="num">
+                    {r.bill_id ? (
+                      <Link href={`/bills/${r.bill_id}`} className="receipt-link">
+                        #{r.receipt_no} <ExternalLink size={11} />
+                      </Link>
+                    ) : r.receipt_no ? `#${r.receipt_no}` : '\u2014'}
+                  </td>
                   <td style={{ maxWidth: 340 }}>{r.particulars}</td>
                   <td className="right num">{r.debit ? fmtNum(r.debit) : '\u2014'}</td>
                   <td className="right num stat-green">{r.credit ? fmtNum(r.credit) : '\u2014'}</td>
@@ -160,6 +167,29 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
           {c.kind === 'ledger' && balance > 0 && (
             <ReceivePaymentForm customerId={c.id} balance={balance} paymentMethods={paymentMethods} />
           )}
+
+          {/* What's actually on file, at a glance — the edit form below has
+              the same fields, but pre-filled inputs aren't a "view". */}
+          {(c.address || c.business_name || c.cnic || c.secondary_contact) && (
+            <div className="card">
+              <div className="card-title">CUSTOMER DETAILS</div>
+              <div className="stack sm">
+                {c.business_name && (
+                  <div className="row between"><span className="t-muted">Business / Shop</span><span className="t-strong">{c.business_name}</span></div>
+                )}
+                {c.address && (
+                  <div className="row between" style={{ alignItems: 'flex-start' }}><span className="t-muted">Address</span><span className="t-strong" style={{ textAlign: 'right', maxWidth: '65%' }}>{c.address}</span></div>
+                )}
+                {c.secondary_contact && (
+                  <div className="row between"><span className="t-muted">Secondary contact</span><span className="t-strong mono">{c.secondary_contact}</span></div>
+                )}
+                {c.cnic && (
+                  <div className="row between"><span className="t-muted">CNIC</span><span className="t-strong mono">{c.cnic}</span></div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="card">
             <div className="card-title">EDIT CUSTOMER</div>
             <form action={editCustomer} className="stack sm">
@@ -172,8 +202,24 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
                 <label>CONTACT</label>
                 <input className="input" name="contact" defaultValue={c.contact ?? ''} />
               </div>
+              <div className="field">
+                <label>ADDRESS</label>
+                <input className="input" name="address" defaultValue={c.address ?? ''} placeholder="Optional" />
+              </div>
               {c.kind === 'ledger' && (
                 <>
+                  <div className="field">
+                    <label>BUSINESS / SHOP NAME</label>
+                    <input className="input" name="business_name" defaultValue={c.business_name ?? ''} placeholder="If different from the name above" />
+                  </div>
+                  <div className="field">
+                    <label>CNIC</label>
+                    <input className="input" name="cnic" defaultValue={c.cnic ?? ''} placeholder="Optional" />
+                  </div>
+                  <div className="field">
+                    <label>SECONDARY CONTACT</label>
+                    <input className="input" name="secondary_contact" defaultValue={c.secondary_contact ?? ''} placeholder="Backup phone number" />
+                  </div>
                   <div className="field">
                     <label>LEDGER PAGE REF</label>
                     <input className="input" name="manual_ledger_page" defaultValue={c.manual_ledger_page ?? ''} placeholder="Paper register page number" />
