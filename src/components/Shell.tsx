@@ -79,7 +79,7 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
         <div className="nav-left">
           <div className="nav-mark">AC</div>
           <span className="nav-title">{tr('appName')}</span>
-          <span className="nav-separator">\u2502</span>
+          <span className="nav-separator">{'\u2502'}</span>
           <span className="nav-subtitle">
             {lang === 'ur' ? '\u0628\u0644\u0646\u06AF\u060C \u06A9\u06BE\u0627\u062A\u06C1 \u0627\u0648\u0631 \u0627\u0633\u0679\u0627\u06A9' : 'Billing, Ledger & Stock'}
           </span>
