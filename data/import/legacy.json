@@ -1,0 +1,4919 @@
+{
+ "source": "Factory Management System First Deployment/book.xlsx",
+ "item_types": [
+  {
+   "code": "fluting",
+   "name_en": "Fluting",
+   "name_ur": "فلوٹنگ",
+   "family": "Fluting",
+   "is_bareek": 0,
+   "description_en": "Fluted paper is the middle liner of corrugated board, which can be supplied individually as a type of protective packaging, with grammage around 85-105.",
+   "default_rate": 28.0,
+   "sort_order": 1
+  },
+  {
+   "code": "fluting_bareek",
+   "name_en": "Fluting Bareek",
+   "name_ur": "فلوٹنگ باریک",
+   "family": "Fluting",
+   "is_bareek": 1,
+   "description_en": "Thin Fluted paper is the middle liner of corrugated board, which can be supplied individually as a type of protective packaging, with grammage around 85-105. Mostly used for small boxes (like shoe boxes, present boxes etc.)",
+   "default_rate": 30.0,
+   "sort_order": 2
+  },
+  {
+   "code": "l1",
+   "name_en": "L1",
+   "name_ur": "ایل ون",
+   "family": "L1",
+   "is_bareek": 0,
+   "description_en": "L1 is a recycled base liner board for container board, with grammage around 140-150, and waterproof.",
+   "default_rate": 32.0,
+   "sort_order": 3
+  },
+  {
+   "code": "l1_bareek",
+   "name_en": "L1 Bareek",
+   "name_ur": "ایل ون باریک",
+   "family": "L1",
+   "is_bareek": 1,
+   "description_en": "Thin L1 is a recycled base liner board for container board, with grammage around 140-150, and waterproof. Mostly used for small boxes (like shoe boxes, present boxes etc.)",
+   "default_rate": 35.0,
+   "sort_order": 4
+  },
+  {
+   "code": "l2",
+   "name_en": "L2",
+   "name_ur": "ایل ٹو",
+   "family": "L2",
+   "is_bareek": 0,
+   "description_en": "L2 is a recycled base liner board for container board, with grammage around 120-140, reddish and non-waterproof.",
+   "default_rate": 30.0,
+   "sort_order": 5
+  },
+  {
+   "code": "l2_bareek",
+   "name_en": "L2 Bareek",
+   "name_ur": "ایل ٹو باریک",
+   "family": "L2",
+   "is_bareek": 1,
+   "description_en": "Thin L2 is a recycled base liner board for container board, with grammage around 120-140, reddish and non-waterproof. Mostly used for small boxes (like shoe boxes, present boxes etc.)",
+   "default_rate": 33.0,
+   "sort_order": 6
+  },
+  {
+   "code": "test_liner",
+   "name_en": "Test Liner",
+   "name_ur": "ٹیسٹ لائنر",
+   "family": "Test Liner",
+   "is_bareek": 0,
+   "description_en": "Testliner is a recycled base liner board for container board, with grammage around 120-145, brown and waterproof.",
+   "default_rate": 33.0,
+   "sort_order": 7
+  },
+  {
+   "code": "test_liner_bareek",
+   "name_en": "Test Liner Bareek",
+   "name_ur": "ٹیسٹ لائنر باریک",
+   "family": "Test Liner",
+   "is_bareek": 1,
+   "description_en": "Thin Testliner is a recycled base liner board for container board, with grammage around 120-145, brown and waterproof. Mostly used for small boxes (like shoe boxes, present boxes etc.)",
+   "default_rate": 36.0,
+   "sort_order": 8
+  },
+  {
+   "code": "boxboard_2_5_no",
+   "name_en": "Boxboard 2.5 No",
+   "name_ur": "بکس بورڈ 2.5",
+   "family": "Boxboard 2.5",
+   "is_bareek": 0,
+   "description_en": "White coated recycled liner, with grammage around 160-180 and waterproof.",
+   "default_rate": 111.0,
+   "sort_order": 9
+  },
+  {
+   "code": "boxboard_2_5_bareek",
+   "name_en": "Boxboard 2.5 Bareek",
+   "name_ur": "بکس بورڈ 2.5 باریک",
+   "family": "Boxboard 2.5",
+   "is_bareek": 1,
+   "description_en": "Thin White coated recycled liner, with grammage around 160-180 and waterproof. Mostly used for small boxes (like shoe boxes, present boxes etc.)",
+   "default_rate": 45.0,
+   "sort_order": 10
+  },
+  {
+   "code": "boxboard_3_no",
+   "name_en": "Boxboard 3 No",
+   "name_ur": "بکس بورڈ 3",
+   "family": "Boxboard 3",
+   "is_bareek": 0,
+   "description_en": "White coated recycled liner, with grammage around 140-160 and non-waterproof.",
+   "default_rate": 40.0,
+   "sort_order": 11
+  },
+  {
+   "code": "boxboard_3_bareek",
+   "name_en": "Boxboard 3 Bareek",
+   "name_ur": "بکس بورڈ 3 باریک",
+   "family": "Boxboard 3",
+   "is_bareek": 1,
+   "description_en": "Thin White coated recycled liner, with grammage around 140-160 and non-waterproof. Mostly used for small boxes (like shoe boxes, present boxes etc.)",
+   "default_rate": 43.0,
+   "sort_order": 12
+  },
+  {
+   "code": "local_kraft",
+   "name_en": "Local Kraft",
+   "name_ur": "لوکل کرافٹ",
+   "family": "Local Kraft",
+   "is_bareek": 0,
+   "description_en": "Virgin Kraft paper assembled outside of Pakistan with grammage around 180-190.",
+   "default_rate": 45.0,
+   "sort_order": 13
+  },
+  {
+   "code": "local_kraft_bareek",
+   "name_en": "Local Kraft Bareek",
+   "name_ur": "لوکل کرافٹ باریک",
+   "family": "Local Kraft",
+   "is_bareek": 1,
+   "description_en": "Thin Virgin Kraft paper assembled outside of Pakistan with grammage around 180-190. Mostly used for small boxes (like shoe boxes, present boxes etc.)",
+   "default_rate": 48.0,
+   "sort_order": 14
+  },
+  {
+   "code": "imported_kraft",
+   "name_en": "Imported Kraft",
+   "name_ur": "امپورٹڈ کرافٹ",
+   "family": "Imported Kraft",
+   "is_bareek": 0,
+   "description_en": "Virgin Kraft paper assembled in Pakistan with grammage around 160-180.",
+   "default_rate": 50.0,
+   "sort_order": 15
+  },
+  {
+   "code": "imported_kraft_bareek",
+   "name_en": "Imported Kraft Bareek",
+   "name_ur": "امپورٹڈ کرافٹ باریک",
+   "family": "Imported Kraft",
+   "is_bareek": 1,
+   "description_en": "Thin Virgin Kraft paper assembled in Pakistan with grammage around 160-180. Mostly used for small boxes (like shoe boxes, present boxes etc.)",
+   "default_rate": 54.0,
+   "sort_order": 16
+  },
+  {
+   "code": "super_fluting",
+   "name_en": "Super Fluting",
+   "name_ur": "سپر فلوٹنگ",
+   "family": "Super Fluting",
+   "is_bareek": 0,
+   "description_en": "Fluted paper is the middle liner of corrugated board, which can be supplied individually as a type of protective packaging, different from fluting with more grammage 100-115 and more strength.",
+   "default_rate": 29.0,
+   "sort_order": 17
+  },
+  {
+   "code": "super_fluting_bareek",
+   "name_en": "Super Fluting Bareek",
+   "name_ur": "سپر فلوٹنگ باریک",
+   "family": "Super Fluting",
+   "is_bareek": 1,
+   "description_en": "Thin Fluted paper is the middle liner of corrugated board, which can be supplied individually as a type of protective packaging, different from fluting with more grammage 100-115 and more strength. Mostly used for small boxes (like shoe boxes, present boxes etc.)",
+   "default_rate": 32.0,
+   "sort_order": 18
+  }
+ ],
+ "stock": [
+  {
+   "type_code": "fluting",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 20.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 0.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 91.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 3.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 238.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 0.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 0.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 45,
+   "unit": "roll",
+   "quantity": 1040.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 46,
+   "unit": "roll",
+   "quantity": 1075.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 47,
+   "unit": "roll",
+   "quantity": 1110.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 48,
+   "unit": "roll",
+   "quantity": 1145.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 49,
+   "unit": "roll",
+   "quantity": 1180.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 50,
+   "unit": "roll",
+   "quantity": 1215.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 51,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting",
+   "size": 52,
+   "unit": "roll",
+   "quantity": 1001249.0,
+   "rate": 28.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 144.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 46.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 96.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 20,
+   "unit": "roll",
+   "quantity": -57.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 0.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 0.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "fluting_bareek",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l1",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 1111111189.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 30.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 90.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 416.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 587.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 45,
+   "unit": "roll",
+   "quantity": 1040.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 46,
+   "unit": "roll",
+   "quantity": 1075.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 47,
+   "unit": "roll",
+   "quantity": 1110.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 48,
+   "unit": "roll",
+   "quantity": 1145.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 49,
+   "unit": "roll",
+   "quantity": 1180.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 50,
+   "unit": "roll",
+   "quantity": 1215.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 51,
+   "unit": "roll",
+   "quantity": 1349.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1",
+   "size": 52,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 97.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l1_bareek",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 35.0
+  },
+  {
+   "type_code": "l2",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 49.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 196.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 226.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 45,
+   "unit": "roll",
+   "quantity": 1040.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 46,
+   "unit": "roll",
+   "quantity": 1075.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 47,
+   "unit": "roll",
+   "quantity": 1110.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 48,
+   "unit": "roll",
+   "quantity": 1145.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 49,
+   "unit": "roll",
+   "quantity": 1180.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 50,
+   "unit": "roll",
+   "quantity": 1215.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 51,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2",
+   "size": 52,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 30.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "l2_bareek",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 45,
+   "unit": "roll",
+   "quantity": 1040.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 46,
+   "unit": "roll",
+   "quantity": 1075.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 47,
+   "unit": "roll",
+   "quantity": 1110.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 48,
+   "unit": "roll",
+   "quantity": 1145.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 49,
+   "unit": "roll",
+   "quantity": 1180.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 50,
+   "unit": "roll",
+   "quantity": 1215.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 51,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner",
+   "size": 52,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 33.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 21,
+   "unit": "roll",
+   "quantity": -133.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 26,
+   "unit": "roll",
+   "quantity": -3.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "test_liner_bareek",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 36.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 102.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 46.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 1111311.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 45,
+   "unit": "roll",
+   "quantity": 1040.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 46,
+   "unit": "roll",
+   "quantity": 1075.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 47,
+   "unit": "roll",
+   "quantity": 1110.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 48,
+   "unit": "roll",
+   "quantity": 1145.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 49,
+   "unit": "roll",
+   "quantity": 1180.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 50,
+   "unit": "roll",
+   "quantity": 1215.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 51,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_no",
+   "size": 52,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 111.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_2_5_bareek",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 45,
+   "unit": "roll",
+   "quantity": 1040.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 46,
+   "unit": "roll",
+   "quantity": 1075.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 47,
+   "unit": "roll",
+   "quantity": 1110.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 48,
+   "unit": "roll",
+   "quantity": 1145.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 49,
+   "unit": "roll",
+   "quantity": 1180.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 50,
+   "unit": "roll",
+   "quantity": 1215.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 51,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_no",
+   "size": 52,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 40.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "boxboard_3_bareek",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 43.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 45,
+   "unit": "roll",
+   "quantity": 1040.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 46,
+   "unit": "roll",
+   "quantity": 1075.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 47,
+   "unit": "roll",
+   "quantity": 1110.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 48,
+   "unit": "roll",
+   "quantity": 1145.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 49,
+   "unit": "roll",
+   "quantity": 1180.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 50,
+   "unit": "roll",
+   "quantity": 1215.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 51,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft",
+   "size": 52,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 45.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "local_kraft_bareek",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 48.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 45,
+   "unit": "roll",
+   "quantity": 1040.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 46,
+   "unit": "roll",
+   "quantity": 1075.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 47,
+   "unit": "roll",
+   "quantity": 1110.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 48,
+   "unit": "roll",
+   "quantity": 1145.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 49,
+   "unit": "roll",
+   "quantity": 1180.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 50,
+   "unit": "roll",
+   "quantity": 1215.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 51,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft",
+   "size": 52,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 50.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 301.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "imported_kraft_bareek",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 54.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 45,
+   "unit": "roll",
+   "quantity": 1040.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 46,
+   "unit": "roll",
+   "quantity": 1075.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 47,
+   "unit": "roll",
+   "quantity": 1110.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 48,
+   "unit": "roll",
+   "quantity": 1145.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 49,
+   "unit": "roll",
+   "quantity": 1180.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 50,
+   "unit": "roll",
+   "quantity": 1215.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 51,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 52,
+   "unit": "roll",
+   "quantity": 1250.0,
+   "rate": 29.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 17,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 18,
+   "unit": "roll",
+   "quantity": 50.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 19,
+   "unit": "roll",
+   "quantity": 100.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 20,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 21,
+   "unit": "roll",
+   "quantity": 200.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 22,
+   "unit": "roll",
+   "quantity": 235.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 23,
+   "unit": "roll",
+   "quantity": 270.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 24,
+   "unit": "roll",
+   "quantity": 305.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 25,
+   "unit": "roll",
+   "quantity": 340.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 26,
+   "unit": "roll",
+   "quantity": 375.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 27,
+   "unit": "roll",
+   "quantity": 410.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 28,
+   "unit": "roll",
+   "quantity": 445.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 29,
+   "unit": "roll",
+   "quantity": 480.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 30,
+   "unit": "roll",
+   "quantity": 515.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 31,
+   "unit": "roll",
+   "quantity": 550.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 32,
+   "unit": "roll",
+   "quantity": 585.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 33,
+   "unit": "roll",
+   "quantity": 620.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 34,
+   "unit": "roll",
+   "quantity": 655.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 35,
+   "unit": "roll",
+   "quantity": 690.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 36,
+   "unit": "roll",
+   "quantity": 725.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 37,
+   "unit": "roll",
+   "quantity": 760.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 38,
+   "unit": "roll",
+   "quantity": 795.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 39,
+   "unit": "roll",
+   "quantity": 830.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 40,
+   "unit": "roll",
+   "quantity": 865.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 41,
+   "unit": "roll",
+   "quantity": 900.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 42,
+   "unit": "roll",
+   "quantity": 935.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 43,
+   "unit": "roll",
+   "quantity": 970.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "super_fluting_bareek",
+   "size": 44,
+   "unit": "roll",
+   "quantity": 1005.0,
+   "rate": 32.0
+  },
+  {
+   "type_code": "bb_3_no",
+   "size": 21,
+   "unit": "reel",
+   "quantity": 222222222.0,
+   "rate": 0
+  },
+  {
+   "type_code": "fluting",
+   "size": 18,
+   "unit": "reel",
+   "quantity": 282.0,
+   "rate": 0
+  },
+  {
+   "type_code": "fluting",
+   "size": 19,
+   "unit": "reel",
+   "quantity": 236.0,
+   "rate": 0
+  },
+  {
+   "type_code": "l1",
+   "size": 17,
+   "unit": "reel",
+   "quantity": 3.0,
+   "rate": 0
+  },
+  {
+   "type_code": "fluting",
+   "size": 17,
+   "unit": "reel",
+   "quantity": 35.0,
+   "rate": 0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 19,
+   "unit": "reel",
+   "quantity": 360.0,
+   "rate": 0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 22,
+   "unit": "tota",
+   "quantity": 2.0,
+   "rate": 0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 17,
+   "unit": "tota",
+   "quantity": 6.0,
+   "rate": 0
+  },
+  {
+   "type_code": "super_fluting",
+   "size": 18,
+   "unit": "tota",
+   "quantity": 6.0,
+   "rate": 0
+  },
+  {
+   "type_code": "fluting",
+   "size": 19,
+   "unit": "tota",
+   "quantity": 22.0,
+   "rate": 0
+  },
+  {
+   "type_code": "bb_3_no",
+   "size": 21,
+   "unit": "tota",
+   "quantity": 333333333.0,
+   "rate": 0
+  },
+  {
+   "type_code": "kraft",
+   "size": 52,
+   "unit": "tota",
+   "quantity": 6.0,
+   "rate": 0
+  }
+ ],
+ "customers": [
+  {
+   "code": "c1",
+   "kind": "cash",
+   "name": "qasim",
+   "contact": "923054129775",
+   "manual_ledger_page": null
+  },
+  {
+   "code": "c2",
+   "kind": "cash",
+   "name": "qasim",
+   "contact": "923314917047",
+   "manual_ledger_page": null
+  },
+  {
+   "code": "1",
+   "kind": "ledger",
+   "name": "acv fe",
+   "contact": "923037033332",
+   "manual_ledger_page": "0"
+  },
+  {
+   "code": "2",
+   "kind": "ledger",
+   "name": "abeera",
+   "contact": "923006450782",
+   "manual_ledger_page": "2"
+  },
+  {
+   "code": "3",
+   "kind": "ledger",
+   "name": "abc",
+   "contact": "9230370322222",
+   "manual_ledger_page": "0"
+  },
+  {
+   "code": "4",
+   "kind": "ledger",
+   "name": "asc",
+   "contact": "923034092032",
+   "manual_ledger_page": "2"
+  }
+ ],
+ "ledger": [
+  {
+   "code": "c1",
+   "date": "19-09-22",
+   "receipt_no": 7,
+   "particulars": "Raddi 11 Kg",
+   "debit": 11.0,
+   "credit": 222.0,
+   "credit_method": "cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "19-09-22",
+   "receipt_no": 8,
+   "particulars": "10 Kg Jutta",
+   "debit": 200.0,
+   "credit": 100.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 9,
+   "particulars": "10 Kg Jutta",
+   "debit": 1020.0,
+   "credit": 1000.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 10,
+   "particulars": "10 Kg Jutta",
+   "debit": 20.0,
+   "credit": 100.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 11,
+   "particulars": "5 Kg Jutta",
+   "debit": 25.0,
+   "credit": 25.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 12,
+   "particulars": "Nali 5 Kg",
+   "debit": 25.0,
+   "credit": 5.0,
+   "credit_method": "CAsh",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 13,
+   "particulars": "Nali 5 Kg",
+   "debit": 25.0,
+   "credit": 5.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 14,
+   "particulars": "Nali 5 Kg",
+   "debit": 5.0,
+   "credit": 5.0,
+   "credit_method": "cs",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 15,
+   "particulars": "Opening entry",
+   "debit": 12.0,
+   "credit": 19.0,
+   "credit_method": "sad",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 16,
+   "particulars": "Raddi 5 Kg",
+   "debit": 25.0,
+   "credit": 24.0,
+   "credit_method": "cs",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 17,
+   "particulars": "Nali 1 Kg",
+   "debit": 2.0,
+   "credit": 2.0,
+   "credit_method": "cs",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 18,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "cs",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 19,
+   "particulars": "Raddi 11 Kg || Raddi 90 Kg",
+   "debit": 20222.0,
+   "credit": 2222.0,
+   "credit_method": "cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 20,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "xc",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 21,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "cs",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 22,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "cs",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 23,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "cs",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 24,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 25,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 26,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 27,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 2.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 28,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 29,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 2.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 30,
+   "particulars": "Nali 1 Kg",
+   "debit": 21.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 31,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 32,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 33,
+   "particulars": "Nali 1 Kg",
+   "debit": 2.0,
+   "credit": 2.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 34,
+   "particulars": "Nali 2 Kg",
+   "debit": 1113578.0,
+   "credit": 56789.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 35,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 5444.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 36,
+   "particulars": "Raddi 1 Kg",
+   "debit": 1.0,
+   "credit": 2.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "21-09-22",
+   "receipt_no": 37,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 2.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 38,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 39,
+   "particulars": "1 Kg Jutta",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 40,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 2.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 41,
+   "particulars": "Nali 5 Kg",
+   "debit": 25.0,
+   "credit": 24.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 42,
+   "particulars": "1 Kg Jutta",
+   "debit": 2.0,
+   "credit": 32.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 43,
+   "particulars": "Nali 3 Kg",
+   "debit": 12.0,
+   "credit": 12.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 44,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 45,
+   "particulars": "Nali 1 Kg",
+   "debit": 3.0,
+   "credit": 12.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 46,
+   "particulars": "Opening entry",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 47,
+   "particulars": "Opening entry",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 48,
+   "particulars": "Opening entry",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 49,
+   "particulars": "Opening entry",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c2",
+   "date": "23-09-22",
+   "receipt_no": 50,
+   "particulars": "Nali 12 Kg",
+   "debit": 144.0,
+   "credit": 143.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c2",
+   "date": "23-09-22",
+   "receipt_no": 51,
+   "particulars": "Raddi 10 Kg",
+   "debit": 300.0,
+   "credit": 3300.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c2",
+   "date": "23-09-22",
+   "receipt_no": 52,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 3.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 53,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 1.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 54,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 2.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 55,
+   "particulars": "Nali 1 Kg",
+   "debit": 1.0,
+   "credit": 2.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 56,
+   "particulars": "50 Kg Jutta",
+   "debit": 500.0,
+   "credit": 200000.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 57,
+   "particulars": "Nali 5 Kg",
+   "debit": 25.0,
+   "credit": 23.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 58,
+   "particulars": "6 Kg Jutta",
+   "debit": 30.0,
+   "credit": 3000.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 59,
+   "particulars": "Nali 100000000 Kg",
+   "debit": 200000000000000.0,
+   "credit": 2333333456789.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "c1",
+   "date": "23-09-22",
+   "receipt_no": 60,
+   "particulars": "Nali 1 Kg",
+   "debit": 2.0,
+   "credit": 3.0,
+   "credit_method": "Cash",
+   "rent": 0.0
+  },
+  {
+   "code": "1",
+   "date": "18-09-22",
+   "receipt_no": "4",
+   "particulars": "Raddi 2 Kg",
+   "debit": 4.0,
+   "credit": 0.0,
+   "credit_method": "f",
+   "rent": 0.0
+  },
+  {
+   "code": "2",
+   "date": "17-09-22",
+   "receipt_no": 3,
+   "particulars": "Opening entry",
+   "debit": 22.0,
+   "credit": 2.0,
+   "credit_method": "dd",
+   "rent": 20.0
+  },
+  {
+   "code": "2",
+   "date": "18-09-22",
+   "receipt_no": 6,
+   "particulars": "17 Fluting 11 Kg Reel",
+   "debit": 22.0,
+   "credit": 0.0,
+   "credit_method": "qq",
+   "rent": 0.0
+  }
+ ]
+}

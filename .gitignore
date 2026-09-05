@@ -32,14 +32,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# database
-/data/
-node_modules
-.next
+# database — only the generated file, never the source import data under
+# data/import/ (that was being silently dropped by a blanket /data/ ignore)
 data/*.db
 data/*.db-wal
 data/*.db-shm
-next-env.d.ts
-.DS_Store
-
-.vercel

@@ -44,7 +44,16 @@ console.log(`Connecting to: ${url.replace(/\/\/.*@/, '//***@')}`);
 
 // ─── Schema ──────────────────────────────────────────────────────────────────
 const schemaSql = fs.readFileSync(SCHEMA, 'utf8');
-const statements = schemaSql.split(';').map(s => s.trim()).filter(s => s && !s.startsWith('--'));
+// NOTE: each chunk between semicolons commonly starts with a `-- section`
+// comment header followed by the real statement on the next line — filtering
+// out anything that STARTS WITH '--' (as this used to) throws away the whole
+// chunk, comment header AND the CREATE TABLE/INDEX after it. That silently
+// skipped every table in this schema when seeding a brand-new local database
+// (only ever worked against a Turso instance that already had the schema
+// applied some other way). Strip comment LINES instead of whole chunks.
+const statements = schemaSql.split(';')
+  .map(s => s.split('\n').filter(line => !line.trim().startsWith('--')).join('\n').trim())
+  .filter(Boolean);
 for (const stmt of statements) {
   if (stmt.toUpperCase().startsWith('PRAGMA')) continue;
   try {
