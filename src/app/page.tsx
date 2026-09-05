@@ -1,6 +1,9 @@
 import Link from 'next/link';
+import { FilePlus2, Receipt, Banknote, DollarSign, Landmark, Package, Users, Activity } from 'lucide-react';
 import { dashboard, recentActivity, outstandingBalances } from '@/lib/repo';
 import { fmtNum } from '@/lib/i18n';
+import { StatusBadge } from '@/components/StatusBadge';
+import { EmptyState } from '@/components/EmptyState';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,7 +25,12 @@ export default async function Home({
   return (
     <>
       <div className="panel-header">
-        <h2>Dashboard</h2>
+        <div className="panel-header-row">
+          <h2>Dashboard</h2>
+          <Link href="/billing" className="btn btn-primary" style={{ fontSize: 13 }}>
+            <FilePlus2 size={15} /> New Bill
+          </Link>
+        </div>
         <p className="panel-desc">
           Live position for Ahmed Corrugation Machines. Every figure below is
           computed from the transaction tables.
@@ -42,25 +50,57 @@ export default async function Home({
 
       <div className="grid grid-4" style={{ marginBottom: 20 }}>
         <div className="card">
-          <div className="card-title">BILLS ({period.toUpperCase()})</div>
+          <div className="row between" style={{ alignItems: 'flex-start' }}>
+            <div className="card-title">BILLS ({period.toUpperCase()})</div>
+            <span className="icon-badge lg amber"><Receipt size={17} /></span>
+          </div>
           <div className="stat-big num">{d.billsToday?.n ?? 0}</div>
           <div className="stat-sub num">PKR {fmtNum(d.billsToday?.v ?? 0)} billed</div>
         </div>
         <div className="card">
-          <div className="card-title">CASH RECEIVED</div>
+          <div className="row between" style={{ alignItems: 'flex-start' }}>
+            <div className="card-title">CASH RECEIVED</div>
+            <span className="icon-badge lg green"><Banknote size={17} /></span>
+          </div>
           <div className="stat-big stat-green num">PKR {fmtNum(d.creditToday?.v ?? 0)}</div>
           <div className="stat-sub">Credits posted against bills</div>
         </div>
         <div className="card">
-          <div className="card-title">EXPENSES</div>
+          <div className="row between" style={{ alignItems: 'flex-start' }}>
+            <div className="card-title">EXPENSES</div>
+            <span className="icon-badge lg red"><DollarSign size={17} /></span>
+          </div>
           <div className="stat-big num">PKR {fmtNum(d.expensesToday?.v ?? 0)}</div>
           <div className="stat-sub">Total for period</div>
         </div>
         <div className="card">
-          <div className="card-title">TOTAL RECEIVABLE</div>
+          <div className="row between" style={{ alignItems: 'flex-start' }}>
+            <div className="card-title">TOTAL RECEIVABLE</div>
+            <span className="icon-badge lg neutral"><Landmark size={17} /></span>
+          </div>
           <div className="stat-big stat-accent num">PKR {fmtNum(d.receivable?.v ?? 0)}</div>
-          <div className="stat-sub">{d.products?.n ?? 0} products \u00b7 {d.customers?.n ?? 0} customers</div>
+          <div className="stat-sub">{d.products?.n ?? 0} products · {d.customers?.n ?? 0} customers</div>
         </div>
+      </div>
+
+      {/* What's actually one tap away today. */}
+      <div className="quick-actions">
+        <Link href="/billing" className="quick-action-tile">
+          <span className="icon-badge lg amber"><FilePlus2 size={19} /></span>
+          <span className="quick-action-label">New Bill</span>
+        </Link>
+        <Link href="/stock" className="quick-action-tile">
+          <span className="icon-badge lg neutral"><Package size={19} /></span>
+          <span className="quick-action-label">Stock</span>
+        </Link>
+        <Link href="/customers" className="quick-action-tile">
+          <span className="icon-badge lg neutral"><Users size={19} /></span>
+          <span className="quick-action-label">Customers</span>
+        </Link>
+        <Link href="/bills" className="quick-action-tile">
+          <span className="icon-badge lg neutral"><Receipt size={19} /></span>
+          <span className="quick-action-label">Bills</span>
+        </Link>
       </div>
 
       {(d.issues?.n ?? 0) > 0 && (
@@ -68,14 +108,17 @@ export default async function Home({
           <div>
             <b>{d.issues?.n} items need attention.</b> The 2022 import contained
             values that failed sanity checks.{' '}
-            <Link href="/review" style={{ color: 'var(--accent-yellow)' }}>{'Review them \u2192'}</Link>
+            <Link href="/review" style={{ color: 'var(--accent-yellow)' }}>Review them →</Link>
           </div>
         </div>
       )}
 
       <div className="split">
         <div className="card">
-          <div className="card-title">ACTIVITY LOG</div>
+          <div className="card-title">
+            <span className="card-title-icon"><Activity size={13} /></span>
+            ACTIVITY LOG
+          </div>
           <div className="log-body">
             {log.map((l) => (
               <div key={l.id} className={`log-entry ${LEVEL[l.level] ?? 'log-system'}`}>
@@ -91,9 +134,12 @@ export default async function Home({
 
         <div className="stack">
           <div className="card">
-            <div className="card-title">OUTSTANDING BALANCES</div>
+            <div className="card-title">
+              <span className="card-title-icon"><Landmark size={13} /></span>
+              OUTSTANDING BALANCES
+            </div>
             {owed.length === 0 ? (
-              <div className="empty">Nothing outstanding</div>
+              <EmptyState emoji="✅" heading="All settled up" message="No customer owes anything right now." />
             ) : (
               <div className="stack sm">
                 {owed.map((c) => (
@@ -111,9 +157,12 @@ export default async function Home({
           </div>
 
           <div className="card">
-            <div className="card-title">LOW STOCK</div>
+            <div className="card-title">
+              <span className="card-title-icon"><Package size={13} /></span>
+              LOW STOCK
+            </div>
             {d.lowStock.length === 0 ? (
-              <div className="empty">Nothing running low</div>
+              <EmptyState emoji="📦" heading="Stock looks healthy" message="Nothing is below its reorder level." />
             ) : (
               <div className="stack sm">
                 {d.lowStock.map((s: any, i: number) => (
@@ -122,9 +171,9 @@ export default async function Home({
                     <span className="t-strong" style={{ fontSize: 12.5 }}>
                       {s.name_en} <span className="t-muted">{s.size}&quot;</span>
                     </span>
-                    <span className={`badge ${s.quantity <= 0 ? 'badge-red' : 'badge-yellow'}`}>
+                    <StatusBadge status={s.quantity <= 0 ? 'out' : 'low'}>
                       {fmtNum(s.quantity)} {s.unit}
-                    </span>
+                    </StatusBadge>
                   </div>
                 ))}
               </div>
