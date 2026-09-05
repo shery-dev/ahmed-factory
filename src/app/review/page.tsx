@@ -24,10 +24,6 @@ export default async function ReviewPage({
     <>
       <div className="panel-header">
         <h2>Needs Attention</h2>
-        <p className="panel-desc">
-          Values that failed a sanity check on import, brought in as zero and flagged
-          for someone to resolve.
-        </p>
       </div>
 
       <div className="tabs" style={{ marginBottom: 16 }}>

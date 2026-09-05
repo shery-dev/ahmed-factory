@@ -14,7 +14,6 @@ export default async function SettingsPage() {
     <>
       <div className="panel-header">
         <h2>Settings</h2>
-        <p className="panel-desc">Business details, system lists, and user accounts.</p>
       </div>
 
       <form action={saveSettings}>

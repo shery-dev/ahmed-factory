@@ -31,7 +31,7 @@ export default async function BillingPage() {
 
   return (
     <>
-      <PanelHeader title="newBill" desc="newBillDesc" />
+      <PanelHeader title="newBill" />
       <BillingForm items={items} customers={customers} paymentMethods={paymentMethods} wasteStock={wasteStock} />
     </>
   );

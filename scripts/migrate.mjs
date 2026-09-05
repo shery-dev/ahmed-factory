@@ -115,6 +115,38 @@ await addColumn(
   'item_types.reorder_level added (default 5, editable per product)',
 );
 
+// \u2500\u2500\u2500 Data corrections \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// The original 2022 import gave the Boxboard families' moti and bareek rows
+// DIFFERENT `family` strings ("Boxboard 2.5 No" vs "Boxboard 2.5", same for
+// "Boxboard 3"), silently splitting one family into two on the Stock screen
+// (11 cards instead of 9, each showing only one thickness \u2014 the other reads
+// as "Not stocked" because it is grouped under the sibling's family name
+// instead). This was fixed in data/import/legacy.json, the source seed.mjs
+// reads from \u2014 but seed.mjs skips reseeding once item_types has rows, so
+// that fix only ever reached a database seeded AFTER the fix landed. Any
+// database seeded before it (including, as far as we can tell, production)
+// still has the old split strings and never got corrected, because nothing
+// until now re-wrote EXISTING rows. This only changes the `family` text
+// label on rows that already exist \u2014 it does not touch stock_items,
+// quantities, or movement history, so it is safe to run against a database
+// with real transactions already posted, and is a no-op once corrected.
+async function unifyFamily(wrongFamily, correctFamily, note) {
+  if (!(await hasTable('item_types'))) return;
+  const before = await db.execute({
+    sql: `SELECT COUNT(*) n FROM item_types WHERE family = ?`, args: [wrongFamily],
+  });
+  const n = Number(before.rows[0].n);
+  if (n === 0) { skipped.push(`${note} \u2014 already unified`); return; }
+  await db.execute({
+    sql: `UPDATE item_types SET family = ? WHERE family = ?`,
+    args: [correctFamily, wrongFamily],
+  });
+  done.push(`${note}: ${n} row(s) moved from "${wrongFamily}" to "${correctFamily}"`);
+}
+
+await unifyFamily('Boxboard 2.5 No', 'Boxboard 2.5', 'Boxboard 2.5 family split');
+await unifyFamily('Boxboard 3 No', 'Boxboard 3', 'Boxboard 3 family split');
+
 for (const d of done) console.log(`\u2713 ${d}`);
 for (const s of skipped) console.log(`\u00b7 ${s}`);
 

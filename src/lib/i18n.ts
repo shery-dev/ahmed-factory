@@ -50,6 +50,11 @@ export const dict = {
   quantity:     { en: 'Quantity',        ur: 'تعداد' },
   weight:       { en: 'Weight (Kg)',     ur: 'وزن (کلو)' },
   rate:         { en: 'Rate',            ur: 'ریٹ' },
+  status:       { en: 'Status',          ur: 'صورتحال' },
+  inStock:      { en: 'In stock',        ur: 'موجود ہے' },
+  statusLow:    { en: 'Low',             ur: 'کم' },
+  statusOut:    { en: 'Out',             ur: 'ختم' },
+  statusFlagged:{ en: 'Flagged',         ur: 'نشان زد' },
   grammage:     { en: 'Grammage (gsm)',  ur: 'گرام' },
   length:       { en: 'Length (in)',     ur: 'لمبائی' },
   width:        { en: 'Width (in)',      ur: 'چوڑائی' },
@@ -83,8 +88,6 @@ export const dict = {
   viewReceipt:  { en: 'View Receipt',    ur: 'رسید دیکھیں' },
 
   // ── Shop-floor page headers (Urdu primary, per the language policy) ──
-  newBillDesc:  { en: 'Seven sale forms. Stock is checked before anything posts.',
-                  ur: 'سات فروخت کے فارم۔ بل جمع کرنے سے پہلے اسٹاک چیک ہوتا ہے۔' },
   stockDesc:    { en: 'Rolls are counted; reels and totay are held in kilograms. Every movement names the bill that caused it.',
                   ur: 'رول گنتی میں، ریل اور ٹوٹے کلو میں۔ ہر حرکت اس بل کا نام بتاتی ہے جس کی وجہ سے ہوئی۔' },
   atomicNote:   { en: 'Posts ledger + stock + receipt in one transaction',
@@ -177,11 +180,6 @@ export const dict = {
   noHistoryYet:        { en: 'No purchases yet', ur: 'ابھی کوئی خریداری نہیں' },
   nameRequired:         { en: 'Name is required', ur: 'نام درکار ہے' },
   viewFullLedger:       { en: 'View full ledger', ur: 'مکمل کھاتہ دیکھیں' },
-
-  stockHomeDesc:{ en: 'Pick a paper and a thickness to see its sizes.',
-                  ur: 'سائز دیکھنے کے لیے کاغذ اور موٹائی منتخب کریں۔' },
-  stockProductDesc:{ en: 'Each tile is one width. Tap it to receive, issue, or count.',
-                  ur: 'ہر خانہ ایک چوڑائی ہے۔ آمد درج کرنے، اسٹاک نکالنے یا گنتی درج کرنے کے لیے اس پر ٹیپ کریں۔' },
 
   // ── Customers ──
   addCustomer:    { en: 'Add Customer',     ur: 'گاہک شامل کریں' },

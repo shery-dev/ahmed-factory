@@ -32,9 +32,6 @@ export default async function ReportsPage({
     <>
       <div className="panel-header">
         <h2>Reports</h2>
-        <p className="panel-desc">
-          Stock valuation, top customers, and period-over-period comparison.
-        </p>
       </div>
 
       {/* Period selector */}

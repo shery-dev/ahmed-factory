@@ -105,7 +105,7 @@ export default async function Home({
             <span className="icon-badge amber"><Receipt size={13} /></span>
             Billed · {periodLabel}
           </div>
-          <div className="hero-figure num">
+          <div className="hero-figure num sensitive">
             <span className="hero-cur">PKR</span> {fmtNum(billed)}
           </div>
           <div className="hero-sub">
@@ -117,9 +117,9 @@ export default async function Home({
           <div className="hero-label">
             <span className="icon-badge green"><Banknote size={13} /></span>
             Collected
-            {collectedPct !== null && <span className="hero-pct">{collectedPct}%</span>}
+            {collectedPct !== null && <span className="hero-pct sensitive">{collectedPct}%</span>}
           </div>
-          <div className="hero-figure num hero-green">
+          <div className="hero-figure num hero-green sensitive">
             <span className="hero-cur">PKR</span> {fmtNum(collected)}
           </div>
           {billed > 0 ? (
@@ -128,7 +128,7 @@ export default async function Home({
                    aria-label={`${collectedPct}% of billing collected, the rest on account`}>
                 <span className="split-fill" style={{ width: `${collectedPct}%` }} />
               </div>
-              <div className="hero-sub">
+              <div className="hero-sub sensitive">
                 PKR {fmtNum(onAccount)} left on account
               </div>
             </>
@@ -165,7 +165,7 @@ export default async function Home({
             <div className="card-title">TOTAL RECEIVABLE</div>
             <span className="icon-badge lg amber"><Landmark size={17} /></span>
           </div>
-          <div className="stat-big stat-accent num">PKR {fmtNum(d.receivable?.v ?? 0)}</div>
+          <div className="stat-big stat-accent num sensitive">PKR {fmtNum(d.receivable?.v ?? 0)}</div>
           <div className="stat-sub">Across {owedAll.length} customers</div>
         </Link>
 
@@ -174,7 +174,7 @@ export default async function Home({
             <div className="card-title">EXPENSES · {periodLabel.toUpperCase()}</div>
             <span className="icon-badge lg red"><Coins size={17} /></span>
           </div>
-          <div className="stat-big num">PKR {fmtNum(d.expensesToday?.v ?? 0)}</div>
+          <div className="stat-big num sensitive">PKR {fmtNum(d.expensesToday?.v ?? 0)}</div>
           <div className="stat-sub">Recorded against this period</div>
         </Link>
 
@@ -270,7 +270,7 @@ export default async function Home({
                 {buckets.map((b) => (
                   <div key={b.key} className={`age-cell tone-${b.tone}`}>
                     <div className="age-label">{b.label}</div>
-                    <div className="age-value num">PKR {fmtNum(b.total)}</div>
+                    <div className="age-value num sensitive">PKR {fmtNum(b.total)}</div>
                     <div className="age-count">{b.n} {b.n === 1 ? 'customer' : 'customers'}</div>
                   </div>
                 ))}
@@ -280,11 +280,11 @@ export default async function Home({
               <div className="stack sm">
                 {owed.map((c) => (
                   <Link key={c.id} href={`/customers/${c.id}`} className="owed-row">
-                    <span className="owed-name">
+                    <span className="owed-name sensitive">
                       <span className="t-strong">{c.name}</span>
                       <span className="t-muted mono owed-code">{c.code}</span>
                     </span>
-                    <span className="num t-strong">PKR {fmtNum(c.balance)}</span>
+                    <span className="num t-strong sensitive">PKR {fmtNum(c.balance)}</span>
                   </Link>
                 ))}
               </div>

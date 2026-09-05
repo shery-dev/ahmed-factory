@@ -22,7 +22,7 @@ export default async function StockPage({
   return (
     <>
       <PanelHeader
-        title="stock" desc="stockHomeDesc"
+        title="stock"
         action={
           <Link href="/catalogue" className="btn btn-ghost" style={{ fontSize: 12.5 }}>
             <Tags size={15} /> Manage paper types

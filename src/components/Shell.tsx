@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
 import { t, dirFor, type Lang, type DictKey } from '@/lib/i18n';
 import { logoutAction } from '@/app/login/actions';
 
@@ -18,6 +19,13 @@ export interface SidebarCounts {
 export function Shell({ children, counts }: { children: ReactNode; counts: SidebarCounts }) {
   const [lang, setLang] = useState<Lang>('en');
   const [light, setLight] = useState(false);
+  // Blurs every `.sensitive` figure app-wide — a counter/store screen faces
+  // customers directly, and a manager needs one tap to hide money and
+  // customer-balance figures for as long as someone is standing at the desk,
+  // not a separate setting to remember to turn back on later. Lives in Shell
+  // rather than the Dashboard alone so it travels with whichever page is open
+  // when someone walks up.
+  const [privacyOn, setPrivacyOn] = useState(false);
   const [restored, setRestored] = useState(false);
   const pathname = usePathname();
 
@@ -25,8 +33,10 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
     try {
       const l = localStorage.getItem('acm-lang') as Lang | null;
       const th = localStorage.getItem('acm-theme');
+      const pr = localStorage.getItem('acm-privacy');
       if (l === 'ur' || l === 'en') setLang(l);
       if (th === 'light') setLight(true);
+      if (pr === 'on') setPrivacyOn(true);
     } catch {}
     setRestored(true);
   }, []);
@@ -34,12 +44,14 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
   useEffect(() => {
     document.body.setAttribute('dir', dirFor(lang));
     document.body.classList.toggle('light', light);
+    document.documentElement.setAttribute('data-privacy', privacyOn ? 'on' : 'off');
     if (!restored) return;
     try {
       localStorage.setItem('acm-lang', lang);
       localStorage.setItem('acm-theme', light ? 'light' : 'dark');
+      localStorage.setItem('acm-privacy', privacyOn ? 'on' : 'off');
     } catch {}
-  }, [lang, light, restored]);
+  }, [lang, light, privacyOn, restored]);
 
   const tr = (k: DictKey) => t(k, lang);
 
@@ -86,6 +98,13 @@ export function Shell({ children, counts }: { children: ReactNode; counts: Sideb
         </div>
         <div className="nav-right">
           <span className="nav-badge">FACTORY</span>
+          <button
+            className={`icon-btn privacy-btn ${privacyOn ? 'on' : ''}`}
+            onClick={() => setPrivacyOn(!privacyOn)}
+            title={privacyOn ? 'Show figures' : 'Hide figures — a customer or visitor is at the desk'}
+          >
+            {privacyOn ? <EyeOff size={15} /> : <Eye size={15} />}
+          </button>
           <button
             className={`icon-btn ${lang === 'ur' ? 'on' : ''}`}
             onClick={() => setLang(lang === 'en' ? 'ur' : 'en')}

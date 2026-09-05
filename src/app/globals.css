@@ -167,6 +167,18 @@ a { color: inherit; text-decoration: none; transition: color .15s; }
 }
 .icon-btn:hover { border-color: var(--accent-kraft); color: var(--accent-kraft); background: var(--accent-kraft-bg); }
 .icon-btn.on { border-color: var(--accent-kraft); color: var(--accent-kraft); background: var(--accent-kraft-bg); }
+.icon-btn.privacy-btn.on {
+  border-color: var(--accent-yellow-solid); color: var(--accent-yellow); background: var(--accent-yellow-bg);
+}
+
+/* Privacy mode — blurs every .sensitive figure app-wide. One tap in the top
+   nav, so a manager can hide money and customer-balance figures the moment
+   someone walks up to the desk without navigating anywhere first. */
+html[data-privacy="on"] .sensitive {
+  filter: blur(7px);
+  user-select: none;
+  transition: filter .15s;
+}
 
 /* ── Layout ── */
 .app-container { display: flex; height: calc(100vh - 56px); }
@@ -683,31 +695,97 @@ body[dir='rtl'] .chev { transform: scaleX(-1); }
 .attn-chip.c-flag { background: var(--accent-orange-bg); color: var(--accent-orange); }
 .attn-chip:hover { filter: brightness(1.15); }
 
-/* Size tiles (product detail) */
-.size-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(94px, 1fr)); gap: 10px; }
-.size-tile {
-  position: relative;
-  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;
-  padding: 12px 8px; min-height: 88px; cursor: pointer; font-family: inherit;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 3px; transition: transform .12s, border-color .15s, background .15s;
+/* ===========================================================================
+   Catalogue — family cards, same visual language as Stock. A flat table with
+   the family name repeated down every row read as a spreadsheet dump; this
+   groups moti/bareek under one heading and turns a missing variant into a
+   one-tap prompt instead of a blank cell.
+   =========================================================================== */
+.cat-family-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+
+.cat-row {
+  padding: 13px 16px; border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 8px;
 }
-.size-tile-status { position: absolute; top: 6px; inset-inline-end: 6px; }
-.size-tile:hover { border-color: var(--accent-kraft); transform: translateY(-2px); }
-.size-tile:focus-visible { outline: 2px solid var(--accent-kraft); outline-offset: 2px; }
-.size-label { font-size: 12px; font-weight: 700; color: var(--text-faint); letter-spacing: .3px; }
-.size-qty {
-  font-size: 23px; font-weight: 700; color: var(--text-primary); line-height: 1.1;
-  font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums;
+.cat-row:last-child { border-bottom: none; }
+.cat-row-inactive { opacity: .55; }
+.cat-row-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.cat-row-name { font-weight: 600; font-size: 13.5px; color: var(--text-primary); }
+.cat-row-urdu {
+  font-family: 'Noto Nastaliq Urdu', serif; font-size: 13px; color: var(--text-muted);
+  margin-inline-start: auto;
 }
-.size-foot { font-size: 10px; color: var(--text-faintest); letter-spacing: .4px; }
-.size-tile.low { border-color: var(--accent-yellow-solid); background: var(--accent-yellow-bg); }
-.size-tile.low .size-qty, .size-tile.low .size-label { color: var(--accent-yellow); }
-.size-tile.out { border-color: var(--accent-red-solid); background: var(--accent-red-bg); }
-.size-tile.out .size-qty, .size-tile.out .size-label { color: var(--accent-red); }
-.size-tile.flagged { border-style: dashed; border-color: var(--accent-orange); background: var(--accent-orange-bg); }
-.size-tile.flagged .size-qty, .size-tile.flagged .size-label { color: var(--accent-orange); }
-.size-tile:target { outline: 2px solid var(--accent-kraft); outline-offset: 2px; }
+.cat-row-desc { font-size: 11.5px; color: var(--text-faint); line-height: 1.5; }
+.cat-row-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.cat-row-empty {
+  display: flex; align-items: center; gap: 10px; padding: 13px 16px;
+  border-bottom: 1px solid var(--border); color: var(--text-faint);
+  transition: background .15s, color .15s;
+}
+.cat-row-empty:last-child { border-bottom: none; }
+.cat-row-empty:hover { background: var(--bg-elevated); color: var(--accent-kraft); }
+.cat-row-empty-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; }
+
+.cat-add-form {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px 18px;
+  align-items: end;
+}
+
+/* Size table (product detail) — one row per width: size, on-hand, rate, and
+   status as their own columns rather than a number buried in a square tile.
+   The whole row is the tap target (as large as the tile it replaced, larger
+   in the horizontal direction), so this reads better with 30+ sizes without
+   losing the "big target, one hand" requirement the tile grid was built for. */
+.size-table {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.size-table-head, .size-row {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 12px 16px; text-align: start;
+}
+.size-table-head {
+  background: var(--bg-elevated); border-bottom: 1px solid var(--border);
+  font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
+  color: var(--text-faint);
+}
+.size-row {
+  border: none; border-bottom: 1px solid var(--border); border-inline-start: 3px solid transparent;
+  background: var(--bg-surface); cursor: pointer; font-family: inherit;
+  transition: background .12s, border-color .12s;
+}
+.size-row:last-child { border-bottom: none; }
+.size-row:hover { background: var(--bg-elevated); }
+.size-row:focus-visible { outline: 2px solid var(--accent-kraft); outline-offset: -2px; }
+.size-row:target { background: var(--accent-kraft-bg); border-inline-start-color: var(--accent-kraft); }
+.size-row.low { border-inline-start-color: var(--accent-yellow-solid); }
+.size-row.out { border-inline-start-color: var(--accent-red-solid); }
+.size-row.flagged { border-inline-start-color: var(--accent-orange); }
+
+.size-col-size { flex: 0 0 56px; }
+.size-col-qty { flex: 1 1 auto; min-width: 0; }
+.size-col-rate { flex: 0 0 90px; }
+.size-col-status { flex: 0 0 100px; display: flex; }
+.size-col-chev { flex: 0 0 18px; display: flex; justify-content: flex-end; color: var(--text-faintest); }
+
+.size-row-size { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.size-row-qty {
+  font-size: 14.5px; font-weight: 700; color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.size-row-qty small { font-size: 11px; font-weight: 500; color: var(--text-faint); margin-inline-start: 3px; }
+.size-row.low .size-row-qty, .size-row.low .size-row-size { color: var(--accent-yellow); }
+.size-row.out .size-row-qty, .size-row.out .size-row-size { color: var(--accent-red); }
+.size-row.flagged .size-row-qty, .size-row.flagged .size-row-size { color: var(--accent-orange); }
+.size-row-rate { color: var(--text-muted); font-size: 12.5px; }
+.size-row-ok { font-size: 11px; color: var(--text-faint); }
+
+@media (max-width: 560px) {
+  .size-col-rate { display: none; }
+  .size-col-status { flex-basis: 74px; }
+  .size-table-head, .size-row { padding: 11px 12px; }
+}
 
 .size-grid-head {
   display: flex; align-items: center; justify-content: space-between;
@@ -741,9 +819,10 @@ body[dir='rtl'] .chev { transform: scaleX(-1); }
 .sheet-sub { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
 .mode-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .mode-btn {
-  padding: 14px 6px; border-radius: 10px; border: 1px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 12px 6px; border-radius: 10px; border: 1px solid var(--border);
   background: var(--bg-elevated); color: var(--text-muted);
-  font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit;
+  font-weight: 700; font-size: 12.5px; cursor: pointer; font-family: inherit;
   transition: all .15s;
 }
 .mode-btn:hover { color: var(--text-secondary); border-color: var(--border-hover); }
@@ -774,10 +853,14 @@ body[dir='rtl'] .chev { transform: scaleX(-1); }
 }
 .chip:hover { border-color: var(--accent-kraft); color: var(--accent-kraft); }
 .preview-line {
-  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
   padding: 11px 13px; background: var(--bg-elevated); border-radius: 9px; font-size: 13px;
 }
 .preview-line b { color: var(--text-primary); font-size: 17px; font-family: 'JetBrains Mono', monospace; }
+.preview-transition { display: flex; align-items: center; gap: 7px; }
+.preview-transition b:first-child { color: var(--text-faint); font-size: 14px; }
+.preview-arrow { color: var(--text-faintest); flex-shrink: 0; }
+.preview-unit { font-size: 11px; font-weight: 600; color: var(--text-faint); }
 
 /* ── Billing: customer search / quick-add / purchase history ── */
 .cust-search-wrap { position: relative; }

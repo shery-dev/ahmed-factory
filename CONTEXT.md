@@ -229,6 +229,78 @@ sound; nobody raising a bill needs it, and it was eating the top of every
 screen. Subtitles carrying live data (a bill's date and customer, a
 customer's kind and contact) were kept.
 
+**Nav separator bug, a Boxboard data fix, a privacy toggle, and three screens
+restyled.** Found while reviewing the previous session's deploy: `Shell.tsx`
+had `<span className="nav-separator">│</span>` — a unicode escape
+sitting directly in JSX text instead of inside a JS string. Escapes are only
+interpreted inside a quoted string; JSX children are literal text, so React
+was printing the six characters `│` next to "Billing, Ledger & Stock"
+instead of the vertical bar. Wrapped in `{'│'}` to fix.
+
+**Confirmed the Stock screen's "11 families instead of 9" is a real
+production data bug, not a display bug.** The 2022 import's family-string
+split (`"Boxboard 2.5 No"` vs `"Boxboard 2.5"`, same for Boxboard 3) was
+fixed in `data/import/legacy.json` in an earlier session, but that only
+helps a database seeded *after* the fix — `seed.mjs` skips reseeding once
+`item_types` has rows, so a database seeded before the fix (production,
+going by the screenshot showing 11 family cards) still has the split
+strings and was never corrected. `migrate.mjs` now includes
+`unifyFamily()`, which re-labels the `family` column on existing rows
+(never touches `stock_items`, quantities, or movement history), verified
+against a copy of the local database with the split re-introduced —
+11 families collapsed back to 9, idempotent on rerun.
+
+**Not yet explained: Fluting Moti showing "Not stocked" and unclickable on
+production**, despite the user confirming that stock exists in reality.
+Locally, Fluting Moti (item_type id 1) has 36 roll-unit `stock_items` rows
+with real quantities, so this isn't a code-path bug reproducible against the
+local database — it needs eyes on the actual production data, which this
+session had no credentials to query. Left as an open question (§6) with the
+exact SQL to run.
+
+**Dashboard privacy toggle.** An Eye/EyeOff button in the top nav (next to
+the theme toggle, so it travels with whichever page is open) sets
+`data-privacy` on `<html>` and persists to `localStorage`, same pattern as
+the language/theme toggles. A global CSS rule
+(`html[data-privacy="on"] .sensitive { filter: blur(7px); ... }`) blurs
+every element marked `.sensitive` — currently the Dashboard's billed/
+collected/receivable/expense figures and the outstanding-balances list
+(both the customer name and the amount, since another customer's identity
+and debt is exactly what a walk-in customer or a new employee shouldn't
+see). One tap hides money figures without navigating anywhere first; low
+stock quantities were deliberately left unmasked since they're operational,
+not financial.
+
+**Stock product page: size grid replaced with a size table.** The tile grid
+put a size, a quantity, and nothing else in each tile, arranged in a
+same-size square regardless of what a size actually needed to say. Replaced
+with `.size-table`: SIZE / ON HAND / RATE (PKR) / STATUS as real columns,
+each row still the full tap target the tile grid was built around ("a store
+man reads a number from arm's length, taps it with one hand" — a full-width
+row is if anything a bigger target than the tile was). The rate column
+surfaces a number that had no home anywhere in the tile view. Hides the rate
+column under 560px rather than cramming it. The update sheet (Receive/Issue/
+Set Count) got matching icons per mode and an always-current→after
+transition in the preview line for every mode, not just Set Count.
+
+**Catalogue rebuilt as family cards.** The flat table repeated the family
+name down every other row and split "which product" from "is it active" and
+"what does it cost" across five separate columns. Now one card per family —
+same `.family-card`/`.thickness-row` visual language as Stock — with moti
+and bareek as two rows carrying name, description, an inline rate-edit form,
+and an activate/deactivate action together. A family missing a thickness
+(not currently the case in the seeded data, but reachable once a
+single-variant product is added) renders as a "+ Add {thickness} variant"
+prompt that pre-fills the Add Product form via a query string rather than
+making someone retype the family name.
+
+**Ten more instances of generic panel-desc copy removed** (billing, stock's
+`PanelHeader`, the product-detail page, settings, reports, the daily report,
+review), plus the three now-unused i18n keys they read from
+(`newBillDesc`, `stockHomeDesc`, `stockProductDesc`). Same reasoning as the
+previous session's copy trim: implementation detail nobody at the counter
+needs, not a subtitle carrying live data.
+
 ### What's NOT merged yet
 
 - **Shell.tsx / the sidebar** — still on unicode-symbol icons (`⌂`, `☎`,
@@ -310,3 +382,17 @@ of the database via `TURSO_DATABASE_URL`, never the live one.
    anywhere beyond the `credit_limit` column existing on `customers`?
 9. How reliable is the **factory's internet**, given this repo now depends
    on a cloud database (Turso) rather than a purely local file?
+10. **Why does production's Fluting Moti show "Not stocked" (zero
+    `stock_items` rows, not just zero quantity) for the roll unit, when the
+    user confirms real stock exists?** Locally this item has 36 roll-unit
+    rows with real quantities, so it isn't a code-path bug reproducible
+    against the local database — something is different about the
+    production data itself, and nobody in this session had Turso
+    credentials to look. Whoever picks this up next should run, against
+    production:
+    `SELECT id, code, family, is_bareek, active FROM item_types WHERE family LIKE 'Fluting%';`
+    and, using the `fluting` moti row's id from that result:
+    `SELECT unit, COUNT(*) n, SUM(quantity) q FROM stock_items WHERE item_type_id = <that id> GROUP BY unit;`
+    If the second query comes back with zero rows for `unit = 'roll'`, the
+    rows are genuinely missing from production (not a display bug) and the
+    fix is a data restore, not a code change.

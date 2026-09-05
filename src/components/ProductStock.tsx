@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, X, Plus, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Plus, Loader2, PackagePlus, PackageMinus, ClipboardList, ArrowRight } from 'lucide-react';
 import { useUi } from './Shell';
 import { fmtNum, type DictKey } from '@/lib/i18n';
 import type { ItemType, SizeRow } from '@/lib/repo';
 import { receiveStock, issueStock, countStock, changeReorderLevel, type ActionResult } from '@/app/stock/actions';
 import { UnitIcon } from './UnitIcon';
-import { StatusIcon, type Status } from './StatusBadge';
+import { StatusBadge, type Status } from './StatusBadge';
 import { EmptyState } from './EmptyState';
 
 /**
@@ -146,7 +146,6 @@ export function ProductStock({
             </span>
           )}
         </h2>
-        <p className="panel-desc">{tr('stockProductDesc')}</p>
       </div>
 
       {/* Thickness and unit, framed as one deliberate control rather than two
@@ -221,7 +220,14 @@ export function ProductStock({
               <Plus size={13} /> {tr('addSize')}
             </button>
           </div>
-          <div className="size-grid">
+          <div className="size-table">
+            <div className="size-table-head">
+              <span className="size-col-size">{tr('size')}</span>
+              <span className="size-col-qty">{tr('onHand')}</span>
+              <span className="size-col-rate">{tr('rate')}</span>
+              <span className="size-col-status">{tr('status')}</span>
+              <span className="size-col-chev" />
+            </div>
             {rows.map((r) => {
               const state = r.flagged ? 'flagged'
                 : r.quantity <= 0 ? 'out'
@@ -230,13 +236,21 @@ export function ProductStock({
                 : r.quantity <= 0 ? 'out'
                 : r.quantity <= type.reorder_level ? 'low' : null;
               return (
-                <button key={r.size} id={`size-${r.size}`} className={`size-tile ${state}`}
+                <button key={r.size} id={`size-${r.size}`} className={`size-row ${state}`}
                         onClick={() => openTile(r.size, r.quantity)}
                         title={r.flag_reason ?? undefined}>
-                  {status && <span className="size-tile-status"><StatusIcon status={status} size={9} /></span>}
-                  <span className="size-label">{r.size}″</span>
-                  <span className="size-qty">{fmtNum(r.quantity)}</span>
-                  <span className="size-foot">{tr(unit as DictKey)}</span>
+                  <span className="size-col-size size-row-size">{r.size}″</span>
+                  <span className="size-col-qty size-row-qty num">
+                    {fmtNum(r.quantity)} <small>{tr(unit as DictKey)}</small>
+                  </span>
+                  <span className="size-col-rate size-row-rate num">{fmtNum(r.rate)}</span>
+                  <span className="size-col-status">
+                    {status === 'out' ? <StatusBadge status="out">{tr('statusOut')}</StatusBadge>
+                      : status === 'low' ? <StatusBadge status="low">{tr('statusLow')}</StatusBadge>
+                      : status === 'quarantined' ? <StatusBadge status="quarantined">{tr('statusFlagged')}</StatusBadge>
+                      : <span className="size-row-ok">{tr('inStock')}</span>}
+                  </span>
+                  <span className="size-col-chev"><ChevronRight size={16} className="chev" /></span>
                 </button>
               );
             })}
@@ -288,11 +302,17 @@ export function ProductStock({
 
             <div className="mode-tabs">
               <button className={`mode-btn m-receive ${mode === 'receive' ? 'on' : ''}`}
-                      onClick={() => pickMode('receive')}>{tr('receive')}</button>
+                      onClick={() => pickMode('receive')}>
+                <PackagePlus size={16} /> {tr('receive')}
+              </button>
               <button className={`mode-btn m-issue ${mode === 'issue' ? 'on' : ''}`}
-                      onClick={() => pickMode('issue')}>{tr('issue')}</button>
+                      onClick={() => pickMode('issue')}>
+                <PackageMinus size={16} /> {tr('issue')}
+              </button>
               <button className={`mode-btn m-count ${mode === 'count' ? 'on' : ''}`}
-                      onClick={() => pickMode('count')}>{tr('setCount')}</button>
+                      onClick={() => pickMode('count')}>
+                <ClipboardList size={16} /> {tr('setCount')}
+              </button>
             </div>
 
             {staleQty !== null && (
@@ -353,12 +373,14 @@ export function ProductStock({
 
               <div className="preview-line">
                 <span>{tr('afterThis')}</span>
-                <b className={after < 0 ? 'stat-red' : ''}>
-                  {mode === 'count'
-                    ? `${fmtNum(open.qty)} → ${fmtNum(value)}`
-                    : fmtNum(after)}
-                  {' '}{tr(unit as DictKey)}
-                </b>
+                <span className="preview-transition">
+                  <b className="num">{fmtNum(open.qty)}</b>
+                  <ArrowRight size={14} className="preview-arrow" />
+                  <b className={`num ${after < 0 ? 'stat-red' : ''}`}>
+                    {fmtNum(mode === 'count' ? value : after)}
+                  </b>
+                  <span className="preview-unit">{tr(unit as DictKey)}</span>
+                </span>
               </div>
 
               {isLarge && (

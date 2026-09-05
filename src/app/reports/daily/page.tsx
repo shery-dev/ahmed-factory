@@ -18,7 +18,6 @@ export default async function DailyReportPage({
     <>
       <div className="panel-header no-print">
         <h2>Daily Report</h2>
-        <p className="panel-desc">Day&apos;s debit, credit, expenses, cash vs client breakdown, and net position.</p>
       </div>
 
       <form className="row wrap no-print" style={{ gap: 8, marginBottom: 20 }} method="get">
