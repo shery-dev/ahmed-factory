@@ -5,7 +5,7 @@ import { priceAndDescribe, billTotals, validateLine, type LineInput } from './pr
 export interface ItemType {
   id: number; code: string; name_en: string; name_ur: string; family: string;
   is_bareek: number; description_en: string | null; description_ur: string | null;
-  default_rate: number; active: number; sort_order: number;
+  default_rate: number; reorder_level: number; active: number; sort_order: number;
 }
 export interface Customer {
   id: number; code: string; kind: 'cash' | 'ledger'; name: string;
@@ -73,6 +73,36 @@ export async function createItemType(input: {
   );
   return info.lastInsertRowid;
 }
+
+export const getItemType = async (id: number): Promise<ItemType | undefined> =>
+  dbGet<ItemType>(`SELECT * FROM item_types WHERE id = ?`, [id]);
+
+/**
+ * The other thickness of the same paper — moti <-> bareek. Both variants
+ * share a `family`; only `is_bareek` differs. This is what lets the stock
+ * screen offer a thickness toggle instead of listing 18 unrelated products,
+ * and it is why the family strings must stay consistent between them.
+ */
+export const siblingThickness = async (t: ItemType): Promise<ItemType | undefined> =>
+  dbGet<ItemType>(
+    `SELECT * FROM item_types WHERE family = ? AND is_bareek = ? AND active = 1`,
+    [t.family, t.is_bareek === 1 ? 0 : 1],
+  );
+
+export async function setReorderLevel(itemTypeId: number, level: number) {
+  const prev = await dbGet<{ name_en: string; reorder_level: number }>(
+    `SELECT name_en, reorder_level FROM item_types WHERE id = ?`, [itemTypeId],
+  );
+  await dbRun(`UPDATE item_types SET reorder_level = ? WHERE id = ?`, [level, itemTypeId]);
+  if (prev) await logActivity('Reorder level changed', `${prev.name_en}: ${prev.reorder_level} → ${level}`, 'system', 'owner');
+}
+
+/** Distinct family names in use, for autocomplete — the guard against a
+ * mistyped family splitting one paper's moti and bareek variants into two
+ * separate families (exactly what happened once in the original import). */
+export const knownFamilies = async (): Promise<string[]> =>
+  (await dbAll<{ family: string }>(`SELECT DISTINCT family FROM item_types ORDER BY family`))
+    .map((r) => r.family);
 
 export async function updateRate(itemTypeId: number, rate: number) {
   const prev = await dbGet<{ name_en: string; default_rate: number }>(
@@ -244,10 +274,121 @@ export const stockOnHand = async (itemTypeId: number, size: number, unit: string
   return r?.quantity ?? 0;
 };
 
+/**
+ * One row per product, for a single unit — the shape the stock screens need.
+ * Nobody on the floor asks "show me all stock"; they ask "Fluting, bareek,
+ * thirty inch". These summaries answer that in the order the question is
+ * asked: family -> thickness -> size.
+ */
+export interface TypeStockSummary {
+  id: number; name_en: string; name_ur: string; family: string; is_bareek: number;
+  reorder_level: number; default_rate: number; sort_order: number;
+  sizes: number; total: number; low: number; out: number; flagged: number;
+  min_size: number | null; max_size: number | null;
+}
+
+export const typeStockSummaries = async (unit: string): Promise<TypeStockSummary[]> =>
+  dbAll<TypeStockSummary>(
+    `SELECT t.id, t.name_en, t.name_ur, t.family, t.is_bareek,
+            t.reorder_level, t.default_rate, t.sort_order,
+            COUNT(s.id)                                                        AS sizes,
+            COALESCE(SUM(s.quantity), 0)                                       AS total,
+            COALESCE(SUM(CASE WHEN s.flagged = 0 AND s.quantity > 0
+                               AND s.quantity <= t.reorder_level
+                              THEN 1 ELSE 0 END), 0)                           AS low,
+            COALESCE(SUM(CASE WHEN s.flagged = 0 AND s.quantity <= 0
+                              THEN 1 ELSE 0 END), 0)                           AS out,
+            COALESCE(SUM(CASE WHEN s.flagged = 1 THEN 1 ELSE 0 END), 0)        AS flagged,
+            MIN(s.size) AS min_size, MAX(s.size) AS max_size
+     FROM item_types t
+     LEFT JOIN stock_items s ON s.item_type_id = t.id AND s.unit = ?
+     WHERE t.active = 1
+     GROUP BY t.id
+     ORDER BY t.sort_order, t.name_en`,
+    [unit],
+  );
+
+/** The same summaries, paired moti-with-bareek under their shared family. */
+export interface FamilyStock {
+  family: string;
+  moti: TypeStockSummary | null;
+  bareek: TypeStockSummary | null;
+  total: number; sizes: number; low: number; out: number; flagged: number;
+}
+
+export async function familyStock(unit: string): Promise<FamilyStock[]> {
+  const out = new Map<string, FamilyStock>();
+  for (const t of await typeStockSummaries(unit)) {
+    const f = out.get(t.family) ?? {
+      family: t.family, moti: null, bareek: null,
+      total: 0, sizes: 0, low: 0, out: 0, flagged: 0,
+    };
+    if (t.is_bareek) f.bareek = t; else f.moti = t;
+    f.total += t.total; f.sizes += t.sizes;
+    f.low += t.low; f.out += t.out; f.flagged += t.flagged;
+    out.set(t.family, f);
+  }
+  return [...out.values()];
+}
+
+export interface SizeRow {
+  id: number | null; size: number; quantity: number; rate: number;
+  flagged: number; flag_reason: string | null;
+}
+
+/** Every stocked size of one product, in one unit — the tiles on the grid. */
+export const sizeRows = async (itemTypeId: number, unit: string): Promise<SizeRow[]> =>
+  dbAll<SizeRow>(
+    `SELECT id, size, quantity, rate, flagged, flag_reason
+     FROM stock_items WHERE item_type_id = ? AND unit = ? ORDER BY size`,
+    [itemTypeId, unit],
+  );
+
+export const movementsFor = async (itemTypeId: number, limit = 20) =>
+  dbAll<{
+    id: number; ts: string; direction: string; size: number | null; unit: string | null;
+    quantity: number; rate: number; ref_type: string | null; ref_id: number | null;
+    note: string | null; actor: string;
+  }>(
+    `SELECT * FROM stock_movements WHERE item_type_id = ? ORDER BY id DESC LIMIT ?`,
+    [itemTypeId, limit],
+  );
+
+// A flat fallback for when there isn't enough movement history yet to judge
+// what's normal for this product — deliberately generous, since the goal is
+// to catch a fat-fingered "1700" for "170", not second-guess a real delivery.
+const FLAT_CEILING: Record<'roll' | 'reel' | 'tota', number> = { roll: 400, reel: 800, tota: 800 };
+
+/**
+ * A soft "does this look right?" threshold for one product's Receive/Issue/
+ * Set Count entry, derived from how that product actually moves rather than
+ * one number for every size of every paper. Falls back to a flat ceiling
+ * when there isn't enough movement history to judge from yet.
+ */
+export async function largeQtyThreshold(itemTypeId: number, unit: 'roll' | 'reel' | 'tota'): Promise<number> {
+  const rows = await dbAll<{ q: number }>(
+    `SELECT ABS(quantity) AS q FROM stock_movements
+     WHERE item_type_id = ? AND unit = ? ORDER BY id DESC LIMIT 15`,
+    [itemTypeId, unit],
+  );
+  if (rows.length < 3) return FLAT_CEILING[unit];
+  const sorted = rows.map((r) => r.q).sort((a, b) => a - b);
+  const median = sorted[Math.floor(sorted.length / 2)];
+  return Math.max(median * 6, FLAT_CEILING[unit] / 2);
+}
+
 export async function stockIn(input: {
   itemTypeId: number; size: number; unit: 'roll' | 'reel' | 'tota';
   quantity: number; rate: number; note?: string;
 }) {
+  // Checked before the write so we know whether this size has ever been
+  // stocked before — "never block the factory" means a genuinely new width
+  // still gets received instantly, it just also gets queued for review.
+  const existed = !!(await dbGet(
+    `SELECT 1 FROM stock_items WHERE item_type_id = ? AND size = ? AND unit = ?`,
+    [input.itemTypeId, input.size, input.unit],
+  ));
+
   // Use batch for transaction-like behavior
   await db.batch([
     {
@@ -264,7 +405,58 @@ export async function stockIn(input: {
       args: [input.itemTypeId, input.size, input.unit, input.quantity, input.rate, input.note ?? 'Stock received'],
     },
   ]);
-  await logActivity('Stock received', `${input.quantity} ${input.unit} @ size ${input.size}`, 'success', 'store');
+
+  if (!existed) {
+    const type = await dbGet<{ name_en: string; default_rate: number }>(
+      `SELECT name_en, default_rate FROM item_types WHERE id = ?`, [input.itemTypeId],
+    );
+    const rateNote = type && type.default_rate > 0
+      ? `Sale rate defaults to the catalogue's PKR ${type.default_rate} until changed.`
+      : `No sale rate is set for ${type?.name_en ?? 'this product'} at all — a bill cannot price this until one is entered in Catalogue.`;
+    await dbRun(
+      `INSERT INTO data_issues (source, entity, detail, severity) VALUES (?,?,?,?)`,
+      ['stock_in', `item_type ${input.itemTypeId} size ${input.size} ${input.unit}`,
+       `New size received — ${input.size}″ ${type?.name_en ?? ''} (${input.unit}) has never been stocked before. `
+       + `Confirm the size is correct, not a typo. ${rateNote}`, 'warn'],
+    );
+  }
+  await logActivity('Stock received', `${input.quantity} ${input.unit} @ size ${input.size}`
+              + (existed ? '' : ' — new size, flagged for review'), 'success', 'store');
+}
+
+/**
+ * Stock leaving for a reason that is not a sale — damage, wastage, a sample.
+ * It does NOT refuse when the recorded quantity is too low: that means the
+ * record is wrong, and blocking the store man teaches him the system is an
+ * obstacle. The movement is written, the level is allowed to go negative,
+ * and a negative level raises a data issue for the count sheet to settle.
+ */
+export async function stockOut(input: {
+  itemTypeId: number; size: number; unit: 'roll' | 'reel' | 'tota';
+  quantity: number; reason: string; actor?: string;
+}) {
+  const actor = input.actor ?? 'store';
+  await dbRun(
+    `UPDATE stock_items SET quantity = quantity - ? WHERE item_type_id = ? AND size = ? AND unit = ?`,
+    [input.quantity, input.itemTypeId, input.size, input.unit],
+  );
+  await dbRun(
+    `INSERT INTO stock_movements
+       (direction, item_type_id, size, unit, quantity, ref_type, note, actor)
+     VALUES ('out', ?, ?, ?, ?, 'issue', ?, ?)`,
+    [input.itemTypeId, input.size, input.unit, input.quantity, input.reason, actor],
+  );
+  const after = await stockOnHand(input.itemTypeId, input.size, input.unit);
+  if (after < 0) {
+    await dbRun(
+      `INSERT INTO data_issues (source, entity, detail, severity) VALUES (?,?,?,?)`,
+      ['stock', `item_type ${input.itemTypeId} size ${input.size}`,
+       `Issued more than the system held — level is now ${after} ${input.unit}. Needs a physical count.`, 'warn'],
+    );
+  }
+  await logActivity('Stock issued', `${input.quantity} ${input.unit} @ size ${input.size} — ${input.reason}`,
+              after < 0 ? 'warn' : 'success', actor);
+  return { after };
 }
 
 // ─── Billing: the atomic transaction ──────────────────────────────────────────
